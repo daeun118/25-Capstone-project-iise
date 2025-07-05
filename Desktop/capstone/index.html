@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>북뮤직 - 책과 음악이 만나는 공간</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <h1>북뮤직</h1>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="music-generator.html">음악 생성</a></li>
+                    <li><a href="board.html">게시판</a></li>
+                    <li><a href="my-bookshelf.html">나의 책장</a></li>
+                </ul>
+                <div class="nav-profile">
+                    <div class="profile-container" id="profileContainer">
+                        <div class="profile-placeholder" id="profilePlaceholder">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="profile-info" id="profileInfo" style="display: none;">
+                            <img src="https://via.placeholder.com/40" alt="프로필" class="profile-image">
+                            <span class="profile-name">사용자명</span>
+                        </div>
+                        <button class="login-btn" id="loginBtn">로그인</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <!-- 사이트 소개 배너 -->
+        <section class="hero-section">
+            <div class="hero-container">
+                <div class="hero-content">
+                    <h2>책 속의 이야기를 음악으로, 당신만의 플레이리스트를 만들어보세요</h2>
+                    <p>음악 생성하기</p>
+                    <button class="cta-button" onclick="location.href='music-generator.html'">
+                        시작하기
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 추천 플레이리스트 섹션 -->
+        <section class="recommendations-section">
+            <div class="container">
+                <h2>추천 플레이리스트</h2>
+                <div class="playlist-grid" id="playlistGrid">
+                    <!-- 추천 플레이리스트들이 여기에 동적으로 로드됩니다 -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 북뮤직. 모든 권리 보유.</p>
+        </div>
+    </footer>
+
+    <!-- 유틸리티 모듈 -->
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/api.js"></script>
+    <script src="scripts/main.js"></script>
+</body>
+</html> 

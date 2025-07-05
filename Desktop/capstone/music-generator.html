@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>음악 생성 - 북뮤직</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/music-generator.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <h1><a href="index.html">북뮤직</a></h1>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="music-generator.html" class="active">음악 생성</a></li>
+                    <li><a href="board.html">게시판</a></li>
+                    <li><a href="my-bookshelf.html">나의 책장</a></li>
+                </ul>
+                <div class="nav-profile">
+                    <div class="profile-container" id="profileContainer">
+                        <div class="profile-placeholder" id="profilePlaceholder">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <button class="login-btn" id="loginBtn">로그인</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="generator-container">
+            <div class="generator-header">
+                <h2>나만의 도서 플레이리스트 만들기</h2>
+            </div>
+
+            <div class="generator-form">
+                <!-- 책 정보 입력 섹션 -->
+                <section class="book-info-section">
+                    <h3>책 정보</h3>
+                    <div class="book-input-container">
+                        <div class="book-inputs">
+                            <input type="text" id="bookTitle" placeholder="책 제목을 입력하세요" required>
+                            <input type="text" id="bookAuthor" placeholder="저자를 입력하세요" required>
+                            <button type="button" class="generate-btn" id="generateInitialMusic">
+                                <i class="fas fa-music"></i>
+                                초기 음악 생성
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 통합 음악 플레이어 -->
+                <section class="integrated-player-section">
+                    <div class="integrated-player">
+                        <div class="player-controls">
+                            <button class="play-btn" id="playIntegratedMusic">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <span class="player-title">통합 플레이리스트</span>
+                            <button class="download-btn" id="downloadIntegratedMusic">
+                                <i class="fas fa-download"></i>
+                            </button>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 책 표지 & 감상 섹션 -->
+                <div class="book-cover-review-container">
+                    <section class="book-cover-section">
+                        <div class="book-cover-container">
+                            <div class="book-cover" id="bookCover">
+                                <div class="cover-placeholder">
+                                    <i class="fas fa-book"></i>
+                                    <p>책 표지</p>
+                                </div>
+                            </div>
+                            <button class="change-cover-btn" id="changeCoverBtn">
+                                <i class="fas fa-camera"></i>
+                                표지 변경
+                            </button>
+                        </div>
+                    </section>
+
+                    <section class="review-section">
+                        <h3>감상 작성</h3>
+                        <div class="rating-container">
+                            <label>별점:</label>
+                            <div class="star-rating" id="starRating">
+                                <span class="star" data-rating="1">★</span>
+                                <span class="star" data-rating="2">★</span>
+                                <span class="star" data-rating="3">★</span>
+                                <span class="star" data-rating="4">★</span>
+                                <span class="star" data-rating="5">★</span>
+                            </div>
+                        </div>
+                        <div class="review-textarea-container">
+                            <textarea id="reviewText" placeholder="이 책에 대한 감상을 적어주세요..."></textarea>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- 인상깊은 구절 섹션 -->
+                <section class="quotes-section">
+                    <h3>인상깊은 구절</h3>
+                    <div class="quotes-container" id="quotesContainer">
+                        <div class="quote-item">
+                            <div class="quote-input-container">
+                                <textarea class="quote-input" placeholder="인상깊은 구절을 입력하세요..."></textarea>
+                                <button class="generate-music-btn" data-quote-index="0">
+                                    <i class="fas fa-music"></i>
+                                    음악 생성
+                                </button>
+                            </div>
+                            <div class="quote-music-player" style="display: none;">
+                                <div class="music-player">
+                                    <button class="play-btn">
+                                        <i class="fas fa-play"></i>
+                                    </button>
+                                    <div class="music-info">
+                                        <span class="music-title">구절 1 음악</span>
+                                    </div>
+                                    <div class="music-controls">
+                                        <button class="download-btn">
+                                            <i class="fas fa-download"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 저장 버튼 -->
+                <div class="save-section">
+                    <button class="save-btn" id="savePlaylist">
+                        <i class="fas fa-save"></i>
+                        플레이리스트 저장
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 유틸리티 모듈 -->
+    <script src="scripts/utils.js"></script>
+    <script src="scripts/api.js"></script>
+    <script src="scripts/music-generator.js"></script>
+</body>
+</html> 

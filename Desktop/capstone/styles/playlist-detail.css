@@ -1,0 +1,470 @@
+/* 플레이리스트 상세 페이지 전용 스타일 */
+.detail-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* 작성자 정보 */
+.author-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.author-profile {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.author-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #f8f9fa;
+}
+
+.author-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.author-name {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.3rem;
+}
+
+.author-stats {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.author-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.follow-btn {
+    padding: 0.6rem 1.5rem;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.follow-btn:hover {
+    background-color: #2980b9;
+}
+
+.follow-btn.following {
+    background-color: #95a5a6;
+}
+
+.follow-btn.following:hover {
+    background-color: #7f8c8d;
+}
+
+.bookshelf-btn {
+    padding: 0.6rem 1.5rem;
+    background-color: #f8f9fa;
+    color: #2c3e50;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.bookshelf-btn:hover {
+    background-color: #e9ecef;
+    border-color: #ccc;
+}
+
+/* 플레이리스트 액션 버튼들 */
+.playlist-actions {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.action-btn {
+    padding: 0.6rem 1.2rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: white;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.action-btn:hover {
+    background-color: #f8f9fa;
+    border-color: #ccc;
+}
+
+.like-btn {
+    color: #e74c3c;
+}
+
+.like-btn.liked {
+    background-color: #e74c3c;
+    color: white;
+    border-color: #e74c3c;
+}
+
+.like-btn.liked:hover {
+    background-color: #c0392b;
+}
+
+.scrap-btn {
+    color: #f39c12;
+}
+
+.scrap-btn.scrapped {
+    background-color: #f39c12;
+    color: white;
+    border-color: #f39c12;
+}
+
+.scrap-btn.scrapped:hover {
+    background-color: #e67e22;
+}
+
+.share-btn {
+    color: #3498db;
+}
+
+.share-btn:hover {
+    background-color: #3498db;
+    color: white;
+}
+
+/* 플레이리스트 컨텐츠 */
+.playlist-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* 책 정보 표시 */
+.book-info-display {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.book-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.book-author {
+    font-size: 1rem;
+    color: #666;
+}
+
+/* 별점 표시 */
+.rating-display {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.rating-display label {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.star-rating .star.filled {
+    color: #f39c12;
+}
+
+.star-rating .star {
+    color: #ddd;
+}
+
+.review-text {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    line-height: 1.6;
+}
+
+/* 댓글 섹션 */
+.comments-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-top: 2rem;
+}
+
+.comments-section h3 {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+}
+
+.comment-count {
+    color: #666;
+    font-weight: normal;
+}
+
+.comment-input-container {
+    margin-bottom: 2rem;
+}
+
+.comment-input-container textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    resize: vertical;
+    min-height: 100px;
+    font-family: inherit;
+    transition: border-color 0.3s;
+    margin-bottom: 1rem;
+}
+
+.comment-input-container textarea:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+.comment-submit-btn {
+    padding: 0.6rem 1.5rem;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.comment-submit-btn:hover {
+    background-color: #2980b9;
+}
+
+.comment-submit-btn:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+}
+
+/* 댓글 리스트 */
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.comment-item {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 3px solid #3498db;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.comment-author {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.comment-author-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.comment-author-name {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.comment-date {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.comment-text {
+    line-height: 1.6;
+    color: #2c3e50;
+}
+
+.comment-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.comment-action {
+    color: #666;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.comment-action:hover {
+    color: #3498db;
+}
+
+.comment-like {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.comment-like.liked {
+    color: #e74c3c;
+}
+
+/* 빈 댓글 상태 */
+.empty-comments {
+    text-align: center;
+    padding: 3rem;
+    color: #666;
+}
+
+.empty-comments i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #bdc3c7;
+}
+
+.empty-comments p {
+    font-size: 1.1rem;
+}
+
+/* 로딩 스피너 */
+.loading-comments {
+    text-align: center;
+    padding: 2rem;
+}
+
+.loading-comments .loading-spinner {
+    width: 30px;
+    height: 30px;
+    border-width: 3px;
+    margin: 0 auto 1rem;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .detail-container {
+        padding: 0 15px;
+    }
+    
+    .author-info {
+        flex-direction: column;
+        gap: 1.5rem;
+        align-items: flex-start;
+    }
+    
+    .author-profile {
+        width: 100%;
+    }
+    
+    .author-actions {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .playlist-actions {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .action-btn {
+        flex: 1;
+        min-width: 100px;
+        justify-content: center;
+    }
+    
+    .book-cover-review-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .book-cover {
+        width: 150px;
+        height: 210px;
+    }
+    
+    .comment-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .author-info,
+    .book-info-section,
+    .integrated-player-section,
+    .book-cover-section,
+    .review-section,
+    .quotes-section,
+    .comments-section {
+        padding: 1.5rem;
+    }
+    
+    .author-avatar {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .author-name {
+        font-size: 1.1rem;
+    }
+    
+    .playlist-actions {
+        flex-direction: column;
+    }
+    
+    .action-btn {
+        width: 100%;
+    }
+    
+    .book-cover {
+        width: 120px;
+        height: 168px;
+    }
+    
+    .comment-item {
+        padding: 1rem;
+    }
+    
+    .comment-author-avatar {
+        width: 28px;
+        height: 28px;
+    }
+} 

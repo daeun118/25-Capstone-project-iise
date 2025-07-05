@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>마이페이지 - 북뮤직</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/my-profile.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-logo">
+                    <h1><a href="index.html">북뮤직</a></h1>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="music-generator.html">음악 생성</a></li>
+                    <li><a href="board.html">게시판</a></li>
+                    <li><a href="my-bookshelf.html">나의 책장</a></li>
+                </ul>
+                <div class="nav-profile">
+                    <div class="profile-container" id="profileContainer">
+                        <div class="profile-info">
+                            <img src="https://via.placeholder.com/40" alt="프로필" class="profile-image">
+                            <span class="profile-name">사용자명</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <div class="profile-container">
+            <div class="profile-sidebar">
+                <div class="profile-menu">
+                    <div class="menu-item active" data-tab="profile">
+                        <i class="fas fa-user"></i>
+                        <span>프로필 설정</span>
+                    </div>
+                    <div class="menu-item" data-tab="account">
+                        <i class="fas fa-cog"></i>
+                        <span>계정 설정</span>
+                    </div>
+                    <div class="menu-item" data-tab="friends">
+                        <i class="fas fa-users"></i>
+                        <span>친구 목록</span>
+                    </div>
+                    <div class="menu-item" data-tab="activity">
+                        <i class="fas fa-chart-line"></i>
+                        <span>활동 내역</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-content">
+                <!-- 프로필 설정 탭 -->
+                <div class="tab-content active" id="profile-tab">
+                    <div class="tab-header">
+                        <h2>프로필 설정</h2>
+                        <p>다른 사용자에게 보여질 정보를 설정하세요</p>
+                    </div>
+
+                    <div class="profile-form">
+                        <div class="profile-image-section">
+                            <div class="profile-image-container">
+                                <img src="https://via.placeholder.com/120" alt="프로필 사진" class="profile-image-large">
+                                <div class="image-overlay">
+                                    <i class="fas fa-camera"></i>
+                                </div>
+                            </div>
+                            <div class="image-actions">
+                                <button class="btn-secondary" id="changeImageBtn">사진 변경</button>
+                                <button class="btn-tertiary" id="deleteImageBtn">삭제</button>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <div class="form-group">
+                                <label for="nickname">닉네임</label>
+                                <input type="text" id="nickname" placeholder="닉네임을 입력하세요" maxlength="20">
+                                <span class="char-count">0/20</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="introduction">소개글</label>
+                                <textarea id="introduction" placeholder="자신을 소개하는 글을 작성해주세요" maxlength="200" rows="4"></textarea>
+                                <span class="char-count">0/200</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="favoriteGenre">선호 장르</label>
+                                <select id="favoriteGenre">
+                                    <option value="">선택하세요</option>
+                                    <option value="novel">소설</option>
+                                    <option value="essay">에세이</option>
+                                    <option value="poem">시</option>
+                                    <option value="philosophy">철학</option>
+                                    <option value="science">과학</option>
+                                    <option value="history">역사</option>
+                                    <option value="biography">전기</option>
+                                    <option value="art">예술</option>
+                                </select>
+                            </div>
+
+                            <div class="form-actions">
+                                <button class="btn-primary" id="saveProfileBtn">저장</button>
+                                <button class="btn-secondary" id="cancelBtn">취소</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 계정 설정 탭 -->
+                <div class="tab-content" id="account-tab">
+                    <div class="tab-header">
+                        <h2>계정 설정</h2>
+                        <p>계정 보안과 개인정보를 관리하세요</p>
+                    </div>
+
+                    <div class="account-form">
+                        <div class="form-section">
+                            <h3>비밀번호 변경</h3>
+                            <div class="form-group">
+                                <label for="currentPassword">현재 비밀번호</label>
+                                <input type="password" id="currentPassword" placeholder="현재 비밀번호를 입력하세요">
+                            </div>
+                            <div class="form-group">
+                                <label for="newPassword">새 비밀번호</label>
+                                <input type="password" id="newPassword" placeholder="새 비밀번호를 입력하세요">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword">새 비밀번호 확인</label>
+                                <input type="password" id="confirmPassword" placeholder="새 비밀번호를 다시 입력하세요">
+                            </div>
+                            <button class="btn-primary" id="changePasswordBtn">비밀번호 변경</button>
+                        </div>
+
+                        <div class="form-section">
+                            <h3>개인정보 설정</h3>
+                            <div class="form-group">
+                                <label for="email">이메일</label>
+                                <input type="email" id="email" placeholder="이메일을 입력하세요">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">전화번호</label>
+                                <input type="tel" id="phone" placeholder="전화번호를 입력하세요">
+                            </div>
+                            <button class="btn-primary" id="saveAccountBtn">저장</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 친구 목록 탭 -->
+                <div class="tab-content" id="friends-tab">
+                    <div class="tab-header">
+                        <h2>친구 목록</h2>
+                        <p>팔로우한 사용자들을 관리하세요</p>
+                    </div>
+
+                    <div class="friends-content">
+                        <div class="friends-search">
+                            <input type="text" id="friendSearchInput" placeholder="사용자 검색">
+                            <button class="btn-primary" id="searchFriendBtn">검색</button>
+                        </div>
+
+                        <div class="friends-list" id="friendsList">
+                            <!-- 친구 목록이 여기에 동적으로 로드됩니다 -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 활동 내역 탭 -->
+                <div class="tab-content" id="activity-tab">
+                    <div class="tab-header">
+                        <h2>활동 내역</h2>
+                        <p>플레이리스트 생성, 좋아요, 댓글 등의 활동을 확인하세요</p>
+                    </div>
+
+                    <div class="activity-content">
+                        <div class="activity-stats">
+                            <div class="stat-item">
+                                <div class="stat-number">0</div>
+                                <div class="stat-label">만든 플레이리스트</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">0</div>
+                                <div class="stat-label">받은 좋아요</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">0</div>
+                                <div class="stat-label">작성한 댓글</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">0</div>
+                                <div class="stat-label">팔로워</div>
+                            </div>
+                        </div>
+
+                        <div class="activity-list" id="activityList">
+                            <!-- 활동 내역이 여기에 동적으로 로드됩니다 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="scripts/my-profile.js"></script>
+</body>
+</html> 
