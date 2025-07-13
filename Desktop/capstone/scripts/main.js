@@ -44,11 +44,15 @@ const playlistGrid = document.getElementById('playlistGrid');
 // 사용자 상태 관리
 let currentUser = null;
 
+// 음악 히스토리 관리
+let musicHistory = [];
+
 // 페이지 로드 시 초기화
 document.addEventListener('DOMContentLoaded', function() {
     checkUserLogin();
     loadRecommendedPlaylists();
     setupEventListeners();
+    renderMusicHistory();
 });
 
 // 사용자 로그인 상태 확인
@@ -92,16 +96,53 @@ function loadRecommendedPlaylists() {
     }, 500);
 }
 
-// 플레이리스트 표시
+// 통합 플레이리스트(통합 음악 플레이어) 제어 함수
+function updateIntegratedPlayer(tracks) {
+    const playBtn = document.getElementById('playIntegratedMusic');
+    const downloadBtn = document.getElementById('downloadIntegratedMusic');
+    if (!playBtn || !downloadBtn) return;
+    if (tracks && tracks.length > 0) {
+        playBtn.disabled = false;
+        downloadBtn.disabled = false;
+        playBtn.onclick = () => playIntegratedPlaylist(tracks);
+        downloadBtn.onclick = () => downloadIntegratedMusic(tracks);
+    } else {
+        playBtn.disabled = true;
+        downloadBtn.disabled = true;
+    }
+}
+
+function playIntegratedPlaylist(tracks) {
+    if (!tracks || tracks.length === 0) {
+        showNotification('재생할 음악이 없습니다.', 'error');
+        return;
+    }
+    // 실제 오디오 플레이어 연동 필요 (여기선 알림만)
+    showNotification('통합 플레이리스트 재생을 시작합니다.', 'info');
+}
+
+function downloadIntegratedMusic(tracks) {
+    if (!tracks || tracks.length === 0) {
+        showNotification('다운로드할 음악이 없습니다.', 'error');
+        return;
+    }
+    showNotification('통합 플레이리스트 다운로드를 시작합니다.', 'info');
+}
+
+// my-bookshelf.html에서 플레이리스트와 통합 음악 플레이어를 함께 렌더링
 function displayPlaylists(playlists) {
     if (!playlistGrid) return;
-    
     playlistGrid.innerHTML = '';
-    
+    let integratedTracks = [];
     playlists.forEach(playlist => {
         const playlistCard = createPlaylistCard(playlist);
         playlistGrid.appendChild(playlistCard);
+        // 통합 음악이 있는 경우 통합 플레이어에 추가
+        if (playlist.musicTracks && playlist.musicTracks.length > 0) {
+            integratedTracks.push(...playlist.musicTracks);
+        }
     });
+    updateIntegratedPlayer(integratedTracks);
 }
 
 // 플레이리스트 카드 생성
@@ -247,4 +288,31 @@ window.BookMusicApp = {
     checkUserLogin,
     showUserProfile,
     showLoginButton
-}; 
+};
+
+// 음악 히스토리 관리
+function renderMusicHistory() {
+    const historyDiv = document.getElementById('music-history');
+    if (!historyDiv) return;
+    if (musicHistory.length === 0) {
+        historyDiv.innerHTML = '';
+        return;
+    }
+    let html = '<b>생성된 음악 히스토리</b><ul style="padding-left:18px;">';
+    musicHistory.forEach((item, idx) => {
+        html += `<li style='margin-bottom:6px;'><a href='#' data-idx='${idx}' style='text-decoration:underline;color:#007bff;'>${item.title} (${item.duration}s)</a></li>`;
+    });
+    html += '</ul>';
+    historyDiv.innerHTML = html;
+    // 클릭 이벤트 등록
+    historyDiv.querySelectorAll('a[data-idx]').forEach(a => {
+        a.onclick = function(e) {
+            e.preventDefault();
+            const idx = parseInt(this.getAttribute('data-idx'));
+            const audioPlayer = document.getElementById('music-player');
+            audioPlayer.src = musicHistory[idx].audioUrl;
+            audioPlayer.load();
+            audioPlayer.play();
+        };
+    });
+} 

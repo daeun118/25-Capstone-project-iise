@@ -95,4 +95,6 @@ uploads/*
 **/.viminfo
 **/NTUSER.DAT*
 **/ntuser.dat*
-**/*.regtrans-ms 
+**/*.regtrans-ms
+
+# ... existing code ... 

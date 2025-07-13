@@ -319,4 +319,21 @@ if (typeof window !== 'undefined') {
 // 모듈 시스템 지원
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = API;
+}
+
+// Google Books API로 책 설명 가져오기
+async function fetchBookDescription(title, author) {
+    const query = `${encodeURIComponent(title)}+inauthor:${encodeURIComponent(author)}`;
+    const url = `https://www.googleapis.com/books/v1/volumes?q=${query}`;
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        if (!data.items || data.items.length === 0) {
+            return { description: null, error: "책 정보를 찾을 수 없습니다. 제목과 저자명을 다시 확인해주세요." };
+        }
+        const description = data.items[0].volumeInfo.description || "이 책에 대한 설명이 제공되지 않았습니다.";
+        return { description, error: null };
+    } catch (e) {
+        return { description: null, error: "Google Books API 요청 중 오류 발생: " + e.message };
+    }
 } 

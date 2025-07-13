@@ -1,11 +1,12 @@
 // 음악 생성 관련 라우터
 const express = require('express');
 const router = express.Router();
+const axios = require('axios');
 
 // 음악 생성 API
 router.post('/generate', async (req, res) => {
     try {
-        const { bookTitle, author, quotes, bookCover, type = 'playlist' } = req.body;
+        const { bookTitle, author, quotes, bookCover, type = 'playlist', prompt } = req.body;
         
         // 입력값 검증
         if (!bookTitle || !author) {
@@ -15,35 +16,53 @@ router.post('/generate', async (req, res) => {
             });
         }
         
-        // 음악 생성 시뮬레이션
-        await simulateMusicGeneration(bookTitle);
-        
-        // 트랙 생성
-        const tracks = [];
-        
-        // 초기 음악 (오프닝) 생성
-        tracks.push({
-            id: Date.now(),
-            title: `${bookTitle} - 오프닝`,
-            type: 'opening',
-            duration: generateRandomDuration(),
-            audioUrl: generateDummyAudioUrl(),
-            createdAt: new Date().toISOString()
-        });
-        
-        // 구절별 음악 생성
-        if (quotes && quotes.length > 0) {
-            quotes.forEach((quote, index) => {
+        let tracks = [];
+        // 프롬프트가 있으면 실제 musicgen 호출
+        if (prompt) {
+            // musicgen API 호출 (Replicate)
+            const mgRes = await axios.post(
+                'http://localhost:3000/api/music/musicgen',
+                { prompt, duration: 30 }
+            );
+            if (mgRes.data && mgRes.data.audioUrl) {
                 tracks.push({
-                    id: Date.now() + index + 1,
-                    title: `${bookTitle} - 구절 ${index + 1}`,
-                    type: 'quote',
-                    quote: quote.text || quote,
-                    duration: generateRandomDuration(),
-                    audioUrl: generateDummyAudioUrl(),
+                    id: Date.now(),
+                    title: `${bookTitle} - 통합 음악`,
+                    type: 'integrated',
+                    duration: '3:00',
+                    audioUrl: mgRes.data.audioUrl,
                     createdAt: new Date().toISOString()
                 });
+            } else {
+                return res.status(500).json({ success: false, message: 'musicgen API 오류' });
+            }
+        } else {
+            // 기존 시뮬레이션 방식
+            await simulateMusicGeneration(bookTitle);
+            // 초기 음악 (오프닝) 생성
+            tracks.push({
+                id: Date.now(),
+                title: `${bookTitle} - 오프닝`,
+                type: 'opening',
+                duration: generateRandomDuration(),
+                audioUrl: generateDummyAudioUrl(),
+                createdAt: new Date().toISOString()
             });
+            
+            // 구절별 음악 생성
+            if (quotes && quotes.length > 0) {
+                quotes.forEach((quote, index) => {
+                    tracks.push({
+                        id: Date.now() + index + 1,
+                        title: `${bookTitle} - 구절 ${index + 1}`,
+                        type: 'quote',
+                        quote: quote.text || quote,
+                        duration: generateRandomDuration(),
+                        audioUrl: generateDummyAudioUrl(),
+                        createdAt: new Date().toISOString()
+                    });
+                });
+            }
         }
         
         // 응답 데이터
@@ -212,6 +231,59 @@ router.get('/status/:jobId', (req, res) => {
             success: false,
             message: '상태 확인 중 오류가 발생했습니다.'
         });
+    }
+});
+
+// Replicate MusicGen API 호출 엔드포인트
+router.post('/musicgen', async (req, res) => {
+    const { prompt, duration } = req.body;
+    if (!prompt) {
+        return res.status(400).json({ error: '음악 생성 프롬프트가 필요합니다.' });
+    }
+    try {
+        // Replicate API 호출 (prediction 생성)
+        const predictionRes = await axios.post(
+            'https://api.replicate.com/v1/predictions',
+            {
+                version: "meta/musicgen:671ac645ce5e552cc63a54a2bbff63fcf798043055d2dac5fc9e36a837eedcfb",
+                input: {
+                    prompt,
+                    model_version: "large",
+                    output_format: "mp3",
+                    duration: duration || 15,
+                    normalization_strategy: "peak"
+                }
+            },
+            {
+                headers: {
+                    'Authorization': `Token ${process.env.REPLICATE_API_TOKEN}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+        // Replicate는 비동기 방식이므로, status가 succeeded가 될 때까지 polling 필요
+        const getUrl = predictionRes.data.urls.get;
+        let audioUrl = null;
+        let status = predictionRes.data.status;
+        let pollCount = 0;
+        while (status !== 'succeeded' && status !== 'failed' && pollCount < 30) {
+            await new Promise(r => setTimeout(r, 3000)); // 3초 대기
+            const pollRes = await axios.get(getUrl, {
+                headers: { 'Authorization': `Token ${process.env.REPLICATE_API_TOKEN}` }
+            });
+            status = pollRes.data.status;
+            if (status === 'succeeded') {
+                audioUrl = pollRes.data.output;
+            }
+            pollCount++;
+        }
+        if (status === 'succeeded' && audioUrl) {
+            res.json({ audioUrl });
+        } else {
+            res.status(500).json({ error: '음악 생성에 실패했습니다.' });
+        }
+    } catch (err) {
+        res.status(500).json({ error: err.message });
     }
 });
 

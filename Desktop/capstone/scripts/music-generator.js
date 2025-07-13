@@ -43,7 +43,7 @@ function setupEventListeners() {
     bookAuthorInput.addEventListener('input', updateBookInfo);
     
     // 초기 음악 생성
-    generateInitialMusicBtn.addEventListener('click', generateInitialMusic);
+    generateInitialMusicBtn.addEventListener('click', generateIntegratedMusic);
     
     // 별점 시스템
     setupStarRating();
@@ -80,39 +80,58 @@ function updateBookInfo() {
     updateBookCoverPlaceholder();
 }
 
-// 초기 음악 생성
-async function generateInitialMusic() {
-    if (!currentPlaylist.bookTitle || !currentPlaylist.bookAuthor) {
-        showNotification('책 제목과 저자를 모두 입력해주세요.', 'error');
-        return;
+// LLM 프롬프트 생성 함수
+function createLLMPrompt({ bookTitle, bookAuthor, bookDescription, review, quotes }) {
+    let prompt = `책 제목: ${bookTitle}\n저자: ${bookAuthor}`;
+    if (bookDescription) prompt += `\n책 설명: ${bookDescription}`;
+    if (review) prompt += `\n감상: ${review}`;
+    if (quotes && quotes.length > 0) {
+        prompt += `\n인상깊은 구절:`;
+        quotes.forEach((q, i) => {
+            if (q && q.text) prompt += `\n${i + 1}. ${q.text}`;
+            else if (typeof q === 'string') prompt += `\n${i + 1}. ${q}`;
+        });
     }
-    
-    setButtonLoading(generateInitialMusicBtn, true);
-    
-    try {
-        // Google Books API 시뮬레이션
-        const bookInfo = await fetchBookInfo(currentPlaylist.bookTitle, currentPlaylist.bookAuthor);
-        
-        if (bookInfo) {
-            currentPlaylist.bookDescription = bookInfo.description;
-            currentPlaylist.coverImage = bookInfo.coverImage;
-            updateBookCover(bookInfo.coverImage);
+    prompt += '\n이 책의 분위기와 감상을 담은 음악을 만들어주세요.';
+    return prompt;
+}
+
+// 음악 생성 (실제 API 호출)
+async function generateMusic(type, prompt) {
+    // type: 'integrated'일 때 통합 프롬프트 기반 생성
+    if (type === 'integrated') {
+        // 서버 API 호출
+        const res = await API.music.generateInitialMusic({
+            prompt,
+            bookTitle: currentPlaylist.bookTitle,
+            bookAuthor: currentPlaylist.bookAuthor,
+            bookDescription: currentPlaylist.bookDescription,
+            review: currentPlaylist.review,
+            quotes: currentPlaylist.quotes
+        });
+        if (res && res.success && res.playlist && res.playlist.tracks && res.playlist.tracks.length > 0) {
+            // 첫 트랙 반환 (통합 음악)
+            return res.playlist.tracks[0];
+        } else {
+            throw new Error('음악 생성 실패');
         }
-        
-        // 초기 음악 생성 시뮬레이션
-        const initialMusic = await generateMusic('initial', currentPlaylist.bookDescription || `${currentPlaylist.bookTitle} by ${currentPlaylist.bookAuthor}`);
-        
-        if (initialMusic) {
-            currentPlaylist.musicTracks = [initialMusic];
-            showNotification('초기 음악이 성공적으로 생성되었습니다!', 'success');
-            updateIntegratedPlayer();
-        }
-        
-    } catch (error) {
-        showNotification('음악 생성 중 오류가 발생했습니다.', 'error');
-        console.error('Music generation error:', error);
-    } finally {
-        setButtonLoading(generateInitialMusicBtn, false);
+    } else {
+        // 기존 구절/시뮬레이션 방식 유지
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const trackId = Date.now() + Math.random();
+                const music = {
+                    id: trackId,
+                    type: type,
+                    title: type === 'initial' ? '초기 음악' : `구절 ${quoteCounter} 음악`,
+                    prompt: prompt,
+                    duration: Math.floor(Math.random() * 120 + 60), // 60-180초
+                    audioUrl: `https://example.com/audio/${trackId}.mp3`, // 더미 URL
+                    createdAt: new Date().toISOString()
+                };
+                resolve(music);
+            }, 2000);
+        });
     }
 }
 
@@ -143,26 +162,6 @@ function fetchBookInfo(title, author) {
             
             resolve(bookInfo);
         }, 1500);
-    });
-}
-
-// 음악 생성 시뮬레이션
-function generateMusic(type, prompt) {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            const trackId = Date.now() + Math.random();
-            const music = {
-                id: trackId,
-                type: type,
-                title: type === 'initial' ? '초기 음악' : `구절 ${quoteCounter} 음악`,
-                prompt: prompt,
-                duration: Math.floor(Math.random() * 120 + 60), // 60-180초
-                audioUrl: `https://example.com/audio/${trackId}.mp3`, // 더미 URL
-                createdAt: new Date().toISOString()
-            };
-            
-            resolve(music);
-        }, 2000);
     });
 }
 
@@ -659,4 +658,150 @@ function showNotification(message, type = 'info') {
     setTimeout(() => {
         notification.remove();
     }, 3000);
+}
+
+// --- Google Books API로 책 검색 및 선택 기능 추가 ---
+async function searchBooksByTitle(title) {
+    const url = `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(title)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    return data.items || [];
+}
+
+function renderBookSearchResults(books) {
+    const container = document.createElement('div');
+    container.className = 'book-search-results';
+    books.forEach((item, idx) => {
+        const info = item.volumeInfo;
+        const div = document.createElement('div');
+        div.className = 'book-search-item';
+        div.innerHTML = `
+            <img src="${info.imageLinks?.thumbnail || ''}" style="width:40px;height:60px;object-fit:cover;vertical-align:middle;"> 
+            <b>${info.title}</b> <span style='font-size:0.9em;color:#666;'>${info.authors ? info.authors.join(', ') : ''}</span>
+        `;
+        div.onclick = () => selectBookFromSearch(item);
+        container.appendChild(div);
+    });
+    return container;
+}
+
+async function handleBookSearch() {
+    const title = bookTitleInput.value.trim();
+    if (!title) return;
+    const results = await searchBooksByTitle(title);
+    const section = document.querySelector('.book-info-section');
+    let resultDiv = section.querySelector('.book-search-results');
+    if (resultDiv) resultDiv.remove();
+    if (results.length === 0) {
+        const noDiv = document.createElement('div');
+        noDiv.className = 'book-search-results';
+        noDiv.innerText = '검색 결과가 없습니다.';
+        section.appendChild(noDiv);
+        return;
+    }
+    const listDiv = renderBookSearchResults(results);
+    section.appendChild(listDiv);
+}
+
+function selectBookFromSearch(item) {
+    const info = item.volumeInfo;
+    bookTitleInput.value = info.title;
+    bookAuthorInput.value = info.authors ? info.authors.join(', ') : '';
+    currentPlaylist.bookTitle = info.title;
+    currentPlaylist.bookAuthor = info.authors ? info.authors.join(', ') : '';
+    currentPlaylist.bookDescription = info.description || '';
+    currentPlaylist.coverImage = info.imageLinks?.thumbnail || '';
+    updateBookCover(currentPlaylist.coverImage);
+    updateBookCoverPlaceholder();
+    // 설명 표시
+    let descDiv = document.getElementById('book-desc-info');
+    if (!descDiv) {
+        descDiv = document.createElement('div');
+        descDiv.id = 'book-desc-info';
+        descDiv.style = 'margin:10px 0; color:#444; font-size:0.98em;';
+        bookTitleInput.parentNode.appendChild(descDiv);
+    }
+    descDiv.innerText = currentPlaylist.bookDescription;
+    // 검색 결과 제거
+    const section = document.querySelector('.book-info-section');
+    const resultDiv = section.querySelector('.book-search-results');
+    if (resultDiv) resultDiv.remove();
+}
+
+// 책 제목 입력 후 엔터 시 검색
+bookTitleInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        handleBookSearch();
+    }
+});
+// 검색 버튼이 있다면 클릭 시에도 검색
+const searchBtn = document.getElementById('searchBookBtn');
+if (searchBtn) {
+    searchBtn.onclick = handleBookSearch;
+}
+
+// 통합 음악 생성 (책 정보, 감상, 구절 모두 기반)
+async function generateIntegratedMusic() {
+    if (!currentPlaylist.bookTitle || !currentPlaylist.bookAuthor) {
+        showNotification('책 제목과 저자를 모두 입력해주세요.', 'error');
+        return;
+    }
+    if (currentPlaylist.quotes.length === 0 || !currentPlaylist.quotes[0].text) {
+        showNotification('최소 1개의 인상깊은 구절을 입력해주세요.', 'error');
+        return;
+    }
+    setButtonLoading(generateInitialMusicBtn, true);
+    showLoadingSpinner(true, '음악을 생성 중입니다. 잠시만 기다려주세요...');
+    try {
+        // 책 정보 보강
+        const bookInfo = await fetchBookInfo(currentPlaylist.bookTitle, currentPlaylist.bookAuthor);
+        if (bookInfo) {
+            currentPlaylist.bookDescription = bookInfo.description;
+            currentPlaylist.coverImage = bookInfo.coverImage;
+            updateBookCover(bookInfo.coverImage);
+        }
+        // LLM 프롬프트 생성
+        const prompt = createLLMPrompt({
+            bookTitle: currentPlaylist.bookTitle,
+            bookAuthor: currentPlaylist.bookAuthor,
+            bookDescription: currentPlaylist.bookDescription,
+            review: currentPlaylist.review,
+            quotes: currentPlaylist.quotes
+        });
+        // musicgen 호출 (실제 API 연동 시 prompt 전달)
+        const integratedMusic = await generateMusic('integrated', prompt);
+        if (integratedMusic) {
+            currentPlaylist.musicTracks = [integratedMusic];
+            showNotification('통합 음악이 성공적으로 생성되었습니다!', 'success');
+        }
+    } catch (error) {
+        showNotification('음악 생성 중 오류가 발생했습니다.', 'error');
+        console.error('Integrated music generation error:', error);
+    } finally {
+        setButtonLoading(generateInitialMusicBtn, false);
+        showLoadingSpinner(false);
+    }
+}
+
+// 로딩 스피너 표시 함수
+function showLoadingSpinner(show, message) {
+    let spinner = document.getElementById('musicgen-loading-spinner');
+    if (show) {
+        if (!spinner) {
+            spinner = document.createElement('div');
+            spinner.id = 'musicgen-loading-spinner';
+            spinner.style = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9999;background:rgba(255,255,255,0.7);display:flex;flex-direction:column;align-items:center;justify-content:center;';
+            spinner.innerHTML = `<div class="spinner" style="border:8px solid #eee;border-top:8px solid #667eea;border-radius:50%;width:60px;height:60px;animation:spin 1s linear infinite;"></div><div style='margin-top:18px;font-size:1.1em;color:#333;'>${message || '로딩 중...'}</div>`;
+            document.body.appendChild(spinner);
+            // CSS 애니메이션 추가
+            const style = document.createElement('style');
+            style.innerHTML = `@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}`;
+            document.head.appendChild(style);
+        } else {
+            spinner.style.display = 'flex';
+            spinner.querySelector('div:last-child').innerText = message || '로딩 중...';
+        }
+    } else if (spinner) {
+        spinner.style.display = 'none';
+    }
 } 
