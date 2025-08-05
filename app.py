@@ -1,15 +1,26 @@
 import streamlit as st
 import requests
-# import time # 현재 직접 사용되지 않음
 import replicate
+from pydub import AudioSegment
+import os
+from pydub.utils import which
+
+# ffmpeg 설치 후 환경 변수로 설정해 놔서 아래와 같은 명시적 경로 표기 불필요
+# AudioSegment.converter = "C:\\ffmpeg\\ffmpeg-7.1.1-essentials_build\\bin\\ffmpeg.exe"
+# AudioSegment.ffprobe   = "C:\\ffmpeg\\ffmpeg-7.1.1-essentials_build\\bin\\ffprobe.exe"
+# AudioSegment.converter = which("ffmpeg")
+# AudioSegment.ffprobe   = which("ffprobe")
+
 # --- 세션 상태 초기화 ---
 if "music_versions" not in st.session_state:
     # 각 음악 버전의 정보 (버전명, LLM 생성 프롬프트, 오디오 URL, 기반 텍스트/구절)를 저장
     st.session_state.music_versions = []
+
 if "current_book_description" not in st.session_state:
     st.session_state.current_book_description = "" # 초기 책 설명 저장용
 if "last_llm_generated_prompt" not in st.session_state:
     st.session_state.last_llm_generated_prompt = "" # LLM이 가장 최근에 생성한 음악 프롬프트
+
 # --- API 호출 함수들 ---
 def get_book_description_from_api(book_title, book_author):
     """Google Books API를 호출하여 책 설명을 가져옵니다."""
@@ -26,6 +37,7 @@ def get_book_description_from_api(book_title, book_author):
         return None, f"Google Books API 요청 중 오류 발생: {e}"
     except Exception as e:
         return None, f"책 설명 처리 중 알 수 없는 오류 발생: {e}"
+    
 def generate_music_prompt_with_llm(input_text_for_llm, existing_prompt_from_llm=None):
     """
     Replicate LLM (GPT-4o-mini)을 사용하여 음악 생성 프롬프트를 생성하거나 업데이트합니다.
@@ -38,26 +50,37 @@ def generate_music_prompt_with_llm(input_text_for_llm, existing_prompt_from_llm=
         # 프롬프트 업데이트 시 LLM에게 전달할 지시문
         prompt_guidance = (
             f"You are an expert music prompt engineer. Your task is to creatively update an existing music prompt "
+            f"This is a continuation of the previous section. Do NOT change the core instrumentation or tempo. Maintain the same key and emotional tone."
             f"based on new input. \n\n"
             f"The PREVIOUS music prompt (created by an AI) was: '{existing_prompt_from_llm}'\n\n"
             f"The NEW user-provided inspiring passage/idea to incorporate is: '{input_text_for_llm}'\n\n"
+            f"Note: The new input is a specific passage from the same book that the user found emotionally impactful while reading.\n\n"
             f"INSTRUCTIONS: Analyze both the previous prompt and the new passage. "
-            f"Generate a COMPLETELY NEW and COHERENT music prompt that thoughtfully integrates the essence of the new passage "
-            f"while evolving or building upon the themes of the previous prompt. "
+            f"Generate a new and coherent music prompt that smoothly continues from the previous one, while thoughtfully integrating the emotional and thematic essence of the new passage. "
+            f"The new prompt should seamlessly continue from the previous music, maintaining musical consistency in tone, mood, and instrumentation. "
+            f"Do not restart or reset the composition—think of this as a musical continuation or next chapter. "
             f"DO NOT simply append the new passage to the old prompt. Instead, RE-IMAGINE and RE-WRITE a fresh prompt. "
             f"The music should remain instrumental, suitable for background listening while reading, typically relaxing, and strictly without vocals or lyrics. "
             f"Focus on translating the combined mood and ideas into actionable musical directions for an AI music generator. "
             f"Output ONLY the new, complete music prompt. No conversational phrases, acknowledgements, or any text other than the music prompt itself."
+            f"End the piece with a gentle fade-out that feels natural and seamlessly leaves room for silence or the next musical section."
+            f"The music should last exactly 60 seconds. End the piece with a gentle fade-out during the last 5–10 seconds, gradually reducing the volume and thinning out the instrumentation. This will help the track flow smoothly into the next piece without abrupt transitions."
         )
+
     else:
         # 초기 프롬프트 생성 시 LLM에게 전달할 지시문
         prompt_guidance = (
-            f"You are a music prompt engineer for an AI music generation system. "
-            f"Create a detailed and evocative prompt for generating instrumental background music based on the following book description: '{input_text_for_llm}'. "
-            f"The music should be designed to be listened to while reading, so it must be relaxing and without vocals or lyrics. "
-            f"Focus on conveying the mood, atmosphere, and key themes of the book in your musical directions. "
-            f"Just print out the prompts for music creation. No conversational phrases, just the prompt itself."
+            f"The following is a book description: '{input_text_for_llm}'. "
+            f"Based solely on this description, create a concise and emotionally resonant prompt for generating instrumental background music. "
+            f"The music should be suitable for focused reading, containing a gentle melody and smooth flow. "
+            f"Begin with a soft fade-in. Include a simple melodic motif that captures the mood and theme expressed in the book description. "
+            f"Use ambient textures only as a subtle background. Choose no more than 2–3 instruments from: soft piano, acoustic guitar, light strings (cello or viola), ambient synth, and subtle nature sounds (optional). "
+            f"Avoid speculative interpretations beyond the description. Do not conclude the piece—leave it open-ended for future continuation. "
+            f"Output only the final music prompt, with no extra explanations or conversational phrases."
+            f"End the piece with a gentle fade-out that feels natural and seamlessly leaves room for silence or the next musical section."
+            f"The music should last exactly 60 seconds. End the piece with a gentle fade-out during the last 5–10 seconds, gradually reducing the volume and thinning out the instrumentation. This will help the track flow smoothly into the next piece without abrupt transitions."
         )
+
     try:
         output = replicate.run(
             "openai/gpt-4o-mini",
@@ -73,14 +96,16 @@ def generate_music_prompt_with_llm(input_text_for_llm, existing_prompt_from_llm=
         return None, f"Replicate LLM API 오류: {e}"
     except Exception as e:
         return None, f"음악 프롬프트 생성 중 알 수 없는 오류 발생: {e}"
-def generate_music_with_musicgen_api(prompt_for_musicgen, duration=15):
+    
+
+def generate_music_with_musicgen_api(prompt_for_musicgen, duration=60):
     """Replicate MusicGen을 사용하여 음악을 생성합니다."""
     try:
         output = replicate.run(
             "meta/musicgen:671ac645ce5e552cc63a54a2bbff63fcf798043055d2dac5fc9e36a837eedcfb",
             input={
                 "prompt": prompt_for_musicgen,
-                "model_version": "large",
+                "model_version": "stereo-large",
                 "output_format": "mp3",
                 "duration": duration,
                 "normalization_strategy": "peak"
@@ -92,6 +117,52 @@ def generate_music_with_musicgen_api(prompt_for_musicgen, duration=15):
         return None, f"Replicate MusicGen API 오류: {e}"
     except Exception as e:
         return None, f"음악 생성 중 알 수 없는 오류 발생: {e}"
+    
+def download_and_fade_audio(audio_url, index, fade_out_ms=5000):
+    os.makedirs("outputs", exist_ok=True)
+    path = os.path.abspath(os.path.join("outputs", f"v{index}.mp3"))
+    try:
+        response = requests.get(audio_url)
+        response.raise_for_status()
+        with open(path, "wb") as f:
+            f.write(response.content)
+        print(f"[DEBUG] 파일 저장 완료: {path}")
+    except Exception as e:
+        print(f"[ERROR] 파일 다운로드 실패: {e}")
+        raise
+    try:
+        sound = AudioSegment.from_file(path, format="mp3")
+        return sound.fade_out(fade_out_ms)
+    except Exception as e:
+        print(f"[ERROR] 오디오 로드 실패: {e}")
+        raise
+
+
+def combine_tracks_with_crossfade(audio_segments, crossfade_ms=3000):
+    combined = audio_segments[0]
+    for seg in audio_segments[1:]:
+        combined = combined.append(seg, crossfade=crossfade_ms)
+    return combined
+
+def export_combined_to_local(combined_audio, filename="combined_output.mp3"):
+    os.makedirs("outputs", exist_ok=True)
+    path = os.path.join("outputs", filename)
+    combined_audio.export(path, format="mp3")
+    return path
+
+# ✅ 새로 추가: 생성 직후 각 버전 mp3 저장
+if "music_versions" in st.session_state:
+    for idx, version in enumerate(st.session_state.music_versions):
+        audio_url = version.get("audio_url")
+        if audio_url:
+            path = os.path.join("outputs", f"v{idx}.mp3")
+            if not os.path.exists(path):
+                try:
+                    _ = download_and_fade_audio(audio_url, index=idx)
+                except Exception as e:
+                    st.error(f"v{idx} mp3 저장 중 오류: {e}")
+                    st.stop()  
+
 # --- Streamlit UI ---
 st.set_page_config(layout="wide")
 st.title("도서 기반 음악 생성기")
@@ -132,6 +203,11 @@ if not st.session_state.music_versions:
                 "audio_url": audio_url_v0,
                 "based_on_text": f"책 설명: {description[:100]}..."
             })
+            st.session_state["audio_url_v0"] = audio_url_v0
+            try:
+                _ = download_and_fade_audio(audio_url_v0, index=0)
+            except Exception as e:
+                st.error(f"v0 mp3 저장 중 오류: {e}")
             st.success("v0 음악이 성공적으로 생성되었습니다!")
             st.balloons()
             st.experimental_rerun()
@@ -160,7 +236,7 @@ if st.session_state.music_versions: # 생성된 음악이 하나라도 있을 �
             key=f"passage_input_v{next_version_num}",
             placeholder="예: '고요한 밤, 별빛 아래 홀로 걷는 주인공의 외롭지만 평화로운 감정'"
         )
-        duration_next_music = st.slider("생성할 음악 길이 (초)", 10, 60, 15, key=f"duration_v{next_version_num}")
+        duration_next_music = 60 # 생성할 음악 길이
         submitted_next_music = st.form_submit_button(f"v{next_version_num} 음악 생성하기")
     if submitted_next_music and new_passage_input:
         if not st.session_state.last_llm_generated_prompt:
@@ -189,6 +265,11 @@ if st.session_state.music_versions: # 생성된 음악이 하나라도 있을 �
                 "audio_url": new_audio_url,
                 "based_on_text": f"추가된 구절: {new_passage_input[:100]}... (이전 프롬프트: '{st.session_state.music_versions[-2]['llm_prompt'][:30]}...' 기반)" if len(st.session_state.music_versions) > 1 else f"추가된 구절: {new_passage_input[:100]}..."
             })
+            st.session_state["new_audio_url"] = new_audio_url
+            try:
+                _ = download_and_fade_audio(new_audio_url, index=next_version_num)
+            except Exception as e:
+                st.error(f"v{next_version_num} mp3 저장 중 오류: {e}")
             st.success(f":짠: v{next_version_num} 음악이 성공적으로 생성되었습니다!")
             st.balloons()
             st.experimental_rerun() # UI를 다시 그려서 음악 목록 업데이트 및 다음 입력 폼 준비
@@ -208,3 +289,31 @@ st.sidebar.markdown("""
 """)
 st.sidebar.markdown("---")
 st.sidebar.caption("Powered by Replicate (GPT-4o-mini, MusicGen) & Google Books API")
+
+# --- 연속 트랙 만들기 기능 추가 ---
+if st.button("모든 음악 이어붙이기 (crossfade 적용)"):
+    try:
+        audio_segments = []
+
+        for i, version in enumerate(st.session_state.music_versions):
+            path = os.path.abspath(os.path.join("outputs", f"v{i}.mp3"))
+            if not os.path.exists(path):
+                st.warning(f"[SKIP] 파일 누락: outputs/v{i}.mp3")
+                continue
+            try:
+                seg = AudioSegment.from_file(path, format="mp3") # 내부적으로 ffmpeg 실행
+                audio_segments.append(seg.fade_out(5000))
+            except Exception as e:
+                st.warning(f"[SKIP] 파일 로딩 실패: outputs/v{i}.mp3: {e}")
+                continue
+
+        if len(audio_segments) < 2:
+            st.error("⚠️ 이어붙일 수 있는 mp3가 2개 이상 있어야 합니다.")
+        else:
+            combined = combine_tracks_with_crossfade(audio_segments)
+            final_path = export_combined_to_local(combined, filename="combined_output.mp3")
+            st.success("✅ 연속 트랙 생성 완료! 아래에서 재생해보세요 🎵")
+            st.audio(final_path, format="audio/mp3")
+
+    except Exception as e:
+        st.error(f"트랙 생성 중 오류 발생: {e}")
