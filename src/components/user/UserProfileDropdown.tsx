@@ -10,7 +10,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { UserAvatar } from './UserAvatar';
 import { BookOpen, Bookmark, User, Settings, Moon, Sun, LogOut } from 'lucide-react';
-import { useState } from 'react';
+import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
 
 interface User {
   id: string;
@@ -25,11 +26,15 @@ interface UserProfileDropdownProps {
 }
 
 export function UserProfileDropdown({ user, onLogout }: UserProfileDropdownProps) {
-  const [isDark, setIsDark] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleThemeToggle = () => {
-    setIsDark(!isDark);
-    // TODO: 실제 테마 변경 로직 (ThemeToggle과 통합)
+    setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
   return (
@@ -73,7 +78,7 @@ export function UserProfileDropdown({ user, onLogout }: UserProfileDropdownProps
         </DropdownMenuItem>
 
         <DropdownMenuItem onClick={handleThemeToggle}>
-          {isDark ? (
+          {mounted && theme === 'dark' ? (
             <>
               <Sun className="mr-2 size-4" />
               라이트 모드

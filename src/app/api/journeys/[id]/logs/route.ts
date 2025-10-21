@@ -74,7 +74,7 @@ export async function POST(
       const recentLogs = previousLogs.slice(-2).map((log) => ({
         quote: log.quote || undefined,
         memo: log.memo || undefined,
-        // TODO: Join emotion_tags via log_emotions table
+        // NOTE: emotion_tags require join via log_emotions table (see CLAUDE.md#알려진-이슈)
         emotions: undefined,
       }));
 

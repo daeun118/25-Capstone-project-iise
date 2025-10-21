@@ -73,7 +73,7 @@ export async function GET(request: Request) {
           bookAuthor: journey.book_author || 'Unknown',
           bookCoverUrl: journey.book_cover_url || undefined,
           status: journey.status,
-          progress: undefined, // TODO: Calculate progress based on logs/page numbers
+          progress: undefined, // NOTE: Progress calculation requires total_pages field (future feature)
           logsCount: logs.length,
           musicTracksCount: musicTracks,
           startedAt: journey.started_at,

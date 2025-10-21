@@ -155,7 +155,7 @@ export class JourneyService implements IJourneyService {
       bookTitle: journey.book_title,
       previousLogs: previousLogs.map((log) => ({
         quote: log.quote || undefined,
-        emotions: undefined, // TODO: Join emotion_tags from log_emotions table
+        emotions: undefined, // NOTE: emotion_tags require join via log_emotions table (see CLAUDE.md#알려진-이슈)
         memo: log.memo || undefined,
       })),
       userInput: {
