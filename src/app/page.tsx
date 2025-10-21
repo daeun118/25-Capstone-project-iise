@@ -36,7 +36,7 @@ export default function Home() {
   return (
     <AppLayout>
       {/* Hero Section - Stripe Style */}
-      <section className="relative min-h-screen overflow-hidden flex items-center">
+      <section className="relative min-h-[calc(100vh-4rem)] md:min-h-screen overflow-hidden flex items-center">
         {/* Stripe 그라데이션 배경 */}
         <div className="absolute inset-0 bg-gradient-hero" />
 
@@ -44,7 +44,7 @@ export default function Home() {
         <div className="absolute inset-0 grid-pattern opacity-20" />
 
         {/* 컨텐츠 */}
-        <div className="relative container mx-auto px-8 py-32">
+        <div className="relative container mx-auto px-4 sm:px-6 md:px-8 py-12 sm:py-20 md:py-32">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -56,10 +56,10 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 mb-8"
+              className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 mb-6 sm:mb-8"
             >
               <Sparkles className="w-4 h-4 text-white" />
-              <span className="text-sm font-medium text-white">
+              <span className="text-xs sm:text-sm font-medium text-white">
                 AI가 만드는 나만의 독서 플레이리스트
               </span>
             </motion.div>
@@ -69,7 +69,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.6 }}
-              className="display-hero text-white text-center mb-8"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white text-center mb-6 sm:mb-8 leading-tight"
             >
               독서 여정을
               <br />
@@ -81,10 +81,10 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.6 }}
-              className="text-xl text-white/90 text-center max-w-2xl mx-auto mb-12"
+              className="text-base sm:text-lg md:text-xl text-white/90 text-center max-w-2xl mx-auto mb-8 sm:mb-12 px-4"
             >
               책을 읽으며 느낀 감정들이 음악이 되어,
-              <br />
+              <br className="hidden sm:inline" />
               당신만의 독서 플레이리스트를 완성합니다
             </motion.p>
 
@@ -93,25 +93,25 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.6 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
+              className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-12 sm:mb-16 px-4"
             >
-              <Link href="/journey/new">
+              <Link href="/journey/new" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="bg-white text-primary hover:bg-white/90 font-semibold px-8 py-6 text-lg rounded-xl shadow-xl"
+                  className="w-full sm:w-auto bg-white text-primary hover:bg-white/90 font-semibold px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-xl shadow-xl min-h-[44px]"
                 >
-                  <BookOpen className="mr-2 h-6 w-6" />
+                  <BookOpen className="mr-2 h-5 w-5 sm:h-6 sm:w-6" />
                   독서 시작하기
-                  <ArrowRight className="ml-2 h-6 w-6" />
+                  <ArrowRight className="ml-2 h-5 w-5 sm:h-6 sm:w-6" />
                 </Button>
               </Link>
-              <Link href="/feed">
+              <Link href="/feed" className="w-full sm:w-auto">
                 <Button
                   size="lg"
                   variant="outline"
-                  className="bg-white/10 backdrop-blur-sm text-white border-white/30 hover:bg-white/20 font-semibold px-8 py-6 text-lg rounded-xl"
+                  className="w-full sm:w-auto bg-white/10 backdrop-blur-sm text-white border-white/30 hover:bg-white/20 font-semibold px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-xl min-h-[44px]"
                 >
-                  <Users className="mr-2 h-6 w-6" />
+                  <Users className="mr-2 h-5 w-5 sm:h-6 sm:w-6" />
                   여정 둘러보기
                 </Button>
               </Link>
@@ -123,23 +123,23 @@ export default function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.6 }}
               whileHover={{ scale: 1.02 }}
-              className="card-elevated max-w-4xl mx-auto p-8"
+              className="card-elevated max-w-4xl mx-auto p-4 sm:p-6 md:p-8"
             >
-              <div className="flex items-center gap-6">
+              <div className="flex items-center gap-3 sm:gap-4 md:gap-6">
                 {/* 앨범커버 미리보기 */}
-                <div className="relative w-24 h-24 rounded-xl overflow-hidden flex-shrink-0 bg-gradient-accent">
+                <div className="relative w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-xl overflow-hidden flex-shrink-0 bg-gradient-accent">
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <Music className="w-12 h-12 text-white/80" />
+                    <Music className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-white/80" />
                   </div>
                 </div>
 
                 {/* 음악 정보 */}
-                <div className="flex-1">
-                  <h3 className="font-bold text-lg mb-1">독서 여정의 시작</h3>
-                  <p className="text-sm text-gray-500 mb-3">노인과 바다 • 헤밍웨이</p>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-bold text-sm sm:text-base md:text-lg mb-1 truncate">독서 여정의 시작</h3>
+                  <p className="text-xs sm:text-sm text-gray-500 mb-2 sm:mb-3 truncate">노인과 바다 • 헤밍웨이</p>
 
                   {/* 프로그레스 바 */}
-                  <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="relative h-1.5 sm:h-2 bg-gray-100 rounded-full overflow-hidden">
                     <motion.div
                       className="absolute inset-y-0 left-0 rounded-full bg-gradient-accent"
                       initial={{ width: '0%' }}
@@ -148,7 +148,7 @@ export default function Home() {
                     />
                   </div>
 
-                  <div className="flex items-center justify-between mt-2 text-xs text-gray-400">
+                  <div className="flex items-center justify-between mt-1.5 sm:mt-2 text-xs text-gray-400">
                     <span>1:23</span>
                     <span>3:45</span>
                   </div>
@@ -158,9 +158,10 @@ export default function Home() {
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 bg-gradient-accent"
+                  className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center flex-shrink-0 bg-gradient-accent min-h-[44px] min-w-[44px]"
+                  aria-label="재생"
                 >
-                  <Play className="w-6 h-6 text-white ml-0.5" />
+                  <Play className="w-5 h-5 sm:w-6 sm:h-6 text-white ml-0.5" />
                 </motion.button>
               </div>
             </motion.div>
@@ -169,24 +170,24 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="py-24 px-4">
+      <section className="py-16 sm:py-20 md:py-24 px-4">
         <div className="container mx-auto max-w-6xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center space-y-4 mb-16"
+            className="text-center space-y-3 sm:space-y-4 mb-12 sm:mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold">
               BookBeats의 특별한 경험
             </h2>
-            <p className="text-lg text-gray-600">
+            <p className="text-base sm:text-lg text-gray-600">
               독서와 음악이 만나는 새로운 방식
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
             {features.map((feature, i) => (
               <motion.div
                 key={i}
@@ -195,15 +196,15 @@ export default function Home() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.6 }}
                 whileHover={{ y: -8 }}
-                className="card-elevated p-8 group cursor-pointer"
+                className="card-elevated p-6 sm:p-8 group cursor-pointer"
               >
                 {/* 그라데이션 아이콘 배경 */}
-                <div className="w-16 h-16 rounded-2xl mb-6 flex items-center justify-center bg-gradient-accent">
-                  <feature.icon className="w-8 h-8 text-white" />
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl mb-5 sm:mb-6 flex items-center justify-center bg-gradient-accent">
+                  <feature.icon className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
                 </div>
 
-                <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3">{feature.title}</h3>
+                <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{feature.description}</p>
               </motion.div>
             ))}
           </div>
@@ -211,22 +212,22 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-24 px-4 bg-gray-50">
+      <section className="py-16 sm:py-20 md:py-24 px-4 bg-gray-50">
         <div className="container mx-auto max-w-6xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-center space-y-4 mb-16"
+            className="text-center space-y-3 sm:space-y-4 mb-12 sm:mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-bold">이렇게 작동합니다</h2>
-            <p className="text-lg text-gray-600">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold">이렇게 작동합니다</h2>
+            <p className="text-base sm:text-lg text-gray-600">
               4단계로 완성하는 나만의 독서 플레이리스트
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
             {steps.map((item, i) => (
               <motion.div
                 key={item.step}
@@ -234,14 +235,14 @@ export default function Home() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.5 }}
-                className="text-center space-y-4"
+                className="text-center space-y-3 sm:space-y-4"
               >
-                <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto text-white bg-gradient-accent">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center text-xl sm:text-2xl font-bold mx-auto text-white bg-gradient-accent">
                   {item.step}
                 </div>
                 <div>
-                  <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
-                  <p className="text-sm text-gray-600">{item.desc}</p>
+                  <h3 className="font-semibold text-base sm:text-lg mb-1 sm:mb-2">{item.title}</h3>
+                  <p className="text-xs sm:text-sm text-gray-600">{item.desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -250,7 +251,7 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-4">
+      <section className="py-16 sm:py-20 md:py-24 px-4">
         <div className="container mx-auto max-w-4xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -259,27 +260,27 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             className="card-gradient text-center"
           >
-            <Sparkles className="w-16 h-16 mx-auto mb-6 text-white/90" />
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <Sparkles className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-5 sm:mb-6 text-white/90" />
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
               지금 바로 독서 여정을 시작하세요
             </h2>
-            <p className="text-lg text-white/90 mb-8">
+            <p className="text-base sm:text-lg text-white/90 mb-6 sm:mb-8 px-4">
               무료로 회원가입하고 당신만의 독서 플레이리스트를 만들어보세요
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/signup">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
+              <Link href="/signup" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="bg-white text-primary hover:bg-white/90 font-semibold px-8 py-6 text-lg rounded-xl"
+                  className="w-full sm:w-auto bg-white text-primary hover:bg-white/90 font-semibold px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-xl min-h-[44px]"
                 >
                   회원가입하기
                 </Button>
               </Link>
-              <Link href="/login">
+              <Link href="/login" className="w-full sm:w-auto">
                 <Button
                   size="lg"
                   variant="outline"
-                  className="bg-white/10 backdrop-blur-sm text-white border-white/30 hover:bg-white/20 font-semibold px-8 py-6 text-lg rounded-xl"
+                  className="w-full sm:w-auto bg-white/10 backdrop-blur-sm text-white border-white/30 hover:bg-white/20 font-semibold px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-xl min-h-[44px]"
                 >
                   로그인
                 </Button>
