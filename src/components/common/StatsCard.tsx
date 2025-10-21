@@ -1,22 +1,31 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { LucideIcon, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
 
 interface StatsCardProps {
   label: string;
   value: number | string;
+  description?: string;
   icon?: LucideIcon;
+  iconColor?: string;
   trend?: 'up' | 'down' | 'neutral';
   trendValue?: string;
+  gradient?: string;
+  delay?: number;
   className?: string;
 }
 
 export function StatsCard({
   label,
   value,
+  description,
   icon: Icon,
+  iconColor,
   trend,
   trendValue,
+  gradient = 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+  delay = 0,
   className,
 }: StatsCardProps) {
   const getTrendIcon = () => {
@@ -46,26 +55,46 @@ export function StatsCard({
   };
 
   return (
-    <Card className={className}>
-      <CardContent className="pt-6">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <p className="text-sm text-muted-foreground">{label}</p>
-            <p className="text-3xl font-bold mt-2">{value}</p>
-            {trendValue && (
-              <div className={cn('flex items-center gap-1 mt-2 text-sm', getTrendColor())}>
-                {getTrendIcon()}
-                <span>{trendValue}</span>
-              </div>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay, duration: 0.5 }}
+      whileHover={{ y: -4, scale: 1.02 }}
+    >
+      <Card className={cn('card-elevated group cursor-pointer', className)}>
+        <CardContent className="p-6">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-sm font-medium text-gray-600">{label}</span>
+            {Icon && (
+              <motion.div
+                className="w-12 h-12 rounded-xl flex items-center justify-center"
+                style={{ background: gradient }}
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                transition={{ type: 'spring', stiffness: 400 }}
+              >
+                <Icon className={cn('w-6 h-6', iconColor || 'text-white')} />
+              </motion.div>
             )}
           </div>
-          {Icon && (
-            <div className="p-3 bg-primary/10 rounded-lg">
-              <Icon className="size-6 text-primary" />
+          <motion.div
+            className="text-4xl font-bold mb-2"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: delay + 0.2, type: 'spring', stiffness: 200 }}
+          >
+            {value}
+          </motion.div>
+          {description && (
+            <p className="text-sm text-gray-500">{description}</p>
+          )}
+          {trendValue && (
+            <div className={cn('flex items-center gap-1 mt-2 text-sm', getTrendColor())}>
+              {getTrendIcon()}
+              <span>{trendValue}</span>
             </div>
           )}
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </motion.div>
   );
 }

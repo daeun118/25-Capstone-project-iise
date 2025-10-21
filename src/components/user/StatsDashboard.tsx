@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { Book, Music, FileText, Heart, MessageSquare, Bookmark, Star, Tag } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { StatsCard } from '@/components/common/StatsCard';
+import { StatsCardSkeleton } from '@/components/common/StatsCardSkeleton';
 
 interface Stats {
   journeys: {
@@ -52,23 +54,43 @@ export function StatsDashboard() {
 
   if (isLoading) {
     return (
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {[...Array(8)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="card-elevated rounded-xl p-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05, duration: 0.5 }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="h-4 w-24 bg-gray-200 animate-pulse rounded" />
-              <div className="h-10 w-10 bg-gray-200 animate-pulse rounded-lg" />
-            </div>
-            <div className="h-8 w-16 bg-gray-200 animate-pulse rounded mb-2" />
-            <div className="h-3 w-32 bg-gray-200 animate-pulse rounded" />
-          </motion.div>
-        ))}
+      <div className="space-y-8">
+        {/* Journey Stats Skeleton */}
+        <div>
+          <div className="h-8 w-32 bg-gray-200 animate-pulse rounded mb-4" />
+          <div className="grid gap-6 md:grid-cols-3">
+            {[...Array(3)].map((_, i) => (
+              <StatsCardSkeleton key={`journey-${i}`} delay={i * 0.05} />
+            ))}
+          </div>
+        </div>
+        {/* Content Stats Skeleton */}
+        <div>
+          <div className="h-8 w-32 bg-gray-200 animate-pulse rounded mb-4" />
+          <div className="grid gap-6 md:grid-cols-3">
+            {[...Array(3)].map((_, i) => (
+              <StatsCardSkeleton key={`content-${i}`} delay={i * 0.05} />
+            ))}
+          </div>
+        </div>
+        {/* Engagement Stats Skeleton */}
+        <div>
+          <div className="h-8 w-32 bg-gray-200 animate-pulse rounded mb-4" />
+          <div className="grid gap-6 md:grid-cols-3">
+            {[...Array(3)].map((_, i) => (
+              <StatsCardSkeleton key={`engagement-${i}`} delay={i * 0.05} />
+            ))}
+          </div>
+        </div>
+        {/* Insights Skeleton */}
+        <div>
+          <div className="h-8 w-32 bg-gray-200 animate-pulse rounded mb-4" />
+          <div className="grid gap-6 md:grid-cols-2">
+            {[...Array(2)].map((_, i) => (
+              <StatsCardSkeleton key={`insights-${i}`} delay={i * 0.05} />
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -92,93 +114,30 @@ export function StatsDashboard() {
           독서 여정
         </h3>
         <div className="grid gap-6 md:grid-cols-3">
-          {/* Total Journeys */}
-          <motion.div
-            className="card-elevated rounded-xl p-6 group cursor-pointer"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.1, duration: 0.5 }}
-            whileHover={{ y: -4, scale: 1.02 }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-medium text-gray-600">전체 여정</span>
-              <motion.div
-                className="w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-hero"
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: 'spring', stiffness: 400 }}
-              >
-                <Book className="w-6 h-6 text-white" />
-              </motion.div>
-            </div>
-            <motion.div
-              className="text-4xl font-bold mb-2"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.3, type: 'spring', stiffness: 200 }}
-            >
-              {stats.journeys.total}
-            </motion.div>
-            <p className="text-sm text-gray-500">시작한 모든 여정</p>
-          </motion.div>
-
-          {/* Reading Journeys */}
-          <motion.div
-            className="card-elevated rounded-xl p-6 group cursor-pointer"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.15, duration: 0.5 }}
-            whileHover={{ y: -4, scale: 1.02 }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-medium text-gray-600">읽는 중</span>
-              <motion.div
-                className="w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-accent"
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: 'spring', stiffness: 400 }}
-              >
-                <Book className="w-6 h-6 text-white" />
-              </motion.div>
-            </div>
-            <motion.div
-              className="text-4xl font-bold mb-2"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.35, type: 'spring', stiffness: 200 }}
-            >
-              {stats.journeys.reading}
-            </motion.div>
-            <p className="text-sm text-gray-500">진행 중인 여정</p>
-          </motion.div>
-
-          {/* Completed Journeys */}
-          <motion.div
-            className="card-elevated rounded-xl p-6 group cursor-pointer"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            whileHover={{ y: -4, scale: 1.02 }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-medium text-gray-600">완독</span>
-              <motion.div
-                className="w-12 h-12 rounded-xl flex items-center justify-center"
-                style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: 'spring', stiffness: 400 }}
-              >
-                <Book className="w-6 h-6 text-white" />
-              </motion.div>
-            </div>
-            <motion.div
-              className="text-4xl font-bold mb-2"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.4, type: 'spring', stiffness: 200 }}
-            >
-              {stats.journeys.completed}
-            </motion.div>
-            <p className="text-sm text-gray-500">완료한 여정</p>
-          </motion.div>
+          <StatsCard
+            label="전체 여정"
+            value={stats.journeys.total}
+            description="시작한 모든 여정"
+            icon={Book}
+            gradient="linear-gradient(135deg, #6366f1, #8b5cf6)"
+            delay={0.1}
+          />
+          <StatsCard
+            label="읽는 중"
+            value={stats.journeys.reading}
+            description="진행 중인 여정"
+            icon={Book}
+            gradient="linear-gradient(135deg, #f59e0b, #d97706)"
+            delay={0.15}
+          />
+          <StatsCard
+            label="완독"
+            value={stats.journeys.completed}
+            description="완료한 여정"
+            icon={Book}
+            gradient="linear-gradient(135deg, #10b981, #059669)"
+            delay={0.2}
+          />
         </div>
       </motion.div>
 
@@ -195,95 +154,30 @@ export function StatsDashboard() {
           생성한 콘텐츠
         </h3>
         <div className="grid gap-6 md:grid-cols-3">
-          {/* Music Tracks */}
-          <motion.div
-            className="card-elevated rounded-xl p-6 group cursor-pointer"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-            whileHover={{ y: -4, scale: 1.02 }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-medium text-gray-600">음악 트랙</span>
-              <motion.div
-                className="w-12 h-12 rounded-xl flex items-center justify-center"
-                style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: 'spring', stiffness: 400 }}
-              >
-                <Music className="w-6 h-6 text-white" />
-              </motion.div>
-            </div>
-            <motion.div
-              className="text-4xl font-bold mb-2"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.5, type: 'spring', stiffness: 200 }}
-            >
-              {stats.content.totalMusicTracks}
-            </motion.div>
-            <p className="text-sm text-gray-500">생성된 음악</p>
-          </motion.div>
-
-          {/* Reading Logs */}
-          <motion.div
-            className="card-elevated rounded-xl p-6 group cursor-pointer"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.35, duration: 0.5 }}
-            whileHover={{ y: -4, scale: 1.02 }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-medium text-gray-600">독서 기록</span>
-              <motion.div
-                className="w-12 h-12 rounded-xl flex items-center justify-center"
-                style={{ background: 'linear-gradient(135deg, #06b6d4, #0891b2)' }}
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: 'spring', stiffness: 400 }}
-              >
-                <FileText className="w-6 h-6 text-white" />
-              </motion.div>
-            </div>
-            <motion.div
-              className="text-4xl font-bold mb-2"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.55, type: 'spring', stiffness: 200 }}
-            >
-              {stats.content.totalReadingLogs}
-            </motion.div>
-            <p className="text-sm text-gray-500">작성한 기록</p>
-          </motion.div>
-
-          {/* Posts Published */}
-          <motion.div
-            className="card-elevated rounded-xl p-6 group cursor-pointer"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-            whileHover={{ y: -4, scale: 1.02 }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-medium text-gray-600">게시물</span>
-              <motion.div
-                className="w-12 h-12 rounded-xl flex items-center justify-center"
-                style={{ background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)' }}
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: 'spring', stiffness: 400 }}
-              >
-                <FileText className="w-6 h-6 text-white" />
-              </motion.div>
-            </div>
-            <motion.div
-              className="text-4xl font-bold mb-2"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.6, type: 'spring', stiffness: 200 }}
-            >
-              {stats.content.postsPublished}
-            </motion.div>
-            <p className="text-sm text-gray-500">공유한 여정</p>
-          </motion.div>
+          <StatsCard
+            label="음악 트랙"
+            value={stats.content.totalMusicTracks}
+            description="생성된 음악"
+            icon={Music}
+            gradient="linear-gradient(135deg, #f59e0b, #d97706)"
+            delay={0.3}
+          />
+          <StatsCard
+            label="독서 기록"
+            value={stats.content.totalReadingLogs}
+            description="작성한 기록"
+            icon={FileText}
+            gradient="linear-gradient(135deg, #06b6d4, #0891b2)"
+            delay={0.35}
+          />
+          <StatsCard
+            label="게시물"
+            value={stats.content.postsPublished}
+            description="공유한 여정"
+            icon={FileText}
+            gradient="linear-gradient(135deg, #8b5cf6, #7c3aed)"
+            delay={0.4}
+          />
         </div>
       </motion.div>
 
@@ -300,95 +194,30 @@ export function StatsDashboard() {
           커뮤니티 활동
         </h3>
         <div className="grid gap-6 md:grid-cols-3">
-          {/* Likes Received */}
-          <motion.div
-            className="card-elevated rounded-xl p-6 group cursor-pointer"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.5, duration: 0.5 }}
-            whileHover={{ y: -4, scale: 1.02 }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-medium text-gray-600">받은 좋아요</span>
-              <motion.div
-                className="w-12 h-12 rounded-xl flex items-center justify-center"
-                style={{ background: 'linear-gradient(135deg, #ec4899, #db2777)' }}
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: 'spring', stiffness: 400 }}
-              >
-                <Heart className="w-6 h-6 text-white" />
-              </motion.div>
-            </div>
-            <motion.div
-              className="text-4xl font-bold mb-2"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.7, type: 'spring', stiffness: 200 }}
-            >
-              {stats.engagement.likesReceived}
-            </motion.div>
-            <p className="text-sm text-gray-500">내 게시물 좋아요</p>
-          </motion.div>
-
-          {/* Comments Received */}
-          <motion.div
-            className="card-elevated rounded-xl p-6 group cursor-pointer"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.55, duration: 0.5 }}
-            whileHover={{ y: -4, scale: 1.02 }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-medium text-gray-600">받은 댓글</span>
-              <motion.div
-                className="w-12 h-12 rounded-xl flex items-center justify-center"
-                style={{ background: 'linear-gradient(135deg, #3b82f6, #2563eb)' }}
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: 'spring', stiffness: 400 }}
-              >
-                <MessageSquare className="w-6 h-6 text-white" />
-              </motion.div>
-            </div>
-            <motion.div
-              className="text-4xl font-bold mb-2"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.75, type: 'spring', stiffness: 200 }}
-            >
-              {stats.engagement.commentsReceived}
-            </motion.div>
-            <p className="text-sm text-gray-500">내 게시물 댓글</p>
-          </motion.div>
-
-          {/* Bookmarks Saved */}
-          <motion.div
-            className="card-elevated rounded-xl p-6 group cursor-pointer"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.6, duration: 0.5 }}
-            whileHover={{ y: -4, scale: 1.02 }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-medium text-gray-600">보관함</span>
-              <motion.div
-                className="w-12 h-12 rounded-xl flex items-center justify-center"
-                style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: 'spring', stiffness: 400 }}
-              >
-                <Bookmark className="w-6 h-6 text-white" />
-              </motion.div>
-            </div>
-            <motion.div
-              className="text-4xl font-bold mb-2"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.8, type: 'spring', stiffness: 200 }}
-            >
-              {stats.engagement.bookmarksSaved}
-            </motion.div>
-            <p className="text-sm text-gray-500">스크랩한 게시물</p>
-          </motion.div>
+          <StatsCard
+            label="받은 좋아요"
+            value={stats.engagement.likesReceived}
+            description="내 게시물 좋아요"
+            icon={Heart}
+            gradient="linear-gradient(135deg, #ec4899, #db2777)"
+            delay={0.5}
+          />
+          <StatsCard
+            label="받은 댓글"
+            value={stats.engagement.commentsReceived}
+            description="내 게시물 댓글"
+            icon={MessageSquare}
+            gradient="linear-gradient(135deg, #3b82f6, #2563eb)"
+            delay={0.55}
+          />
+          <StatsCard
+            label="보관함"
+            value={stats.engagement.bookmarksSaved}
+            description="스크랩한 게시물"
+            icon={Bookmark}
+            gradient="linear-gradient(135deg, #f59e0b, #d97706)"
+            delay={0.6}
+          />
         </div>
       </motion.div>
 
@@ -405,67 +234,22 @@ export function StatsDashboard() {
           독서 인사이트
         </h3>
         <div className="grid gap-6 md:grid-cols-2">
-          {/* Average Rating */}
-          <motion.div
-            className="card-elevated rounded-xl p-6 group cursor-pointer"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.7, duration: 0.5 }}
-            whileHover={{ y: -4, scale: 1.02 }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-medium text-gray-600">평균 별점</span>
-              <motion.div
-                className="w-12 h-12 rounded-xl flex items-center justify-center"
-                style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: 'spring', stiffness: 400 }}
-              >
-                <Star className="w-6 h-6 text-white" />
-              </motion.div>
-            </div>
-            <motion.div
-              className="text-4xl font-bold mb-2"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.9, type: 'spring', stiffness: 200 }}
-            >
-              {stats.insights.averageRating > 0 
-                ? stats.insights.averageRating.toFixed(1)
-                : '-'}
-            </motion.div>
-            <p className="text-sm text-gray-500">완독한 책의 평균 평점</p>
-          </motion.div>
-
-          {/* Favorite Category */}
-          <motion.div
-            className="card-elevated rounded-xl p-6 group cursor-pointer"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.75, duration: 0.5 }}
-            whileHover={{ y: -4, scale: 1.02 }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-medium text-gray-600">선호 카테고리</span>
-              <motion.div
-                className="w-12 h-12 rounded-xl flex items-center justify-center"
-                style={{ background: 'linear-gradient(135deg, #8b5cf6, #7c3aed)' }}
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: 'spring', stiffness: 400 }}
-              >
-                <Tag className="w-6 h-6 text-white" />
-              </motion.div>
-            </div>
-            <motion.div
-              className="text-4xl font-bold mb-2 truncate"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.95, type: 'spring', stiffness: 200 }}
-            >
-              {stats.insights.favoriteCategory || '-'}
-            </motion.div>
-            <p className="text-sm text-gray-500">가장 많이 읽은 장르</p>
-          </motion.div>
+          <StatsCard
+            label="평균 별점"
+            value={stats.insights.averageRating > 0 ? stats.insights.averageRating.toFixed(1) : '-'}
+            description="완독한 책의 평균 평점"
+            icon={Star}
+            gradient="linear-gradient(135deg, #f59e0b, #d97706)"
+            delay={0.7}
+          />
+          <StatsCard
+            label="선호 카테고리"
+            value={stats.insights.favoriteCategory || '-'}
+            description="가장 많이 읽은 장르"
+            icon={Tag}
+            gradient="linear-gradient(135deg, #8b5cf6, #7c3aed)"
+            delay={0.75}
+          />
         </div>
       </motion.div>
     </div>
