@@ -11,6 +11,12 @@
 import { generateMusicPrompt } from '@/lib/openai/client';
 import { IMusicRepository } from '@/repositories/music.repository';
 import { ILogRepository } from '@/repositories/log.repository';
+import { ReadingLogResponseDto, MusicTrackResponseDto } from '@/types/dto/journey.dto';
+
+export interface MusicGenerationResult {
+  musicTrack: MusicTrackResponseDto;
+  log: ReadingLogResponseDto;
+}
 
 export interface IMusicService {
   generateV0Music(params: {
@@ -18,10 +24,7 @@ export interface IMusicService {
     bookTitle: string;
     bookDescription?: string;
     bookCategory?: string;
-  }): Promise<{
-    musicTrack: any;
-    log: any;
-  }>;
+  }): Promise<MusicGenerationResult>;
   generateVNMusic(params: {
     journeyId: string;
     bookTitle: string;
@@ -36,10 +39,7 @@ export interface IMusicService {
       memo?: string;
     };
     isPublic?: boolean;
-  }): Promise<{
-    musicTrack: any;
-    log: any;
-  }>;
+  }): Promise<MusicGenerationResult>;
   generateVFinalMusic(params: {
     journeyId: string;
     bookTitle: string;
@@ -52,10 +52,7 @@ export interface IMusicService {
       review?: string;
       rating?: number;
     };
-  }): Promise<{
-    musicTrack: any;
-    log: any;
-  }>;
+  }): Promise<MusicGenerationResult>;
 }
 
 export class MusicService implements IMusicService {

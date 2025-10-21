@@ -81,8 +81,8 @@ export class JourneyService implements IJourneyService {
 
     return {
       journey: journey as JourneyResponseDto,
-      log: log as any,
-      musicTrack: musicTrack as any,
+      log,
+      musicTrack,
     };
   }
 
