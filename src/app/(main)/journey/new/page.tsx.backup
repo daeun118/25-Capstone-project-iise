@@ -1,0 +1,167 @@
+'use client';
+
+import { useState } from 'react';
+import { AppLayout } from '@/components/layout/AppLayout';
+import { BookSearchDialog } from '@/components/book/BookSearchDialog';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { BookOpen, Search, Sparkles, Music, TrendingUp } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+
+export default function NewJourneyPage() {
+  const router = useRouter();
+  const [searchDialogOpen, setSearchDialogOpen] = useState(false);
+
+  const handleBookSelect = (book: any) => {
+    // In real app: create journey → navigate to journey page
+    console.log('Selected book:', book);
+    // router.push(`/journey/${newJourneyId}`);
+  };
+
+  return (
+    <AppLayout>
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* Hero Section */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-100 via-secondary-100 to-primary-100 p-12 mb-12 shadow-xl">
+          <div className="relative z-10 text-center space-y-4">
+            <div className="inline-flex p-4 rounded-2xl bg-gradient-to-br from-primary-500 to-secondary-500 mb-4 shadow-lg">
+              <Sparkles className="w-10 h-10 text-white" />
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold">
+              새로운 독서 여정을 시작하세요
+            </h1>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              책을 선택하면 AI가 당신만의 독서 플레이리스트를 만들어갑니다
+            </p>
+            <Button
+              size="lg"
+              onClick={() => setSearchDialogOpen(true)}
+              className="mt-6 bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 shadow-lg hover:shadow-xl transition-all group"
+            >
+              <Search className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
+              도서 검색하기
+            </Button>
+          </div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(166,138,94,0.2),transparent_70%)]" />
+        </div>
+
+        {/* How It Works */}
+        <div className="space-y-6 mb-12">
+          <h2 className="text-3xl font-bold text-center mb-8">독서 여정은 이렇게 진행됩니다</h2>
+
+          <div className="grid md:grid-cols-4 gap-6">
+            {[
+              {
+                step: '1',
+                icon: Search,
+                title: '책 선택',
+                description: '읽고 싶은 책을 검색하고 선택합니다',
+                color: 'from-primary-500 to-primary-600',
+              },
+              {
+                step: '2',
+                icon: Music,
+                title: 'v0 음악 생성',
+                description: '책 정보를 바탕으로 첫 번째 음악이 생성됩니다',
+                color: 'from-secondary-500 to-secondary-600',
+              },
+              {
+                step: '3',
+                icon: BookOpen,
+                title: '독서 & 기록',
+                description: '책을 읽으며 감정과 구절을 기록합니다',
+                color: 'from-primary-500 via-secondary-500 to-primary-600',
+              },
+              {
+                step: '4',
+                icon: TrendingUp,
+                title: '플레이리스트 완성',
+                description: '완독 시 전체 여정의 음악이 완성됩니다',
+                color: 'from-amber-500 to-amber-600',
+              },
+            ].map((item) => (
+              <Card key={item.step} className="relative overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                <div className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-5`} />
+                <CardHeader className="relative text-center">
+                  <div className={`w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center mb-4 shadow-lg hover:scale-110 transition-transform`}>
+                    <span className="text-2xl font-bold text-white">{item.step}</span>
+                  </div>
+                  <CardTitle className="text-lg">{item.title}</CardTitle>
+                  <CardDescription className="text-sm leading-relaxed">
+                    {item.description}
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        {/* Features */}
+        <div className="grid md:grid-cols-3 gap-6 mb-12">
+          <Card className="hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <CardHeader>
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center mb-4 shadow-lg">
+                <Music className="w-6 h-6 text-white" />
+              </div>
+              <CardTitle>AI 음악 생성</CardTitle>
+              <CardDescription>
+                당신의 감정과 기록을 바탕으로 AI가 독서 여정을 음악으로 표현합니다
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card className="hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <CardHeader>
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-secondary-500 to-secondary-600 flex items-center justify-center mb-4 shadow-lg">
+                <BookOpen className="w-6 h-6 text-white" />
+              </div>
+              <CardTitle>독서 기록</CardTitle>
+              <CardDescription>
+                인상 깊은 구절과 감정을 기록하며 독서의 순간을 담아내세요
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card className="hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <CardHeader>
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500 via-secondary-500 to-primary-600 flex items-center justify-center mb-4 shadow-lg">
+                <Sparkles className="w-6 h-6 text-white" />
+              </div>
+              <CardTitle>커뮤니티 공유</CardTitle>
+              <CardDescription>
+                완성된 독서 플레이리스트를 공유하고 다른 독자들과 소통하세요
+              </CardDescription>
+            </CardHeader>
+          </Card>
+        </div>
+
+        {/* CTA */}
+        <Card className="bg-gradient-to-r from-primary-50 to-secondary-50 border-primary-200">
+          <CardContent className="text-center py-12">
+            <h3 className="text-2xl font-bold mb-4">
+              지금 바로 독서 여정을 시작하세요
+            </h3>
+            <p className="text-muted-foreground mb-6">
+              첫 번째 책을 선택하고 AI가 만드는 나만의 독서 플레이리스트를 경험해보세요
+            </p>
+            <Button
+              size="lg"
+              onClick={() => setSearchDialogOpen(true)}
+              className="bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700 shadow-lg group"
+            >
+              <Search className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
+              도서 검색하기
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Book Search Dialog */}
+        <BookSearchDialog
+          open={searchDialogOpen}
+          onOpenChange={setSearchDialogOpen}
+          onSelectBook={handleBookSelect}
+        />
+      </div>
+    </AppLayout>
+  );
+}

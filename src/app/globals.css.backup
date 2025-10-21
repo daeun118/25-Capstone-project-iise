@@ -1,0 +1,434 @@
+/* ========================================
+   Reading Experience Platform - Global Styles
+   Design System v1.0
+   ======================================== */
+
+@import "tailwindcss";
+
+/* ========================================
+   Font Imports
+   ======================================== */
+
+/* Pretendard Variable (한글 + 영문 UI) */
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
+
+/* Inter (영문 본문) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Playfair Display (영문 제목) */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap');
+
+/* Noto Serif KR (한글 제목) */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&display=swap');
+
+/* ========================================
+   CSS Variables - Light Mode (Default)
+   ======================================== */
+
+:root {
+  /* ========== PRIMARY COLORS (독서 - Warm Beige/Brown) ========== */
+  --color-primary-50: 250 248 245;   /* #FAF8F5 */
+  --color-primary-100: 245 239 231;  /* #F5EFE7 */
+  --color-primary-200: 232 220 200;  /* #E8DCC8 */
+  --color-primary-300: 212 194 163;  /* #D4C2A3 */
+  --color-primary-400: 191 166 126;  /* #BFA67E */
+  --color-primary-500: 166 138 94;   /* #A68A5E - Main */
+  --color-primary-600: 139 112 73;   /* #8B7049 */
+  --color-primary-700: 109 87 56;    /* #6D5738 */
+  --color-primary-800: 79 63 42;     /* #4F3F2A */
+  --color-primary-900: 58 46 31;     /* #3A2E1F */
+
+  /* ========== SECONDARY COLORS (음악 - Calm Blue/Purple) ========== */
+  --color-secondary-50: 243 244 249;   /* #F3F4F9 */
+  --color-secondary-100: 230 232 242;  /* #E6E8F2 */
+  --color-secondary-200: 199 204 224;  /* #C7CCE0 */
+  --color-secondary-300: 162 170 206;  /* #A2AACE */
+  --color-secondary-400: 125 136 188;  /* #7D88BC */
+  --color-secondary-500: 93 107 168;   /* #5D6BA8 - Main */
+  --color-secondary-600: 76 88 144;    /* #4C5890 */
+  --color-secondary-700: 60 70 115;    /* #3C4673 */
+  --color-secondary-800: 45 52 86;     /* #2D3456 */
+  --color-secondary-900: 31 36 57;     /* #1F2439 */
+
+  /* ========== ACCENT COLORS ========== */
+  /* Coral */
+  --color-accent-coral-light: 255 229 220;  /* #FFE5DC */
+  --color-accent-coral-main: 255 122 89;    /* #FF7A59 */
+  --color-accent-coral-dark: 230 90 59;     /* #E65A3B */
+
+  /* Purple */
+  --color-accent-purple-light: 237 231 246;  /* #EDE7F6 */
+  --color-accent-purple-main: 156 39 176;    /* #9C27B0 */
+  --color-accent-purple-dark: 123 31 162;    /* #7B1FA2 */
+
+  /* Pink */
+  --color-accent-pink-light: 252 228 236;  /* #FCE4EC */
+  --color-accent-pink-main: 233 30 99;     /* #E91E63 */
+  --color-accent-pink-dark: 194 24 91;     /* #C2185B */
+
+  /* ========== SEMANTIC COLORS ========== */
+  /* Success */
+  --color-success-light: 232 245 233;  /* #E8F5E9 */
+  --color-success-main: 76 175 80;     /* #4CAF50 */
+  --color-success-dark: 56 142 60;     /* #388E3C */
+
+  /* Warning */
+  --color-warning-light: 255 244 229;  /* #FFF4E5 */
+  --color-warning-main: 255 152 0;     /* #FF9800 */
+  --color-warning-dark: 245 124 0;     /* #F57C00 */
+
+  /* Error */
+  --color-error-light: 255 235 238;  /* #FFEBEE */
+  --color-error-main: 244 67 54;     /* #F44336 */
+  --color-error-dark: 211 47 47;     /* #D32F2F */
+
+  /* Info */
+  --color-info-light: 227 242 253;  /* #E3F2FD */
+  --color-info-main: 33 150 243;    /* #2196F3 */
+  --color-info-dark: 25 118 210;    /* #1976D2 */
+
+  /* ========== NEUTRAL COLORS - Light Mode ========== */
+  --color-neutral-bg-primary: 255 255 255;     /* #FFFFFF */
+  --color-neutral-bg-secondary: 250 249 248;   /* #FAF9F8 */
+  --color-neutral-bg-tertiary: 245 244 242;    /* #F5F4F2 */
+
+  --color-neutral-surface: 255 255 255;        /* #FFFFFF */
+  --color-neutral-surface-elevated: 254 254 254; /* #FEFEFE */
+
+  --color-neutral-border-light: 232 230 227;  /* #E8E6E3 */
+  --color-neutral-border: 209 206 201;        /* #D1CEC9 */
+  --color-neutral-border-dark: 184 180 173;   /* #B8B4AD */
+
+  --color-neutral-text-primary: 42 38 34;     /* #2A2622 */
+  --color-neutral-text-secondary: 90 86 81;   /* #5A5651 */
+  --color-neutral-text-tertiary: 138 133 125; /* #8A857D */
+  --color-neutral-text-disabled: 196 192 185; /* #C4C0B9 */
+
+  /* ========== EMOTION TAG COLORS ========== */
+  /* Joy (기쁨) */
+  --color-emotion-joy-light: 255 249 230;  /* #FFF9E6 */
+  --color-emotion-joy-main: 255 184 0;     /* #FFB800 */
+  --color-emotion-joy-text: 122 92 0;      /* #7A5C00 */
+
+  /* Sadness (슬픔) */
+  --color-emotion-sadness-light: 227 242 253;  /* #E3F2FD */
+  --color-emotion-sadness-main: 66 165 245;    /* #42A5F5 */
+  --color-emotion-sadness-text: 13 71 161;     /* #0D47A1 */
+
+  /* Loneliness (고독) */
+  --color-emotion-loneliness-light: 232 234 246;  /* #E8EAF6 */
+  --color-emotion-loneliness-main: 92 107 192;    /* #5C6BC0 */
+  --color-emotion-loneliness-text: 26 35 126;     /* #1A237E */
+
+  /* Determination (의지) */
+  --color-emotion-determination-light: 251 233 231;  /* #FBE9E7 */
+  --color-emotion-determination-main: 255 111 76;    /* #FF6F4C */
+  --color-emotion-determination-text: 191 54 12;     /* #BF360C */
+
+  /* Hope (희망) */
+  --color-emotion-hope-light: 232 245 233;  /* #E8F5E9 */
+  --color-emotion-hope-main: 102 187 106;   /* #66BB6A */
+  --color-emotion-hope-text: 27 94 32;      /* #1B5E20 */
+
+  /* Anger (분노) */
+  --color-emotion-anger-light: 255 235 238;  /* #FFEBEE */
+  --color-emotion-anger-main: 239 83 80;     /* #EF5350 */
+  --color-emotion-anger-text: 183 28 28;     /* #B71C1C */
+
+  /* Excitement (설렘) */
+  --color-emotion-excitement-light: 252 228 236;  /* #FCE4EC */
+  --color-emotion-excitement-main: 236 64 122;    /* #EC407A */
+  --color-emotion-excitement-text: 136 14 79;     /* #880E4F */
+
+  /* Peace (평온) */
+  --color-emotion-peace-light: 224 242 241;  /* #E0F2F1 */
+  --color-emotion-peace-main: 38 166 154;    /* #26A69A */
+  --color-emotion-peace-text: 0 77 64;       /* #004D40 */
+}
+
+/* ========================================
+   CSS Variables - Dark Mode
+   ======================================== */
+
+.dark {
+  /* Neutral Colors - Dark Mode */
+  --color-neutral-bg-primary: 26 24 21;      /* #1A1815 */
+  --color-neutral-bg-secondary: 36 34 32;    /* #242220 */
+  --color-neutral-bg-tertiary: 46 43 40;     /* #2E2B28 */
+
+  --color-neutral-surface: 36 34 32;         /* #242220 */
+  --color-neutral-surface-elevated: 46 43 40; /* #2E2B28 */
+
+  --color-neutral-border-light: 58 55 51;    /* #3A3733 */
+  --color-neutral-border: 74 70 65;          /* #4A4641 */
+  --color-neutral-border-dark: 90 86 81;     /* #5A5651 */
+
+  --color-neutral-text-primary: 245 244 242;  /* #F5F4F2 */
+  --color-neutral-text-secondary: 196 192 185; /* #C4C0B9 */
+  --color-neutral-text-tertiary: 138 133 125;  /* #8A857D */
+  --color-neutral-text-disabled: 90 86 81;     /* #5A5651 */
+}
+
+/* ========================================
+   Tailwind Theme Configuration
+   ======================================== */
+
+@theme {
+  /* ========== FONT FAMILIES ========== */
+  --font-family-primary: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-family-secondary: 'Inter', var(--font-family-primary);
+  --font-family-accent: 'Playfair Display', 'Noto Serif KR', serif;
+  --font-family-mono: 'SF Mono', 'Consolas', 'Monaco', monospace;
+
+  /* ========== FONT SIZES with Line Heights ========== */
+  --font-size-xs: 0.75rem;      /* 12px */
+  --font-size-xs--line-height: 1.4;
+
+  --font-size-sm: 0.875rem;     /* 14px */
+  --font-size-sm--line-height: 1.5;
+
+  --font-size-base: 1rem;       /* 16px */
+  --font-size-base--line-height: 1.6;
+
+  --font-size-lg: 1.125rem;     /* 18px */
+  --font-size-lg--line-height: 1.6;
+
+  --font-size-xl: 1.25rem;      /* 20px */
+  --font-size-xl--line-height: 1.5;
+
+  --font-size-2xl: 1.5rem;      /* 24px */
+  --font-size-2xl--line-height: 1.3;
+
+  --font-size-3xl: 1.875rem;    /* 30px */
+  --font-size-3xl--line-height: 1.2;
+
+  --font-size-4xl: 2.25rem;     /* 36px */
+  --font-size-4xl--line-height: 1.2;
+
+  --font-size-5xl: 2.8125rem;   /* 45px */
+  --font-size-5xl--line-height: 1.1;
+
+  --font-size-6xl: 3.5rem;      /* 56px */
+  --font-size-6xl--line-height: 1.0;
+
+  /* ========== FONT WEIGHTS ========== */
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ========== LETTER SPACING ========== */
+  --letter-spacing-tight: -0.02em;
+  --letter-spacing-normal: 0em;
+  --letter-spacing-wide: 0.01em;
+
+  /* ========== LINE HEIGHTS ========== */
+  --line-height-none: 1.0;
+  --line-height-tight: 1.2;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.6;
+  --line-height-loose: 1.75;
+
+  /* ========== BORDER RADIUS ========== */
+  --radius-none: 0px;
+  --radius-sm: 4px;
+  --radius-DEFAULT: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 24px;
+  --radius-full: 9999px;
+
+  /* ========== SPACING (4px base) ========== */
+  --spacing-0: 0px;
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+
+  /* ========== BOX SHADOWS ========== */
+  /* Soft shadows for cards */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-DEFAULT: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px 0 rgb(0 0 0 / 0.06);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -1px rgb(0 0 0 / 0.06);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.05);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04);
+  --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+
+  /* ========== COLORS ========== */
+  /* Primary */
+  --color-primary: rgb(var(--color-primary-500) / <alpha-value>);
+
+  /* Secondary */
+  --color-secondary: rgb(var(--color-secondary-500) / <alpha-value>);
+
+  /* Neutral */
+  --color-background: rgb(var(--color-neutral-bg-primary) / <alpha-value>);
+  --color-foreground: rgb(var(--color-neutral-text-primary) / <alpha-value>);
+  --color-surface: rgb(var(--color-neutral-surface) / <alpha-value>);
+  --color-border: rgb(var(--color-neutral-border) / <alpha-value>);
+
+  /* Semantic */
+  --color-success: rgb(var(--color-success-main) / <alpha-value>);
+  --color-warning: rgb(var(--color-warning-main) / <alpha-value>);
+  --color-error: rgb(var(--color-error-main) / <alpha-value>);
+  --color-info: rgb(var(--color-info-main) / <alpha-value>);
+}
+
+/* ========================================
+   Base Styles
+   ======================================== */
+
+* {
+  @apply border-border;
+}
+
+body {
+  @apply bg-background text-foreground font-primary;
+  font-feature-settings: "rlig" 1, "calt" 1;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ========================================
+   Typography Utilities
+   ======================================== */
+
+.heading-1 {
+  @apply font-accent text-4xl font-bold leading-tight tracking-tight;
+}
+
+.heading-2 {
+  @apply font-accent text-3xl font-bold leading-tight;
+}
+
+.heading-3 {
+  @apply font-primary text-2xl font-semibold leading-tight;
+}
+
+.heading-4 {
+  @apply font-primary text-xl font-semibold leading-snug;
+}
+
+.heading-5 {
+  @apply font-primary text-lg font-semibold;
+}
+
+.heading-6 {
+  @apply font-primary text-base font-semibold;
+}
+
+.body-large {
+  @apply font-primary text-lg font-regular leading-relaxed;
+}
+
+.body {
+  @apply font-primary text-base font-regular leading-relaxed;
+}
+
+.body-small {
+  @apply font-primary text-sm font-regular leading-normal;
+}
+
+/* Quote style */
+.quote {
+  @apply border-l-4 border-primary-300 pl-5 font-serif text-lg italic leading-loose;
+}
+
+/* Emotion tag style */
+.emotion-tag {
+  @apply inline-flex items-center px-3 py-1 text-xs font-medium leading-snug tracking-wide rounded-full;
+}
+
+/* ========================================
+   Custom Utilities
+   ======================================== */
+
+/* Smooth transitions */
+.transition-smooth {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Card hover effect */
+.card-hover {
+  @apply transition-smooth hover:-translate-y-1 hover:shadow-lg;
+}
+
+/* Focus ring */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+}
+
+/* Scrollbar styling */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  @apply bg-neutral-bg-secondary;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  @apply bg-neutral-border-dark rounded-full;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  @apply bg-neutral-text-tertiary;
+}
+
+/* ========================================
+   Animation Utilities
+   ======================================== */
+
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ========================================
+   Accessibility
+   ======================================== */
+
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

@@ -1,0 +1,412 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { AppLayout } from '@/components/layout/AppLayout';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { FilterBar } from '@/components/common/FilterBar';
+import { JourneyCard } from '@/components/journey/JourneyCard';
+import { EmptyState } from '@/components/common/EmptyState';
+import { Pagination } from '@/components/common/Pagination';
+import { Button } from '@/components/ui/button';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { BookOpen, Plus, TrendingUp, Clock, Music } from 'lucide-react';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { toast } from 'sonner';
+
+interface Journey {
+  id: string;
+  bookTitle: string;
+  bookAuthor: string;
+  bookCoverUrl?: string;
+  status: 'reading' | 'completed';
+  progress?: number;
+  logsCount: number;
+  musicTracksCount: number;
+  startedAt: string;
+  completedAt?: string;
+  rating?: number;
+}
+
+export default function LibraryPage() {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<'reading' | 'completed'>('reading');
+  const [sort, setSort] = useState('latest');
+  const [page, setPage] = useState(1);
+  const [journeys, setJourneys] = useState<Journey[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch journeys from API
+  useEffect(() => {
+    const fetchJourneys = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch('/api/journeys');
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch journeys');
+        }
+
+        const data = await response.json();
+        setJourneys(data);
+      } catch (error) {
+        console.error('Error fetching journeys:', error);
+        toast.error('독서 여정을 불러오는데 실패했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJourneys();
+  }, []);
+
+  // Filter journeys by status
+  const filteredJourneys = journeys.filter(j => j.status === activeTab);
+
+  // Sort journeys
+  const sortedJourneys = [...filteredJourneys].sort((a, b) => {
+    if (sort === 'latest') {
+      return new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime();
+    }
+    return new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime();
+  });
+
+  // Pagination (8 per page)
+  const itemsPerPage = 8;
+  const totalPages = Math.ceil(sortedJourneys.length / itemsPerPage);
+  const paginatedJourneys = sortedJourneys.slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage
+  );
+
+  const readingCount = journeys.filter(j => j.status === 'reading').length;
+  const completedCount = journeys.filter(j => j.status === 'completed').length;
+  const totalMusicTracks = journeys.reduce((acc, j) => acc + j.musicTracksCount, 0);
+
+  // Calculate total reading progress
+  const totalReadingProgress = journeys
+    .filter(j => j.status === 'reading')
+    .reduce((acc, j) => acc + (j.progress || 0), 0) / (readingCount || 1);
+
+  // Handle journey card click
+  const handleJourneyClick = (journey: Journey) => {
+    router.push(`/journey/${journey.id}`);
+  };
+
+  // Handle journey deletion
+  const handleJourneyDelete = (deletedJourneyId: string) => {
+    setJourneys((prev) => prev.filter((j) => j.id !== deletedJourneyId));
+  };
+
+  // Show loading state
+  if (loading) {
+    return (
+      <AppLayout>
+        <div className="container mx-auto px-4 py-8">
+          <LoadingSpinner size="lg" message="독서 여정을 불러오는 중..." />
+        </div>
+      </AppLayout>
+    );
+  }
+
+  return (
+    <AppLayout>
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid md:grid-cols-[280px_1fr] gap-8">
+          {/* Sidebar */}
+          <aside className="hidden md:block">
+            <motion.div
+              className="sticky top-20 space-y-6"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              {/* Gradient Header Card */}
+              <motion.div
+                className="relative rounded-2xl overflow-hidden p-6"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.1, duration: 0.5 }}
+                whileHover={{ scale: 1.02 }}
+              >
+                {/* 그라데이션 배경 */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
+                  }}
+                />
+                
+                {/* 콘텐츠 */}
+                <div className="relative z-10">
+                  <h3 className="text-2xl font-bold mb-2 text-white">독서 현황</h3>
+                  <div className="text-white/90 text-sm mb-4">전체 진행률</div>
+                  <motion.div
+                    className="text-5xl font-bold text-white"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.3, type: 'spring', stiffness: 200 }}
+                  >
+                    {Math.round(totalReadingProgress)}%
+                  </motion.div>
+                  
+                  {/* Progress bar */}
+                  <div className="mt-4 h-2 bg-white/20 rounded-full overflow-hidden">
+                    <motion.div
+                      className="h-full bg-white rounded-full"
+                      initial={{ width: '0%' }}
+                      animate={{ width: `${totalReadingProgress}%` }}
+                      transition={{ delay: 0.5, duration: 1, ease: 'easeOut' }}
+                    />
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Stats Card */}
+              <motion.div
+                className="card-elevated p-6 space-y-6 rounded-2xl"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+                whileHover={{ y: -2 }}
+              >
+                {/* Reading Count */}
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-8 h-8 rounded-lg flex items-center justify-center"
+                        style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+                      >
+                        <BookOpen className="w-4 h-4 text-white" />
+                      </div>
+                      <span className="text-sm font-medium">읽는 중</span>
+                    </div>
+                    <span className="text-2xl font-bold">{readingCount}</span>
+                  </div>
+                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <motion.div
+                      className="h-full rounded-full"
+                      style={{ background: 'linear-gradient(90deg, #6366f1, #8b5cf6)' }}
+                      initial={{ width: '0%' }}
+                      animate={{ width: `${totalReadingProgress}%` }}
+                      transition={{ delay: 0.6, duration: 0.8 }}
+                    />
+                  </div>
+                </motion.div>
+
+                {/* Completed Count */}
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-8 h-8 rounded-lg flex items-center justify-center"
+                        style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
+                      >
+                        <TrendingUp className="w-4 h-4 text-white" />
+                      </div>
+                      <span className="text-sm font-medium">완독</span>
+                    </div>
+                    <span className="text-2xl font-bold">{completedCount}</span>
+                  </div>
+                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <motion.div
+                      className="h-full bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full"
+                      initial={{ width: '0%' }}
+                      animate={{ width: `${(completedCount / Math.max(readingCount + completedCount, 1)) * 100}%` }}
+                      transition={{ delay: 0.7, duration: 0.8 }}
+                    />
+                  </div>
+                </motion.div>
+
+                {/* Music Tracks */}
+                <motion.div
+                  className="pt-4 border-t"
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.5 }}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-8 h-8 rounded-lg flex items-center justify-center"
+                        style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}
+                      >
+                        <Music className="w-4 h-4 text-white" />
+                      </div>
+                      <span className="text-sm font-medium">생성된 음악</span>
+                    </div>
+                    <span className="text-2xl font-bold">{totalMusicTracks}</span>
+                  </div>
+                </motion.div>
+              </motion.div>
+
+              {/* Quick Stats Grid */}
+              <div className="grid grid-cols-2 gap-4">
+                <motion.div
+                  className="card-elevated p-5 rounded-xl group cursor-pointer"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3, duration: 0.5 }}
+                  whileHover={{ y: -4, scale: 1.05 }}
+                >
+                  <motion.div
+                    className="w-10 h-10 rounded-lg mb-3 flex items-center justify-center"
+                    style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+                    whileHover={{ rotate: 5 }}
+                  >
+                    <Clock className="w-5 h-5 text-white" />
+                  </motion.div>
+                  <p className="text-2xl font-bold">{readingCount + completedCount}</p>
+                  <p className="text-xs text-gray-500">총 여정</p>
+                </motion.div>
+                <motion.div
+                  className="card-elevated p-5 rounded-xl group cursor-pointer"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4, duration: 0.5 }}
+                  whileHover={{ y: -4, scale: 1.05 }}
+                >
+                  <motion.div
+                    className="w-10 h-10 rounded-lg mb-3 flex items-center justify-center"
+                    style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
+                    whileHover={{ rotate: 5 }}
+                  >
+                    <BookOpen className="w-5 h-5 text-white" />
+                  </motion.div>
+                  <p className="text-2xl font-bold">{Math.round(totalReadingProgress)}%</p>
+                  <p className="text-xs text-gray-500">평균 진행률</p>
+                </motion.div>
+              </div>
+            </motion.div>
+          </aside>
+
+          {/* Main Content */}
+          <main className="space-y-6">
+            {/* Header */}
+            <div>
+              <h1 className="text-4xl font-bold mb-2">내 책장</h1>
+              <p className="text-muted-foreground text-lg">
+                나의 독서 여정을 관리하세요
+              </p>
+            </div>
+
+            {/* Tabs */}
+            <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'reading' | 'completed')}>
+              <div className="flex items-center justify-between">
+                <TabsList>
+                  <TabsTrigger value="reading">
+                    <BookOpen className="w-4 h-4 mr-2" />
+                    읽는 중 ({readingCount})
+                  </TabsTrigger>
+                  <TabsTrigger value="completed">
+                    <TrendingUp className="w-4 h-4 mr-2" />
+                    완독 ({completedCount})
+                  </TabsTrigger>
+                </TabsList>
+
+                <FilterBar
+                  sortOptions={[
+                    { value: 'latest', label: '최신순' },
+                    { value: 'oldest', label: '오래된순' },
+                  ]}
+                  selectedSort={sort}
+                  onSortChange={setSort}
+                />
+              </div>
+
+              <TabsContent value="reading" className="mt-6">
+                {paginatedJourneys.length > 0 ? (
+                  <>
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                      {paginatedJourneys.map((journey) => (
+                        <JourneyCard 
+                          key={journey.id} 
+                          journey={journey} 
+                          onClick={handleJourneyClick}
+                          onDelete={handleJourneyDelete}
+                        />
+                      ))}
+                    </div>
+                    {totalPages > 1 && (
+                      <div className="mt-8">
+                        <Pagination
+                          currentPage={page}
+                          totalPages={totalPages}
+                          onPageChange={setPage}
+                        />
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <EmptyState
+                    icon={BookOpen}
+                    title="독서 중인 책이 없습니다"
+                    description="새로운 책으로 독서를 시작해보세요"
+                    action={{
+                      label: "도서 검색",
+                      onClick: () => window.location.href = '/journey/new'
+                    }}
+                  />
+                )}
+              </TabsContent>
+
+              <TabsContent value="completed" className="mt-6">
+                {paginatedJourneys.length > 0 ? (
+                  <>
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                      {paginatedJourneys.map((journey) => (
+                        <JourneyCard 
+                          key={journey.id} 
+                          journey={journey} 
+                          onClick={handleJourneyClick}
+                          onDelete={handleJourneyDelete}
+                        />
+                      ))}
+                    </div>
+                    {totalPages > 1 && (
+                      <div className="mt-8">
+                        <Pagination
+                          currentPage={page}
+                          totalPages={totalPages}
+                          onPageChange={setPage}
+                        />
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <EmptyState
+                    icon={BookOpen}
+                    title="완독한 책이 없습니다"
+                    description="책을 끝까지 읽고 완독 처리를 해보세요"
+                  />
+                )}
+              </TabsContent>
+            </Tabs>
+          </main>
+        </div>
+      </div>
+
+      {/* Floating Action Button */}
+      <Link href="/journey/new">
+        <Button
+          size="lg"
+          className="fixed bottom-6 right-6 z-50 h-16 w-16 rounded-full shadow-lg"
+        >
+          <Plus className="h-8 w-8" />
+          <span className="sr-only">새 여정 시작</span>
+        </Button>
+      </Link>
+    </AppLayout>
+  );
+}
