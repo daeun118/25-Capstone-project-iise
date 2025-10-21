@@ -363,6 +363,30 @@
     justify-content: center;
     color: white;
   }
+
+  /* ========================================
+     Gradient Background Utilities
+     ======================================== */
+
+  .bg-gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .bg-gradient-accent {
+    background: var(--gradient-accent);
+  }
+
+  .bg-gradient-warm {
+    background: var(--gradient-warm);
+  }
+
+  .bg-gradient-cool {
+    background: var(--gradient-cool);
+  }
+
+  .bg-gradient-card {
+    background: var(--gradient-card);
+  }
 }
 
 /* ========================================

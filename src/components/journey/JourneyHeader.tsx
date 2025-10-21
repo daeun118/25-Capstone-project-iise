@@ -46,14 +46,7 @@ export function JourneyHeader({
       transition={{ duration: 0.6 }}
     >
       {/* 그라데이션 배경 */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: isCompleted
-            ? 'linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #ffd868 100%)'
-            : 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
-        }}
-      />
+      <div className={`absolute inset-0 ${isCompleted ? 'bg-gradient-warm' : 'bg-gradient-hero'}`} />
 
       {/* 그리드 패턴 오버레이 */}
       <div className="absolute inset-0 grid-pattern opacity-10" />

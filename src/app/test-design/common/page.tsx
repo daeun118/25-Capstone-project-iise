@@ -61,7 +61,7 @@ export default function CommonComponentsTestPage() {
             <CardDescription>메시지 포함</CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center py-8">
-            <LoadingSpinner size="md" message="로딩 중입니다..." />
+            <LoadingSpinner size="md" text="로딩 중입니다..." />
           </CardContent>
         </Card>
       </section>
@@ -237,7 +237,7 @@ export default function CommonComponentsTestPage() {
               <CardDescription>API 응답 대기</CardDescription>
             </CardHeader>
             <CardContent className="py-12">
-              <LoadingSpinner size="lg" message="독서 여정을 불러오는 중..." />
+              <LoadingSpinner size="lg" text="독서 여정을 불러오는 중..." />
             </CardContent>
           </Card>
 
@@ -271,7 +271,7 @@ export default function CommonComponentsTestPage() {
               <CardTitle>로딩 스피너</CardTitle>
             </CardHeader>
             <CardContent className="py-8">
-              <LoadingSpinner size="md" message="로딩 중..." />
+              <LoadingSpinner size="md" text="로딩 중..." />
             </CardContent>
           </Card>
 

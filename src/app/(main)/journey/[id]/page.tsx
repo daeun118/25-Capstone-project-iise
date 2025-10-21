@@ -200,7 +200,7 @@ export default function JourneyDetailPage() {
               newGeneratingTracks.add(log.music_track.id);
             } else {
               // 타임아웃된 트랙은 에러 상태로 자동 업데이트 (한 번만)
-              if (!isLoading && log.music_track.status !== 'error') {
+              if (!isLoading) {
                 console.warn(`음악 생성 타임아웃: ${log.music_track.id} (${Math.round(minutesElapsed)}분 경과)`);
               }
             }
@@ -335,7 +335,7 @@ export default function JourneyDetailPage() {
     return (
       <AppLayout>
         <div className="container mx-auto px-4 py-8 flex items-center justify-center min-h-[60vh]">
-          <LoadingSpinner size="lg" message="독서 여정을 불러오는 중..." />
+          <LoadingSpinner size="lg" text="독서 여정을 불러오는 중..." />
         </div>
       </AppLayout>
     );

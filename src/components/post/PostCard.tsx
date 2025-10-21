@@ -66,12 +66,7 @@ export function PostCard({ post, onClick }: PostCardProps) {
             className="object-cover"
           />
         ) : (
-          <div
-            className="absolute inset-0 flex items-center justify-center"
-            style={{
-              background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-            }}
-          >
+          <div className="absolute inset-0 flex items-center justify-center bg-gradient-accent">
             <BookOpen className="w-20 h-20 text-white/60" />
           </div>
         )}
@@ -79,9 +74,7 @@ export function PostCard({ post, onClick }: PostCardProps) {
         {/* Gradient overlay on hover */}
         <motion.div
           className="absolute inset-0"
-          style={{
-            background: 'linear-gradient(to top, rgba(0,0,0,0.9), transparent 60%)',
-          }}
+          style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.9), transparent 60%)' }}
           initial={{ opacity: 0 }}
           whileHover={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
@@ -120,12 +113,7 @@ export function PostCard({ post, onClick }: PostCardProps) {
             // Music play logic
           }}
         >
-          <div
-            className="w-20 h-20 rounded-full flex items-center justify-center shadow-2xl"
-            style={{
-              background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-            }}
-          >
+          <div className="w-20 h-20 rounded-full flex items-center justify-center shadow-2xl bg-gradient-accent">
             <Play className="w-10 h-10 text-white ml-1" />
           </div>
         </motion.button>

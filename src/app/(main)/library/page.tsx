@@ -105,7 +105,7 @@ export default function LibraryPage() {
     return (
       <AppLayout>
         <div className="container mx-auto px-4 py-8">
-          <LoadingSpinner size="lg" message="독서 여정을 불러오는 중..." />
+          <LoadingSpinner size="lg" text="독서 여정을 불러오는 중..." />
         </div>
       </AppLayout>
     );
@@ -132,12 +132,7 @@ export default function LibraryPage() {
                 whileHover={{ scale: 1.02 }}
               >
                 {/* 그라데이션 배경 */}
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
-                  }}
-                />
+                <div className="absolute inset-0 bg-gradient-hero" />
                 
                 {/* 콘텐츠 */}
                 <div className="relative z-10">
@@ -180,10 +175,7 @@ export default function LibraryPage() {
                 >
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <div
-                        className="w-8 h-8 rounded-lg flex items-center justify-center"
-                        style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
-                      >
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-accent">
                         <BookOpen className="w-4 h-4 text-white" />
                       </div>
                       <span className="text-sm font-medium">읽는 중</span>
@@ -192,8 +184,7 @@ export default function LibraryPage() {
                   </div>
                   <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                     <motion.div
-                      className="h-full rounded-full"
-                      style={{ background: 'linear-gradient(90deg, #6366f1, #8b5cf6)' }}
+                      className="h-full rounded-full bg-gradient-accent"
                       initial={{ width: '0%' }}
                       animate={{ width: `${totalReadingProgress}%` }}
                       transition={{ delay: 0.6, duration: 0.8 }}
@@ -261,8 +252,7 @@ export default function LibraryPage() {
                   whileHover={{ y: -4, scale: 1.05 }}
                 >
                   <motion.div
-                    className="w-10 h-10 rounded-lg mb-3 flex items-center justify-center"
-                    style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+                    className="w-10 h-10 rounded-lg mb-3 flex items-center justify-center bg-gradient-accent"
                     whileHover={{ rotate: 5 }}
                   >
                     <Clock className="w-5 h-5 text-white" />

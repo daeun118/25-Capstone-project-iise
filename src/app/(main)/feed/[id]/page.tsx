@@ -125,7 +125,7 @@ export default function PostDetailPage() {
       <AppLayout>
         <div className="container mx-auto px-4 py-8">
           <div className="flex justify-center items-center py-20">
-            <LoadingSpinner size="lg" message="게시물을 불러오는 중..." />
+            <LoadingSpinner size="lg" text="게시물을 불러오는 중..." />
           </div>
         </div>
       </AppLayout>
@@ -168,9 +168,6 @@ export default function PostDetailPage() {
           <div className="lg:col-span-2">
             <PostDetail
               post={post}
-              onLike={handleLike}
-              onBookmark={handleBookmark}
-              onCommentSubmit={handleCommentSubmit}
             />
           </div>
 

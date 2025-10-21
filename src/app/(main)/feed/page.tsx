@@ -168,7 +168,7 @@ export default function FeedPage() {
         {/* Content */}
         {loading ? (
           <div className="flex justify-center items-center py-20">
-            <LoadingSpinner size="lg" message="게시물을 불러오는 중..." />
+            <LoadingSpinner size="lg" text="게시물을 불러오는 중..." />
           </div>
         ) : posts.length === 0 ? (
           <EmptyState
@@ -189,9 +189,6 @@ export default function FeedPage() {
                   key={post.id}
                   post={post}
                   onClick={handlePostClick}
-                  onLike={handleLike}
-                  onComment={handleComment}
-                  onBookmark={handleBookmark}
                 />
               ))}
             </div>

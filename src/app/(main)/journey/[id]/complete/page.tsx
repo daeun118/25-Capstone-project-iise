@@ -102,7 +102,7 @@ export default function CompleteJourneyPage() {
     return (
       <AppLayout>
         <div className="container mx-auto px-4 py-8 flex items-center justify-center min-h-[60vh]">
-          <LoadingSpinner size="lg" message="불러오는 중..." />
+          <LoadingSpinner size="lg" text="불러오는 중..." />
         </div>
       </AppLayout>
     );

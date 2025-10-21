@@ -38,12 +38,7 @@ export default function Home() {
       {/* Hero Section - Stripe Style */}
       <section className="relative min-h-screen overflow-hidden flex items-center">
         {/* Stripe 그라데이션 배경 */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
-          }}
-        />
+        <div className="absolute inset-0 bg-gradient-hero" />
 
         {/* 그리드 패턴 오버레이 */}
         <div className="absolute inset-0 grid-pattern opacity-20" />
@@ -132,9 +127,7 @@ export default function Home() {
             >
               <div className="flex items-center gap-6">
                 {/* 앨범커버 미리보기 */}
-                <div className="relative w-24 h-24 rounded-xl overflow-hidden flex-shrink-0" style={{
-                  background: 'linear-gradient(135deg, #6366f1, #8b5cf6)'
-                }}>
+                <div className="relative w-24 h-24 rounded-xl overflow-hidden flex-shrink-0 bg-gradient-accent">
                   <div className="absolute inset-0 flex items-center justify-center">
                     <Music className="w-12 h-12 text-white/80" />
                   </div>
@@ -148,10 +141,7 @@ export default function Home() {
                   {/* 프로그레스 바 */}
                   <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden">
                     <motion.div
-                      className="absolute inset-y-0 left-0 rounded-full"
-                      style={{
-                        background: 'linear-gradient(90deg, #6366f1, #8b5cf6)'
-                      }}
+                      className="absolute inset-y-0 left-0 rounded-full bg-gradient-accent"
                       initial={{ width: '0%' }}
                       animate={{ width: '60%' }}
                       transition={{ delay: 1, duration: 1.5 }}
@@ -168,10 +158,7 @@ export default function Home() {
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
-                  className="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0"
-                  style={{
-                    background: 'linear-gradient(135deg, #6366f1, #8b5cf6)'
-                  }}
+                  className="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 bg-gradient-accent"
                 >
                   <Play className="w-6 h-6 text-white ml-0.5" />
                 </motion.button>
@@ -211,12 +198,7 @@ export default function Home() {
                 className="card-elevated p-8 group cursor-pointer"
               >
                 {/* 그라데이션 아이콘 배경 */}
-                <div
-                  className="w-16 h-16 rounded-2xl mb-6 flex items-center justify-center"
-                  style={{
-                    background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-                  }}
-                >
+                <div className="w-16 h-16 rounded-2xl mb-6 flex items-center justify-center bg-gradient-accent">
                   <feature.icon className="w-8 h-8 text-white" />
                 </div>
 
@@ -254,12 +236,7 @@ export default function Home() {
                 transition={{ delay: i * 0.1, duration: 0.5 }}
                 className="text-center space-y-4"
               >
-                <div
-                  className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto text-white"
-                  style={{
-                    background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-                  }}
-                >
+                <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold mx-auto text-white bg-gradient-accent">
                   {item.step}
                 </div>
                 <div>

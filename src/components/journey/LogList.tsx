@@ -49,9 +49,7 @@ export function LogList({ logs, onPlayMusic }: LogListProps) {
   return (
     <div className="relative">
       {/* Timeline 세로선 */}
-      <div className="absolute left-6 top-0 bottom-0 w-0.5" style={{
-        background: 'linear-gradient(180deg, #6366f1, #8b5cf6, #f093fb)'
-      }} />
+      <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-accent" />
 
       <div className="space-y-8">
         {logs.map((log, index) => {
@@ -71,14 +69,9 @@ export function LogList({ logs, onPlayMusic }: LogListProps) {
             >
               {/* Timeline 아이콘 */}
               <motion.div
-                className="absolute left-0 w-12 h-12 rounded-full flex items-center justify-center shadow-lg"
-                style={{
-                  background: isFinal
-                    ? 'linear-gradient(135deg, #f093fb, #f5576c)'
-                    : isV0
-                    ? 'linear-gradient(135deg, #667eea, #764ba2)'
-                    : 'linear-gradient(135deg, #6366f1, #8b5cf6)'
-                }}
+                className={`absolute left-0 w-12 h-12 rounded-full flex items-center justify-center shadow-lg ${
+                  isFinal ? 'bg-gradient-warm' : isV0 ? 'bg-gradient-hero' : 'bg-gradient-accent'
+                }`}
                 whileHover={{ scale: 1.1 }}
                 transition={{ type: 'spring', stiffness: 300 }}
               >
@@ -140,17 +133,13 @@ export function LogList({ logs, onPlayMusic }: LogListProps) {
                   {log.music_track && (
                     <div className="mb-4">
                       {isGenerating && (
-                        <div className="flex items-center gap-2 p-3 rounded-lg" style={{
-                          background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1))'
-                        }}>
+                        <div className="flex items-center gap-2 p-3 rounded-lg bg-gradient-accent" style={{ opacity: 0.1 }}>
                           <Loader2 className="w-4 h-4 animate-spin text-primary" />
                           <span className="text-sm font-medium text-primary">음악 생성 중...</span>
                         </div>
                       )}
                       {isCompleted && (
-                        <div className="flex items-center gap-2 p-3 rounded-lg" style={{
-                          background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1))'
-                        }}>
+                        <div className="flex items-center gap-2 p-3 rounded-lg" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)' }}>
                           <Music className="w-4 h-4 text-emerald-600" />
                           <span className="text-sm font-medium text-emerald-600">음악 준비 완료</span>
                         </div>
@@ -168,10 +157,7 @@ export function LogList({ logs, onPlayMusic }: LogListProps) {
                 {/* 본문 */}
                 <div className="px-6 pb-6 space-y-4">
                   {log.quote && (
-                    <div className="p-4 rounded-lg border-l-4" style={{
-                      background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05))',
-                      borderColor: '#6366f1'
-                    }}>
+                    <div className="p-4 rounded-lg border-l-4" style={{ backgroundColor: 'rgba(99, 102, 241, 0.05)', borderColor: '#6366f1' }}>
                       <p className="text-sm italic leading-relaxed">&ldquo;{log.quote}&rdquo;</p>
                     </div>
                   )}
@@ -181,9 +167,7 @@ export function LogList({ logs, onPlayMusic }: LogListProps) {
                   )}
 
                   {log.music_track && log.music_track.description && (
-                    <div className="p-4 rounded-lg" style={{
-                      background: 'linear-gradient(135deg, rgba(240, 147, 251, 0.1), rgba(245, 87, 108, 0.1))'
-                    }}>
+                    <div className="p-4 rounded-lg" style={{ backgroundColor: 'rgba(240, 147, 251, 0.1)' }}>
                       <div className="flex items-center gap-2 mb-2">
                         <Music className="w-4 h-4 text-primary" />
                         <p className="text-xs font-semibold text-muted-foreground">음악 설명</p>
@@ -191,14 +175,10 @@ export function LogList({ logs, onPlayMusic }: LogListProps) {
                       <p className="text-sm leading-relaxed">{log.music_track.description}</p>
                       {log.music_track.genre && log.music_track.mood && (
                         <div className="flex gap-2 mt-3">
-                          <span className="text-xs px-3 py-1 rounded-full font-medium text-white" style={{
-                            background: 'linear-gradient(135deg, #6366f1, #8b5cf6)'
-                          }}>
+                          <span className="text-xs px-3 py-1 rounded-full font-medium text-white bg-gradient-accent">
                             {log.music_track.genre}
                           </span>
-                          <span className="text-xs px-3 py-1 rounded-full font-medium text-white" style={{
-                            background: 'linear-gradient(135deg, #8b5cf6, #f093fb)'
-                          }}>
+                          <span className="text-xs px-3 py-1 rounded-full font-medium text-white bg-gradient-accent">
                             {log.music_track.mood}
                           </span>
                         </div>

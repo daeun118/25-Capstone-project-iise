@@ -66,7 +66,9 @@
       "mcp__filesystem__directory_tree",
       "mcp__filesystem__read_multiple_files",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(git checkout:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []

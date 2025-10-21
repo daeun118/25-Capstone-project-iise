@@ -86,10 +86,7 @@ export function StatsDashboard() {
         transition={{ duration: 0.6 }}
       >
         <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-          <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center"
-            style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
-          >
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-accent">
             <Book className="w-4 h-4 text-white" />
           </div>
           독서 여정
@@ -106,8 +103,7 @@ export function StatsDashboard() {
             <div className="flex items-center justify-between mb-4">
               <span className="text-sm font-medium text-gray-600">전체 여정</span>
               <motion.div
-                className="w-12 h-12 rounded-xl flex items-center justify-center"
-                style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)' }}
+                className="w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-hero"
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 transition={{ type: 'spring', stiffness: 400 }}
               >
@@ -136,8 +132,7 @@ export function StatsDashboard() {
             <div className="flex items-center justify-between mb-4">
               <span className="text-sm font-medium text-gray-600">읽는 중</span>
               <motion.div
-                className="w-12 h-12 rounded-xl flex items-center justify-center"
-                style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+                className="w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-accent"
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 transition={{ type: 'spring', stiffness: 400 }}
               >
@@ -194,10 +189,7 @@ export function StatsDashboard() {
         transition={{ delay: 0.2, duration: 0.6 }}
       >
         <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-          <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center"
-            style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}
-          >
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#f59e0b' }}>
             <FileText className="w-4 h-4 text-white" />
           </div>
           생성한 콘텐츠
@@ -302,10 +294,7 @@ export function StatsDashboard() {
         transition={{ delay: 0.4, duration: 0.6 }}
       >
         <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-          <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center"
-            style={{ background: 'linear-gradient(135deg, #ec4899, #db2777)' }}
-          >
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#ec4899' }}>
             <Heart className="w-4 h-4 text-white" />
           </div>
           커뮤니티 활동
@@ -410,10 +399,7 @@ export function StatsDashboard() {
         transition={{ delay: 0.6, duration: 0.6 }}
       >
         <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-          <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center"
-            style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}
-          >
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#f59e0b' }}>
             <Star className="w-4 h-4 text-white" />
           </div>
           독서 인사이트

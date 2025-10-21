@@ -253,7 +253,7 @@ export default function TestDesignPage() {
                       <p className="text-sm text-muted-foreground">Small</p>
                     </div>
                     <div className="text-center space-y-4">
-                      <LoadingSpinner size="md" message="로딩 중..." />
+                      <LoadingSpinner size="md" text="로딩 중..." />
                       <p className="text-sm text-muted-foreground">Medium (with message)</p>
                     </div>
                     <div className="text-center space-y-4">

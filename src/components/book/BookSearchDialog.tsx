@@ -121,7 +121,7 @@ export function BookSearchDialog({
         <div className="flex-1 overflow-y-auto mt-4">
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
-              <LoadingSpinner size="lg" message="도서 검색 중..." />
+              <LoadingSpinner size="lg" text="도서 검색 중..." />
             </div>
           ) : hasSearched && results.length === 0 ? (
             <EmptyState
