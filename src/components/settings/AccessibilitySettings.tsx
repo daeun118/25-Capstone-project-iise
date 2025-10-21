@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Eye, Type, AlignJustify } from 'lucide-react';
+import { Eye, Type, AlignJustify, Contrast } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,6 +34,7 @@ export function AccessibilitySettings() {
   const [mounted, setMounted] = useState(false);
   const [fontSize, setFontSize] = useState<FontSize>('medium');
   const [lineHeight, setLineHeight] = useState<LineHeight>('normal');
+  const [highContrast, setHighContrast] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -41,22 +42,32 @@ export function AccessibilitySettings() {
     // Load saved preferences from localStorage
     const savedFontSize = localStorage.getItem('fontSize') as FontSize;
     const savedLineHeight = localStorage.getItem('lineHeight') as LineHeight;
+    const savedHighContrast = localStorage.getItem('highContrast') === 'true';
     
     if (savedFontSize) setFontSize(savedFontSize);
     if (savedLineHeight) setLineHeight(savedLineHeight);
+    setHighContrast(savedHighContrast);
   }, []);
 
   useEffect(() => {
     if (!mounted) return;
 
-    // Apply font size
+    // Apply font size and line height
     document.documentElement.style.setProperty('--base-font-size', FONT_SIZE_MAP[fontSize]);
     document.documentElement.style.setProperty('--base-line-height', LINE_HEIGHT_MAP[lineHeight]);
+    
+    // Apply high contrast mode
+    if (highContrast) {
+      document.documentElement.classList.add('high-contrast');
+    } else {
+      document.documentElement.classList.remove('high-contrast');
+    }
     
     // Save to localStorage
     localStorage.setItem('fontSize', fontSize);
     localStorage.setItem('lineHeight', lineHeight);
-  }, [fontSize, lineHeight, mounted]);
+    localStorage.setItem('highContrast', String(highContrast));
+  }, [fontSize, lineHeight, highContrast, mounted]);
 
   if (!mounted) {
     return (
@@ -151,6 +162,28 @@ export function AccessibilitySettings() {
 
         <DropdownMenuSeparator />
         
+        {/* High Contrast Mode */}
+        <div className="p-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Contrast className="size-4" />
+              <span className="text-sm font-medium">고대비 모드</span>
+            </div>
+            <Button
+              variant={highContrast ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setHighContrast(!highContrast)}
+            >
+              {highContrast ? '켜짐' : '꺼짐'}
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground mt-2">
+            시각적 접근성을 위한 높은 대비 색상
+          </p>
+        </div>
+
+        <DropdownMenuSeparator />
+        
         <div className="p-2">
           <Button
             variant="ghost"
@@ -159,6 +192,7 @@ export function AccessibilitySettings() {
             onClick={() => {
               setFontSize('medium');
               setLineHeight('normal');
+              setHighContrast(false);
             }}
           >
             기본값으로 재설정

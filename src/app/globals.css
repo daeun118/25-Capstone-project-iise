@@ -146,6 +146,49 @@
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    
+    /* 접근성 설정 - 기본값 */
+    font-size: var(--base-font-size, 16px);
+    line-height: var(--base-line-height, 1.6);
+  }
+  
+  /* ========================================
+     ♿ High Contrast Mode (고대비 모드)
+     ======================================== */
+  
+  .high-contrast {
+    /* 배경 색상 - 순수한 검정/흰색 */
+    --background: #000000;
+    --background-secondary: #1a1a1a;
+    
+    /* 텍스트 - 순수한 흰색 */
+    --foreground: #ffffff;
+    --muted: #cccccc;
+    --muted-foreground: #999999;
+    
+    /* 카드 - 진한 회색 */
+    --card: #1a1a1a;
+    --card-hover: #2a2a2a;
+    
+    /* 보더 - 더 진하게 */
+    --border: #ffffff;
+    --border-light: #cccccc;
+    
+    /* 액센트 색상 - 더 밝고 대비 강함 */
+    --primary: #99a5ff;
+    --primary-dark: #7788ff;
+    --primary-light: #bbccff;
+    
+    --secondary: #bb99ff;
+    --secondary-dark: #9966ff;
+    --secondary-light: #ddccff;
+    
+    /* 그라데이션 비활성화 - 고대비 모드에서는 단색 */
+    --gradient-hero: #6366f1;
+    --gradient-accent: #6366f1;
+    --gradient-warm: #f5576c;
+    --gradient-cool: #22d3ee;
+    --gradient-card: #5eead4;
   }
 
   /* ========================================
