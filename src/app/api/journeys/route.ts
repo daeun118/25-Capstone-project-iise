@@ -45,43 +45,52 @@ export async function GET(request: Request) {
     const musicService = new MusicService(musicRepo, logRepo);
     const journeyService = new JourneyService(journeyRepo, logRepo, musicService);
 
-    // Get all user journeys
-    const journeys = await journeyService.findByUserId(user.id);
+    // ✅ OPTIMIZED: Single query with JOIN to avoid N+1 problem
+    // Fetch journeys with reading_logs in a single query
+    let query = supabase
+      .from('reading_journeys')
+      .select(`
+        *,
+        reading_logs (
+          id,
+          music_track_id
+        )
+      `)
+      .eq('user_id', user.id);
 
     // Filter by status if specified
-    let filteredJourneys = journeys;
     if (status !== 'all') {
-      filteredJourneys = journeys.filter((j) => j.status === status);
+      query = query.eq('status', status);
     }
 
-    // Sort journeys
-    const sortedJourneys = filteredJourneys.sort((a, b) => {
-      const dateA = new Date(a.started_at).getTime();
-      const dateB = new Date(b.started_at).getTime();
-      return sort === 'latest' ? dateB - dateA : dateA - dateB;
+    // Sort at database level
+    query = query.order('started_at', { ascending: sort === 'oldest' });
+
+    const { data: journeysWithLogs, error: fetchError } = await query;
+
+    if (fetchError) {
+      throw new Error(`Failed to fetch journeys: ${fetchError.message}`);
+    }
+
+    // Transform data with stats calculated from joined data
+    const journeysWithStats = (journeysWithLogs || []).map((journey: any) => {
+      const logs = journey.reading_logs || [];
+      const musicTracksCount = logs.filter((log: any) => log.music_track_id).length;
+
+      return {
+        id: journey.id,
+        bookTitle: journey.book_title,
+        bookAuthor: journey.book_author || 'Unknown',
+        bookCoverUrl: journey.book_cover_url || undefined,
+        status: journey.status,
+        progress: undefined, // NOTE: Progress calculation requires total_pages field (future feature)
+        logsCount: logs.length,
+        musicTracksCount: musicTracksCount,
+        startedAt: journey.started_at,
+        completedAt: journey.completed_at || undefined,
+        rating: journey.rating || undefined,
+      };
     });
-
-    // Get logs count and music tracks count for each journey
-    const journeysWithStats = await Promise.all(
-      sortedJourneys.map(async (journey) => {
-        const logs = await logRepo.findByJourneyId(journey.id);
-        const musicTracks = logs.filter((log) => log.music_track_id).length;
-
-        return {
-          id: journey.id,
-          bookTitle: journey.book_title,
-          bookAuthor: journey.book_author || 'Unknown',
-          bookCoverUrl: journey.book_cover_url || undefined,
-          status: journey.status,
-          progress: undefined, // NOTE: Progress calculation requires total_pages field (future feature)
-          logsCount: logs.length,
-          musicTracksCount: musicTracks,
-          startedAt: journey.started_at,
-          completedAt: journey.completed_at || undefined,
-          rating: journey.rating || undefined,
-        };
-      })
-    );
 
     return NextResponse.json(journeysWithStats);
   } catch (error) {

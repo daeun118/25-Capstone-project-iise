@@ -18,7 +18,8 @@
     "test:report": "playwright show-report",
     "test:music-flow": "node scripts/test-music-flow.js",
     "test:complete-flow": "node scripts/test-complete-flow.js",
-    "test:library": "node scripts/test-library.js"
+    "test:library": "node scripts/test-library.js",
+    "test:performance": "node scripts/performance-test.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

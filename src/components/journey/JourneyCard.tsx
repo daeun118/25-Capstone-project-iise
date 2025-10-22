@@ -50,6 +50,7 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
   const router = useRouter();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleClick = () => {
     onClick?.(journey);
@@ -82,11 +83,11 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
   const progress = journey.progress || (isCompleted ? 100 : 0);
 
   return (
-    <m.div
-      className="card-elevated group cursor-pointer overflow-hidden"
-      whileHover={{ y: -4 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+    <div
+      className="card-elevated group cursor-pointer overflow-hidden transition-transform hover:-translate-y-1"
       onClick={handleClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       {/* 책 표지 + 호버 오버레이 (Mureka 스타일) */}
       <div className="relative aspect-[2/3] rounded-xl overflow-hidden mb-4">
@@ -108,15 +109,14 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
           </div>
         )}
 
-        {/* 그라데이션 오버레이 (호버 시) */}
-        <m.div
-          className="absolute inset-0"
+        {/* ✅ OPTIMIZED: CSS transition instead of Framer Motion */}
+        <div
+          className={`absolute inset-0 transition-opacity duration-200 ${
+            isHovered ? 'opacity-100' : 'opacity-0'
+          }`}
           style={{
             background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
           }}
-          initial={{ opacity: 0 }}
-          whileHover={{ opacity: 1 }}
-          transition={{ duration: 0.2 }}
         />
 
         {/* 상태 배지 (상단 좌측) */}
@@ -162,43 +162,42 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
           </DropdownMenu>
         </div>
 
-        {/* 진행률 (하단, 읽는 중일 때만) */}
+        {/* ✅ OPTIMIZED: Simple CSS transition */}
         {!isCompleted && progress > 0 && (
-          <m.div
-            className="absolute bottom-0 left-0 right-0 h-1"
-            initial={{ opacity: 0 }}
-            whileHover={{ opacity: 1 }}
+          <div
+            className={`absolute bottom-0 left-0 right-0 h-1 transition-opacity duration-200 ${
+              isHovered ? 'opacity-100' : 'opacity-0'
+            }`}
           >
             <div className="absolute inset-0 bg-white/20" />
-            <m.div
-              className="absolute inset-y-0 left-0"
+            <div
+              className="absolute inset-y-0 left-0 transition-all duration-300"
               style={{
                 background: 'linear-gradient(90deg, #6366f1, #8b5cf6)',
                 width: `${progress}%`,
               }}
             />
-          </m.div>
+          </div>
         )}
 
-        {/* 재생 버튼 (Mureka 스타일 - 호버 시만 표시) */}
-        <m.button
-          className="absolute bottom-4 right-4 w-14 h-14 rounded-full flex items-center justify-center shadow-xl"
+        {/* ✅ OPTIMIZED: CSS scale with reduced animation complexity */}
+        <button
+          className={`absolute bottom-4 right-4 w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all duration-200 ${
+            isHovered ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
+          } active:scale-95`}
           style={{
             background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
           }}
-          initial={{ scale: 0, opacity: 0 }}
-          whileHover={{ scale: 1, opacity: 1 }}
-          whileTap={{ scale: 0.95 }}
-          transition={{ type: 'spring', stiffness: 500, damping: 25 }}
           onClick={(e) => {
             e.stopPropagation();
             // 음악 재생 로직
           }}
         >
           <Play className="w-6 h-6 text-white ml-0.5" />
-        </m.button>
+        </button>
       </div>
 
+      {/* ✅ OPTIMIZED: Removed unnecessary motion wrapper */}
       {/* 책 정보 */}
       <div className="px-1">
         <h3 className="font-bold text-lg mb-1 line-clamp-2">{journey.bookTitle}</h3>
@@ -262,6 +261,6 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </m.div>
+    </div>
   );
 });

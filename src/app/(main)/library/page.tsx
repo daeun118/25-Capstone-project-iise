@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -62,43 +62,56 @@ export default function LibraryPage() {
     fetchJourneys();
   }, []);
 
-  // Filter journeys by status
-  const filteredJourneys = journeys.filter(j => j.status === activeTab);
-
-  // Sort journeys
-  const sortedJourneys = [...filteredJourneys].sort((a, b) => {
-    if (sort === 'latest') {
-      return new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime();
-    }
-    return new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime();
-  });
-
-  // Pagination (8 per page)
-  const itemsPerPage = 8;
-  const totalPages = Math.ceil(sortedJourneys.length / itemsPerPage);
-  const paginatedJourneys = sortedJourneys.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage
+  // ✅ OPTIMIZED: Memoize filtered and sorted journeys to prevent recalculation
+  const filteredJourneys = useMemo(
+    () => journeys.filter(j => j.status === activeTab),
+    [journeys, activeTab]
   );
 
-  const readingCount = journeys.filter(j => j.status === 'reading').length;
-  const completedCount = journeys.filter(j => j.status === 'completed').length;
-  const totalMusicTracks = journeys.reduce((acc, j) => acc + j.musicTracksCount, 0);
+  const sortedJourneys = useMemo(
+    () => [...filteredJourneys].sort((a, b) => {
+      if (sort === 'latest') {
+        return new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime();
+      }
+      return new Date(a.startedAt).getTime() - new Date(b.startedAt).getTime();
+    }),
+    [filteredJourneys, sort]
+  );
 
-  // Calculate total reading progress
-  const totalReadingProgress = journeys
-    .filter(j => j.status === 'reading')
-    .reduce((acc, j) => acc + (j.progress || 0), 0) / (readingCount || 1);
+  // ✅ OPTIMIZED: Memoize pagination calculations
+  const itemsPerPage = 8;
+  const { totalPages, paginatedJourneys } = useMemo(() => {
+    const total = Math.ceil(sortedJourneys.length / itemsPerPage);
+    const paginated = sortedJourneys.slice(
+      (page - 1) * itemsPerPage,
+      page * itemsPerPage
+    );
+    return { totalPages: total, paginatedJourneys: paginated };
+  }, [sortedJourneys, page]);
 
-  // Handle journey card click
-  const handleJourneyClick = (journey: Journey) => {
+  // ✅ OPTIMIZED: Memoize statistics calculations
+  const { readingCount, completedCount, totalMusicTracks, totalReadingProgress } = useMemo(() => {
+    const reading = journeys.filter(j => j.status === 'reading');
+    const completed = journeys.filter(j => j.status === 'completed');
+    const musicCount = journeys.reduce((acc, j) => acc + j.musicTracksCount, 0);
+    const progress = reading.reduce((acc, j) => acc + (j.progress || 0), 0) / (reading.length || 1);
+
+    return {
+      readingCount: reading.length,
+      completedCount: completed.length,
+      totalMusicTracks: musicCount,
+      totalReadingProgress: progress,
+    };
+  }, [journeys]);
+
+  // ✅ OPTIMIZED: Memoize callbacks to prevent child re-renders
+  const handleJourneyClick = useCallback((journey: Journey) => {
     router.push(`/journey/${journey.id}`);
-  };
+  }, [router]);
 
-  // Handle journey deletion
-  const handleJourneyDelete = (deletedJourneyId: string) => {
+  const handleJourneyDelete = useCallback((deletedJourneyId: string) => {
     setJourneys((prev) => prev.filter((j) => j.id !== deletedJourneyId));
-  };
+  }, []);
 
   // Show loading state
   if (loading) {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { JourneyHeader } from '@/components/journey/JourneyHeader';
@@ -138,19 +138,31 @@ export default function JourneyDetailPage() {
     }
   };
 
-  // Poll for generating tracks (using ref to avoid dependency issues)
+  // ✅ OPTIMIZED: Poll for generating tracks with adaptive interval
   const generatingTracksRef = useRef(generatingTracks);
   generatingTracksRef.current = generatingTracks;
 
   useEffect(() => {
-    const pollInterval = setInterval(async () => {
+    // Start with 3s interval, increase to 5s after 30s
+    let pollInterval = 3000;
+    let elapsedTime = 0;
+    
+    const poll = async () => {
       if (generatingTracksRef.current.size > 0) {
-        // Use lightweight music status update instead of full fetch
         await updateMusicStatus();
+        
+        // Adaptive polling: slow down after 30 seconds
+        elapsedTime += pollInterval;
+        if (elapsedTime > 30000 && pollInterval === 3000) {
+          pollInterval = 5000; // Slow down to 5s
+          clearInterval(intervalId);
+          intervalId = setInterval(poll, pollInterval);
+        }
       }
-    }, 2000); // Poll every 2 seconds
-
-    return () => clearInterval(pollInterval);
+    };
+    
+    let intervalId = setInterval(poll, pollInterval);
+    return () => clearInterval(intervalId);
   }, []); // Empty dependency - only run once on mount
 
   const fetchJourney = async (skipLoading = false) => {
@@ -238,7 +250,8 @@ export default function JourneyDetailPage() {
     }
   };
 
-  const handleShareToFeed = async () => {
+  // ✅ OPTIMIZED: Memoize callbacks
+  const handleShareToFeed = useCallback(async () => {
     if (!journey || journey.status !== 'completed') {
       toast.error('완독한 여정만 공유할 수 있습니다.');
       return;
@@ -278,9 +291,9 @@ export default function JourneyDetailPage() {
     } finally {
       setIsSharingToFeed(false);
     }
-  };
+  }, [journey, router]);
 
-  const handleSubmitLog = async (data: LogFormData, generateMusic: boolean) => {
+  const handleSubmitLog = useCallback(async (data: LogFormData, generateMusic: boolean) => {
     setIsSubmittingLog(true);
     try {
       const response = await fetch(`/api/journeys/${journeyId}/logs`, {
@@ -320,16 +333,16 @@ export default function JourneyDetailPage() {
     } finally {
       setIsSubmittingLog(false);
     }
-  };
+  }, [journeyId, triggerGeneration, fetchJourney]);
 
-  const handlePlayMusic = (track: MusicTrack) => {
+  const handlePlayMusic = useCallback((track: MusicTrack) => {
     if (track.file_url && track.status === 'completed') {
       setCurrentTrack(track);
       toast.success(`${track.genre || '음악'} 재생을 시작합니다.`);
     } else {
       toast.error('음악 파일이 아직 준비되지 않았습니다.');
     }
-  };
+  }, []);
 
   if (isLoading) {
     return (

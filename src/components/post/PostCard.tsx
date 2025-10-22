@@ -1,6 +1,6 @@
 'use client';
 
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { UserAvatar } from '@/components/user/UserAvatar';
@@ -16,6 +16,8 @@ interface PostCardProps {
 }
 
 export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps) {
+  const [isHovered, setIsHovered] = useState(false);
+  
   const handleCardClick = () => {
     onClick?.(post);
   };
@@ -25,11 +27,11 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
   };
 
   return (
-    <m.div
-      className="card-elevated group cursor-pointer overflow-hidden"
-      whileHover={{ y: -8 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+    <div
+      className="card-elevated group cursor-pointer overflow-hidden transition-transform hover:-translate-y-2"
       onClick={handleCardClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       {/* Album Cover / Book Cover - Mureka Style */}
       <div className="relative aspect-square rounded-xl overflow-hidden">
@@ -46,13 +48,12 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
           </div>
         )}
 
-        {/* Gradient overlay on hover */}
-        <m.div
-          className="absolute inset-0"
+        {/* ✅ OPTIMIZED: CSS transition instead of Framer Motion */}
+        <div
+          className={`absolute inset-0 transition-opacity duration-300 ${
+            isHovered ? 'opacity-100' : 'opacity-0'
+          }`}
           style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.9), transparent 60%)' }}
-          initial={{ opacity: 0 }}
-          whileHover={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
         />
 
         {/* Category Badge (top-left) */}
@@ -77,12 +78,11 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
           </div>
         </div>
 
-        {/* Play Button (center, appears on hover) */}
-        <m.button
-          className="absolute inset-0 flex items-center justify-center"
-          initial={{ opacity: 0, scale: 0 }}
-          whileHover={{ opacity: 1, scale: 1 }}
-          transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+        {/* ✅ OPTIMIZED: CSS scale transition */}
+        <button
+          className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${
+            isHovered ? 'opacity-100 scale-100' : 'opacity-0 scale-0'
+          }`}
           onClick={(e) => {
             e.stopPropagation();
             // Music play logic
@@ -91,14 +91,13 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
           <div className="w-20 h-20 rounded-full flex items-center justify-center shadow-2xl bg-gradient-accent">
             <Play className="w-10 h-10 text-white ml-1" />
           </div>
-        </m.button>
+        </button>
 
-        {/* User Info (bottom-left, on hover) */}
-        <m.div
-          className="absolute bottom-4 left-4 z-10 flex items-center gap-2"
-          initial={{ opacity: 0, y: 10 }}
-          whileHover={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
+        {/* ✅ OPTIMIZED: CSS transition */}
+        <div
+          className={`absolute bottom-4 left-4 z-10 flex items-center gap-2 transition-all duration-300 ${
+            isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+          }`}
         >
           <UserAvatar user={post.user} size="sm" />
           <div>
@@ -113,7 +112,7 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
               {new Date(post.createdAt).toLocaleDateString('ko-KR')}
             </p>
           </div>
-        </m.div>
+        </div>
       </div>
 
       {/* Content Section */}
@@ -172,6 +171,6 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
           />
         </div>
       </div>
-    </m.div>
+    </div>
   );
 });

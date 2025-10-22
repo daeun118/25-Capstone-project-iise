@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { PostCard } from '@/components/post/PostCard';
@@ -82,39 +82,39 @@ export default function FeedPage() {
     fetchPosts();
   }, [category, sort, pagination.page]);
 
-  // Reset to page 1 when filters change
-  const handleCategoryChange = (newCategory: string) => {
+  // ✅ OPTIMIZED: Memoize callbacks to prevent child re-renders
+  const handleCategoryChange = useCallback((newCategory: string) => {
     setCategory(newCategory);
     setPagination((prev) => ({ ...prev, page: 1 }));
-  };
+  }, []);
 
-  const handleSortChange = (newSort: string) => {
+  const handleSortChange = useCallback((newSort: string) => {
     setSort(newSort);
     setPagination((prev) => ({ ...prev, page: 1 }));
-  };
+  }, []);
 
-  const handlePageChange = (newPage: number) => {
+  const handlePageChange = useCallback((newPage: number) => {
     setPagination((prev) => ({ ...prev, page: newPage }));
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  }, []);
 
-  const handlePostClick = (post: PostDto) => {
+  const handlePostClick = useCallback((post: PostDto) => {
     router.push(`/feed/${post.id}`);
-  };
+  }, [router]);
 
-  const handleLike = async (postId: string) => {
+  const handleLike = useCallback(async (postId: string) => {
     // Phase 9 will implement this
     toast.info('좋아요 기능은 Phase 9에서 구현됩니다.');
-  };
+  }, []);
 
-  const handleComment = (postId: string) => {
+  const handleComment = useCallback((postId: string) => {
     router.push(`/feed/${postId}#comments`);
-  };
+  }, [router]);
 
-  const handleBookmark = async (postId: string) => {
+  const handleBookmark = useCallback(async (postId: string) => {
     // Phase 9 will implement this
     toast.info('스크랩 기능은 Phase 9에서 구현됩니다.');
-  };
+  }, []);
 
   return (
     <AppLayout>
