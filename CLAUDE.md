@@ -72,6 +72,9 @@ src/
 │   ├── ui/                  # shadcn/ui 기본 컴포넌트
 │   ├── journey/             # 독서 여정 UI
 │   ├── music/               # 음악 플레이어
+│   │   ├── MusicPlayerBar.tsx   # 하단 재생 바 (Spotify 스타일) ⭐
+│   │   ├── MusicPlayer.tsx      # 기본 플레이어
+│   │   └── Waveform.tsx         # 웨이브폼 시각화
 │   ├── post/                # 게시물 UI
 │   └── CLAUDE.md            # 컴포넌트 재사용 가이드 ⭐ 필독
 │
@@ -89,6 +92,7 @@ src/
 
 **⭐ 핵심 파일**:
 - `src/lib/openai/client.ts` - 3단계 음악 프롬프트 생성 로직 (v0/vN/vFinal)
+- `src/components/music/MusicPlayerBar.tsx` - 하단 재생 바 (Spotify 스타일, 2025-01 개선)
 - `src/components/CLAUDE.md` - **컴포넌트 생성 전 필수 확인** (재사용 가이드)
 - `src/services/` - 비즈니스 로직 레이어
 - `src/repositories/` - 데이터 접근 레이어
@@ -278,9 +282,18 @@ bash("sed -i 's/old/new/g' file.tsx")
 
 ## 개발 상태 및 다음 단계
 
-**현재**: ✅ Phase 12 완료 (Vercel 배포)
+**현재**: ✅ Phase 12 완료 (Vercel 배포) + 음악 재생 바 개선 완료
 **Production**: https://25-capstone-project-iise.vercel.app
 **다음**: Phase 13 - 앨범커버 생성 (DALL-E 3)
+
+**최근 개선사항** (2025-01):
+- ✅ **음악 재생 바 UX/디자인 대폭 개선** (Spotify/YouTube Music 스타일)
+  - 재생/일시정지 상태 동기화 오류 수정
+  - Audio 메모리 누수 해결 (이벤트 리스너 cleanup)
+  - 진행 바 상호작용 개선 (hover 효과, dragging 피드백)
+  - Visual hierarchy 강화 (48px 재생 버튼, 56px 앨범 커버)
+  - Glass morphism + pulse 애니메이션
+  - 모바일 터치 영역 최적화
 
 **완료된 최적화** (Phase 11):
 - N+1 쿼리 제거: 11개 → 1개 JOIN (60-70% 성능 개선)
