@@ -8,7 +8,7 @@ import { StatsDashboard } from '@/components/user/StatsDashboard';
 import { User, Mail, Calendar, Edit, Bookmark } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 interface UserProfile {
   id: string;
@@ -81,7 +81,7 @@ export default function MyPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto space-y-8">
           {/* Header */}
-          <motion.div
+          <m.div
             className="flex items-center justify-between"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -95,10 +95,10 @@ export default function MyPage() {
               <Bookmark className="mr-2 h-4 w-4" />
               보관함
             </Button>
-          </motion.div>
+          </m.div>
 
           {/* Profile Card - Gradient Hero */}
-          <motion.div
+          <m.div
             className="relative rounded-2xl overflow-hidden"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -138,7 +138,7 @@ export default function MyPage() {
                   <div className="flex items-start justify-between mb-8">
                     <div className="flex items-center gap-6">
                       {/* 아바타 */}
-                      <motion.div
+                      <m.div
                         className="w-24 h-24 rounded-full flex items-center justify-center text-4xl font-bold shadow-2xl"
                         style={{
                           background: 'linear-gradient(135deg, #ffffff, #f3f4f6)',
@@ -150,10 +150,10 @@ export default function MyPage() {
                         whileHover={{ scale: 1.05 }}
                       >
                         {profile.nickname.charAt(0).toUpperCase()}
-                      </motion.div>
+                      </m.div>
 
                       {/* 닉네임 + 이메일 */}
-                      <motion.div
+                      <m.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.4 }}
@@ -165,11 +165,11 @@ export default function MyPage() {
                           <Mail className="w-4 h-4" />
                           {profile.email}
                         </p>
-                      </motion.div>
+                      </m.div>
                     </div>
 
                     {/* 수정 버튼 */}
-                    <motion.div
+                    <m.div
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 0.5 }}
@@ -183,13 +183,13 @@ export default function MyPage() {
                         <Edit className="mr-2 h-4 w-4" />
                         프로필 수정
                       </Button>
-                    </motion.div>
+                    </m.div>
                   </div>
 
                   {/* 하단: 계정 정보 카드들 */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* 로그인 방식 */}
-                    <motion.div
+                    <m.div
                       className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20"
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -210,10 +210,10 @@ export default function MyPage() {
                           </p>
                         </div>
                       </div>
-                    </motion.div>
+                    </m.div>
 
                     {/* 가입일 */}
-                    <motion.div
+                    <m.div
                       className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20"
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -234,30 +234,30 @@ export default function MyPage() {
                           </p>
                         </div>
                       </div>
-                    </motion.div>
+                    </m.div>
                   </div>
                 </>
               ) : (
-                <motion.div
+                <m.div
                   className="text-center py-12"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                 >
                   <p className="text-white/80 text-lg">프로필 정보를 불러올 수 없습니다.</p>
-                </motion.div>
+                </m.div>
               )}
             </div>
-          </motion.div>
+          </m.div>
 
           {/* Statistics Dashboard */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.6 }}
           >
             <h2 className="text-3xl font-bold mb-6">독서 통계</h2>
             <StatsDashboard />
-          </motion.div>
+          </m.div>
         </div>
 
         {/* Profile Edit Dialog */}

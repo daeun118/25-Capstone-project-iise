@@ -13,7 +13,7 @@ import { Separator } from '@/components/ui/separator';
 import { Plus, CheckCircle2, Clock, Music2, BookOpen, Loader2, Share2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useMusicGeneration } from '@/hooks/useMusicGeneration';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 interface Journey {
   id: string;
@@ -345,10 +345,10 @@ export default function JourneyDetailPage() {
     return (
       <AppLayout>
         <div className="container mx-auto px-4 py-8">
-          <motion.div className="card-elevated p-12 text-center">
+          <m.div className="card-elevated p-12 text-center">
             <h2 className="text-2xl font-bold mb-4">독서 여정을 찾을 수 없습니다</h2>
             <Button onClick={() => router.push('/library')}>내 책장으로 돌아가기</Button>
-          </motion.div>
+          </m.div>
         </div>
       </AppLayout>
     );
@@ -380,7 +380,7 @@ export default function JourneyDetailPage() {
           <div className="lg:col-span-2 space-y-6">
             {/* Add Log Form */}
             {journey.status === 'reading' && (
-              <motion.div
+              <m.div
                 className="card-elevated rounded-2xl overflow-hidden"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -418,11 +418,11 @@ export default function JourneyDetailPage() {
                     </p>
                   )}
                 </div>
-              </motion.div>
+              </m.div>
             )}
 
             {/* Reading Logs List */}
-            <motion.div
+            <m.div
               className="card-elevated rounded-2xl overflow-hidden"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -439,14 +439,14 @@ export default function JourneyDetailPage() {
                 </div>
                 <LogList logs={logs} onPlayMusic={handlePlayMusic} />
               </div>
-            </motion.div>
+            </m.div>
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Music Player - Sticky */}
             {currentTrack && currentTrack.status === 'completed' && (
-              <motion.div
+              <m.div
                 className="card-elevated p-6 rounded-2xl"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -492,11 +492,11 @@ export default function JourneyDetailPage() {
                     )}
                   </div>
                 )}
-              </motion.div>
+              </m.div>
             )}
 
             {/* Statistics - Gradient Cards */}
-            <motion.div
+            <m.div
               className="card-gradient text-white p-6 rounded-2xl"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -504,7 +504,7 @@ export default function JourneyDetailPage() {
             >
               <h3 className="text-xl font-bold mb-6">독서 현황</h3>
               <div className="space-y-5">
-                <motion.div
+                <m.div
                   className="flex items-center justify-between p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20"
                   whileHover={{ scale: 1.02, backgroundColor: 'rgba(255, 255, 255, 0.15)' }}
                 >
@@ -517,9 +517,9 @@ export default function JourneyDetailPage() {
                     <span className="text-sm text-white/80">독서 기간</span>
                   </div>
                   <span className="text-2xl font-bold text-white">{totalReadingDays}일</span>
-                </motion.div>
+                </m.div>
 
-                <motion.div
+                <m.div
                   className="flex items-center justify-between p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20"
                   whileHover={{ scale: 1.02, backgroundColor: 'rgba(255, 255, 255, 0.15)' }}
                 >
@@ -532,9 +532,9 @@ export default function JourneyDetailPage() {
                     <span className="text-sm text-white/80">생성된 음악</span>
                   </div>
                   <span className="text-2xl font-bold text-white">{completedLogs.length}곡</span>
-                </motion.div>
+                </m.div>
 
-                <motion.div
+                <m.div
                   className="flex items-center justify-between p-4 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20"
                   whileHover={{ scale: 1.02, backgroundColor: 'rgba(255, 255, 255, 0.15)' }}
                 >
@@ -547,13 +547,13 @@ export default function JourneyDetailPage() {
                     <span className="text-sm text-white/80">독서 기록</span>
                   </div>
                   <span className="text-2xl font-bold text-white">{logs.length}개</span>
-                </motion.div>
+                </m.div>
               </div>
-            </motion.div>
+            </m.div>
 
             {/* Actions */}
             {journey.status === 'reading' ? (
-              <motion.div
+              <m.div
                 className="card-gradient-warm text-white p-6 rounded-2xl"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -571,9 +571,9 @@ export default function JourneyDetailPage() {
                   <CheckCircle2 className="mr-2 h-5 w-5" />
                   완독 처리하기
                 </Button>
-              </motion.div>
+              </m.div>
             ) : (
-              <motion.div
+              <m.div
                 className="card-elevated p-6 rounded-2xl"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -621,7 +621,7 @@ export default function JourneyDetailPage() {
                     </Button>
                   </div>
                 )}
-              </motion.div>
+              </m.div>
             )}
           </div>
         </div>

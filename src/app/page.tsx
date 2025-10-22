@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { BookOpen, Music, Users, Sparkles, ArrowRight, Play } from 'lucide-react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 export default function Home() {
   const features = [
@@ -45,14 +45,14 @@ export default function Home() {
 
         {/* 컨텐츠 */}
         <div className="relative container mx-auto px-4 sm:px-6 md:px-8 py-12 sm:py-20 md:py-32">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="max-w-6xl mx-auto"
           >
             {/* Badge */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
@@ -62,10 +62,10 @@ export default function Home() {
               <span className="text-xs sm:text-sm font-medium text-white">
                 AI가 만드는 나만의 독서 플레이리스트
               </span>
-            </motion.div>
+            </m.div>
 
             {/* Title */}
-            <motion.h1
+            <m.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.6 }}
@@ -74,10 +74,10 @@ export default function Home() {
               독서 여정을
               <br />
               음악으로 기록하세요
-            </motion.h1>
+            </m.h1>
 
             {/* Description */}
-            <motion.p
+            <m.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.6 }}
@@ -86,10 +86,10 @@ export default function Home() {
               책을 읽으며 느낀 감정들이 음악이 되어,
               <br className="hidden sm:inline" />
               당신만의 독서 플레이리스트를 완성합니다
-            </motion.p>
+            </m.p>
 
             {/* CTA Buttons */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.6 }}
@@ -115,10 +115,10 @@ export default function Home() {
                   여정 둘러보기
                 </Button>
               </Link>
-            </motion.div>
+            </m.div>
 
             {/* Demo Card */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.6 }}
@@ -140,7 +140,7 @@ export default function Home() {
 
                   {/* 프로그레스 바 */}
                   <div className="relative h-1.5 sm:h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <motion.div
+                    <m.div
                       className="absolute inset-y-0 left-0 rounded-full bg-gradient-accent"
                       initial={{ width: '0%' }}
                       animate={{ width: '60%' }}
@@ -155,24 +155,24 @@ export default function Home() {
                 </div>
 
                 {/* 재생 버튼 */}
-                <motion.button
+                <m.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                   className="w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center flex-shrink-0 bg-gradient-accent min-h-[44px] min-w-[44px]"
                   aria-label="재생"
                 >
                   <Play className="w-5 h-5 sm:w-6 sm:h-6 text-white ml-0.5" />
-                </motion.button>
+                </m.button>
               </div>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         </div>
       </section>
 
       {/* Features Section */}
       <section className="py-16 sm:py-20 md:py-24 px-4">
         <div className="container mx-auto max-w-6xl">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -185,11 +185,11 @@ export default function Home() {
             <p className="text-base sm:text-lg text-gray-600">
               독서와 음악이 만나는 새로운 방식
             </p>
-          </motion.div>
+          </m.div>
 
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
             {features.map((feature, i) => (
-              <motion.div
+              <m.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -205,7 +205,7 @@ export default function Home() {
 
                 <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3">{feature.title}</h3>
                 <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{feature.description}</p>
-              </motion.div>
+              </m.div>
             ))}
           </div>
         </div>
@@ -214,7 +214,7 @@ export default function Home() {
       {/* How It Works Section */}
       <section className="py-16 sm:py-20 md:py-24 px-4 bg-gray-50">
         <div className="container mx-auto max-w-6xl">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -225,11 +225,11 @@ export default function Home() {
             <p className="text-base sm:text-lg text-gray-600">
               4단계로 완성하는 나만의 독서 플레이리스트
             </p>
-          </motion.div>
+          </m.div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
             {steps.map((item, i) => (
-              <motion.div
+              <m.div
                 key={item.step}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -244,7 +244,7 @@ export default function Home() {
                   <h3 className="font-semibold text-base sm:text-lg mb-1 sm:mb-2">{item.title}</h3>
                   <p className="text-xs sm:text-sm text-gray-600">{item.desc}</p>
                 </div>
-              </motion.div>
+              </m.div>
             ))}
           </div>
         </div>
@@ -253,7 +253,7 @@ export default function Home() {
       {/* CTA Section */}
       <section className="py-16 sm:py-20 md:py-24 px-4">
         <div className="container mx-auto max-w-4xl">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -286,7 +286,7 @@ export default function Home() {
                 </Button>
               </Link>
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </section>
     </AppLayout>
