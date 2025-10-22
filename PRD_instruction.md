@@ -2,7 +2,7 @@
 
 **프로젝트명:** Reading Experience Platform (독서 여정 플랫폼)  
 **버전:** 2.0 (MVP)  
-**작성일:** 2025-10-20  
+**작성일:** 2025-10-22 (최종 수정)  
 **목표:** 독서 과정을 음악으로 기록하고 공유하는 웹 서비스 개발
 
 ---
@@ -171,9 +171,10 @@ Day 10: 완독
 ## 6. 기술 스택
 
 ### Frontend
-- **Next.js 14** (App Router)
-- **Tailwind CSS** + **Shadcn/ui**
+- **Next.js 15** (App Router)
+- **Tailwind CSS v4** + **Shadcn/ui**
 - **TypeScript**
+- **React 19**
 
 ### Backend & Database
 - **Supabase**

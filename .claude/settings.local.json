@@ -77,7 +77,8 @@
       "Bash(test:*)",
       "Bash(node scripts/check-server.js:*)",
       "Bash(node scripts/fix-framer-motion.js:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(tree:*)"
     ],
     "deny": [],
     "ask": []
