@@ -49,3 +49,10 @@ tests/screenshots/
 
 # test environment
 .env.test
+
+# MCP configuration (contains local paths and settings)
+.mcp.json
+
+# Claude Code
+.claude/
+.playwright-mcp/
