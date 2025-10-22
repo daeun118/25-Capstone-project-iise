@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Music } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Music, Loader2 } from 'lucide-react';
 import { Waveform } from './Waveform';
 import { m } from 'framer-motion';
 
@@ -25,9 +25,20 @@ export function MusicPlayer({
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(70);
   const [isMuted, setIsMuted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
+    if (!trackUrl) {
+      setHasError(true);
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    setHasError(false);
+
     // TODO: Howler.js 초기화
     audioRef.current = new Audio(trackUrl);
 
@@ -35,6 +46,7 @@ export function MusicPlayer({
 
     audio.addEventListener('loadedmetadata', () => {
       setDuration(audio.duration);
+      setIsLoading(false);
     });
 
     audio.addEventListener('timeupdate', () => {
@@ -46,7 +58,22 @@ export function MusicPlayer({
       setCurrentTime(0);
     });
 
+    audio.addEventListener('error', (e) => {
+      console.error('Audio playback error:', e);
+      setHasError(true);
+      setIsLoading(false);
+      setIsPlaying(false);
+    });
+
+    // 초기 로딩 타임아웃 (10초)
+    const loadTimeout = setTimeout(() => {
+      if (isLoading) {
+        setIsLoading(false);
+      }
+    }, 10000);
+
     return () => {
+      clearTimeout(loadTimeout);
       audio.pause();
       audio.remove();
     };
@@ -94,6 +121,28 @@ export function MusicPlayer({
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  // 에러 상태 표시
+  if (hasError) {
+    return (
+      <m.div
+        className="space-y-4 p-6 rounded-lg bg-red-50 border border-red-200"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <div className="text-center space-y-3">
+          <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mx-auto">
+            <Music className="w-6 h-6 text-red-600" />
+          </div>
+          <p className="font-semibold text-red-900">음악 파일을 불러올 수 없습니다</p>
+          <p className="text-sm text-red-700">
+            음악 파일이 아직 생성 중이거나 URL이 유효하지 않습니다.
+          </p>
+        </div>
+      </m.div>
+    );
+  }
+
   return (
     <m.div
       className="space-y-4"
@@ -137,8 +186,8 @@ export function MusicPlayer({
         </Button>
 
         <m.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: isLoading ? 1 : 1.05 }}
+          whileTap={{ scale: isLoading ? 1 : 0.95 }}
         >
           <Button
             size="icon"
@@ -147,8 +196,11 @@ export function MusicPlayer({
               background: 'linear-gradient(135deg, #6366f1, #8b5cf6)'
             }}
             onClick={togglePlayPause}
+            disabled={isLoading}
           >
-            {isPlaying ? (
+            {isLoading ? (
+              <Loader2 className="size-6 text-white animate-spin" />
+            ) : isPlaying ? (
               <Pause className="size-6 text-white" fill="white" />
             ) : (
               <Play className="size-6 text-white ml-0.5" fill="white" />

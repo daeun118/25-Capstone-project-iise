@@ -7,6 +7,7 @@ import { JourneyHeader } from '@/components/journey/JourneyHeader';
 import { LogForm, type LogFormData } from '@/components/journey/LogForm';
 import { LogList } from '@/components/journey/LogList';
 import { MusicPlayer } from '@/components/music/MusicPlayer';
+import { MusicPlayerBar } from '@/components/music/MusicPlayerBar';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -58,6 +59,7 @@ export default function JourneyDetailPage() {
   const [journey, setJourney] = useState<Journey | null>(null);
   const [logs, setLogs] = useState<ReadingLog[]>([]);
   const [currentTrack, setCurrentTrack] = useState<MusicTrack | null>(null);
+  const [currentTrackId, setCurrentTrackId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmittingLog, setIsSubmittingLog] = useState(false);
   const [showLogForm, setShowLogForm] = useState(false);
@@ -336,12 +338,53 @@ export default function JourneyDetailPage() {
   }, [journeyId, triggerGeneration, fetchJourney]);
 
   const handlePlayMusic = useCallback((track: MusicTrack) => {
-    if (track.file_url && track.status === 'completed') {
-      setCurrentTrack(track);
-      toast.success(`${track.genre || '음악'} 재생을 시작합니다.`);
-    } else {
-      toast.error('음악 파일이 아직 준비되지 않았습니다.');
+    console.log('🎵 handlePlayMusic called:', {
+      trackId: track.id,
+      currentTrackId,
+      status: track.status,
+      fileUrl: track.file_url,
+      genre: track.genre
+    });
+
+    // 상태 검증
+    if (track.status !== 'completed') {
+      if (track.status === 'pending' || track.status === 'generating') {
+        toast.error('음악이 아직 생성 중입니다. 잠시 후 다시 시도해주세요.');
+      } else {
+        toast.error('음악 생성에 실패했습니다.');
+      }
+      return;
     }
+
+    // URL 검증
+    if (!track.file_url || track.file_url.trim() === '') {
+      console.error('❌ Invalid file_url:', track.file_url);
+      toast.error('음악 파일 URL이 유효하지 않습니다.');
+      return;
+    }
+
+    // ✅ 같은 트랙 클릭 시 - 하단 바의 togglePlayPause 호출
+    if (currentTrackId === track.id && currentTrack) {
+      console.log('🔄 Same track clicked - toggling playback');
+      // 하단 바에서 처리하도록 이벤트 발생 (CustomEvent 사용)
+      const event = new CustomEvent('togglePlayPause');
+      window.dispatchEvent(event);
+      return;
+    }
+
+    // 다른 트랙 클릭 시 - 새 트랙으로 교체
+    console.log('✅ Starting new track');
+    setCurrentTrack(track);
+    setCurrentTrackId(track.id);
+    toast.success(`${track.genre || '음악'} 재생을 시작합니다.`, {
+      description: track.mood ? `분위기: ${track.mood}` : undefined,
+    });
+  }, [currentTrackId, currentTrack]);
+
+  const handleClosePlayer = useCallback(() => {
+    console.log('⏸️ Closing player');
+    setCurrentTrack(null);
+    setCurrentTrackId(null);
   }, []);
 
   if (isLoading) {
@@ -450,64 +493,13 @@ export default function JourneyDetailPage() {
                   </div>
                   <h2 className="text-2xl font-bold">독서 여정 타임라인</h2>
                 </div>
-                <LogList logs={logs} onPlayMusic={handlePlayMusic} />
+                <LogList logs={logs} onPlayMusic={handlePlayMusic} currentTrackId={currentTrackId} />
               </div>
             </m.div>
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Music Player - Sticky */}
-            {currentTrack && currentTrack.status === 'completed' && (
-              <m.div
-                className="card-elevated p-6 rounded-2xl"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              >
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{
-                    background: 'linear-gradient(135deg, #6366f1, #8b5cf6)'
-                  }}>
-                    <Music2 className="w-5 h-5 text-white" />
-                  </div>
-                  <h3 className="text-lg font-bold">현재 재생 중</h3>
-                </div>
-
-                <MusicPlayer
-                  trackUrl={currentTrack.file_url}
-                  trackTitle={journey.book_title}
-                  trackVersion={`음악`}
-                  showWaveform={false}
-                />
-
-                {currentTrack.description && (
-                  <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
-                    {currentTrack.description}
-                  </p>
-                )}
-
-                {(currentTrack.genre || currentTrack.mood) && (
-                  <div className="flex gap-2 mt-4">
-                    {currentTrack.genre && (
-                      <span className="text-xs px-3 py-1.5 rounded-full font-medium text-white shadow-sm" style={{
-                        background: 'linear-gradient(135deg, #6366f1, #8b5cf6)'
-                      }}>
-                        {currentTrack.genre}
-                      </span>
-                    )}
-                    {currentTrack.mood && (
-                      <span className="text-xs px-3 py-1.5 rounded-full font-medium text-white shadow-sm" style={{
-                        background: 'linear-gradient(135deg, #8b5cf6, #f093fb)'
-                      }}>
-                        {currentTrack.mood}
-                      </span>
-                    )}
-                  </div>
-                )}
-              </m.div>
-            )}
-
             {/* Statistics - Gradient Cards */}
             <m.div
               className="card-gradient text-white p-6 rounded-2xl"
@@ -638,6 +630,25 @@ export default function JourneyDetailPage() {
             )}
           </div>
         </div>
+
+        {/* Bottom Music Player Bar */}
+        {currentTrack && currentTrack.status === 'completed' && (
+          <MusicPlayerBar
+            trackUrl={currentTrack.file_url}
+            trackTitle={journey.book_title}
+            trackVersion={
+              logs.find((log) => log.music_track?.id === currentTrack.id)?.log_type === 'v0'
+                ? 'v0 - 여정 시작'
+                : logs.find((log) => log.music_track?.id === currentTrack.id)?.log_type === 'vFinal'
+                ? 'vFinal - 완독'
+                : `v${logs.find((log) => log.music_track?.id === currentTrack.id)?.version || ''}`
+            }
+            bookCoverUrl={journey.book_cover_url}
+            genre={currentTrack.genre}
+            mood={currentTrack.mood}
+            onClose={handleClosePlayer}
+          />
+        )}
       </div>
     </AppLayout>
   );

@@ -2,7 +2,7 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Music, Play, Clock, Lock, Loader2, AlertCircle, CheckCircle2, BookOpen } from 'lucide-react';
+import { Music, Play, Pause, Clock, Lock, Loader2, AlertCircle, CheckCircle2, BookOpen } from 'lucide-react';
 import { EmptyState } from '@/components/common/EmptyState';
 import { m } from 'framer-motion';
 
@@ -33,9 +33,10 @@ interface Log {
 interface LogListProps {
   logs: Log[];
   onPlayMusic?: (track: MusicTrack) => void;
+  currentTrackId?: string | null;
 }
 
-export function LogList({ logs, onPlayMusic }: LogListProps) {
+export function LogList({ logs, onPlayMusic, currentTrackId }: LogListProps) {
   if (logs.length === 0) {
     return (
       <EmptyState
@@ -58,6 +59,7 @@ export function LogList({ logs, onPlayMusic }: LogListProps) {
           const isGenerating = log.music_track?.status === 'pending' || log.music_track?.status === 'generating';
           const isCompleted = log.music_track?.status === 'completed';
           const isFailed = log.music_track?.status === 'error';
+          const isCurrentlyPlaying = log.music_track?.id === currentTrackId;
 
           return (
             <m.div
@@ -84,9 +86,18 @@ export function LogList({ logs, onPlayMusic }: LogListProps) {
 
               {/* 카드 */}
               <m.div
-                className="card-elevated overflow-hidden"
+                className={`card-elevated overflow-hidden transition-all ${
+                  isCurrentlyPlaying ? 'ring-2 ring-primary shadow-2xl' : ''
+                }`}
+                style={isCurrentlyPlaying ? {
+                  background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.08))'
+                } : undefined}
                 whileHover={{ y: -4 }}
                 transition={{ type: 'spring', stiffness: 300 }}
+                animate={isCurrentlyPlaying ? {
+                  scale: [1, 1.01, 1],
+                  transition: { duration: 2, repeat: Infinity }
+                } : {}}
               >
                 {/* 헤더 */}
                 <div className="p-6 pb-4">
@@ -109,21 +120,44 @@ export function LogList({ logs, onPlayMusic }: LogListProps) {
                     </div>
                     
                     <div className="flex items-center gap-2">
+                      {isCurrentlyPlaying && (
+                        <Badge className="bg-primary animate-pulse">
+                          <Music className="w-3 h-3 mr-1" />
+                          재생 중
+                        </Badge>
+                      )}
                       {!log.is_public && (
                         <Badge variant="outline" className="text-xs">
                           <Lock className="w-3 h-3 mr-1" />
                           비공개
                         </Badge>
                       )}
-                      {isCompleted && onPlayMusic && (
+                      {isCompleted && onPlayMusic && log.music_track?.file_url && (
                         <m.button
-                          onClick={() => onPlayMusic(log.music_track!)}
-                          className="w-10 h-10 rounded-full flex items-center justify-center shadow-md"
+                          onClick={() => {
+                            console.log('🎵 Play button clicked:', {
+                              logId: log.id,
+                              trackId: log.music_track?.id,
+                              fileUrl: log.music_track?.file_url,
+                              isCurrentlyPlaying
+                            });
+                            if (log.music_track?.file_url) {
+                              onPlayMusic(log.music_track);
+                            }
+                          }}
+                          className={`w-10 h-10 rounded-full flex items-center justify-center shadow-md transition-all ${
+                            isCurrentlyPlaying ? 'ring-2 ring-white' : ''
+                          }`}
                           style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
-                          whileHover={{ scale: 1.1 }}
+                          whileHover={{ scale: 1.1, boxShadow: '0 8px 16px rgba(99, 102, 241, 0.4)' }}
                           whileTap={{ scale: 0.95 }}
+                          aria-label={`${isV0 ? 'v0' : isFinal ? 'vFinal' : `v${log.version}`} 음악 ${isCurrentlyPlaying ? '일시정지' : '재생'}`}
                         >
-                          <Play className="w-5 h-5 text-white ml-0.5" />
+                          {isCurrentlyPlaying ? (
+                            <Pause className="w-5 h-5 text-white" fill="white" />
+                          ) : (
+                            <Play className="w-5 h-5 text-white ml-0.5" />
+                          )}
                         </m.button>
                       )}
                     </div>
