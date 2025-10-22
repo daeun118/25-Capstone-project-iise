@@ -49,10 +49,21 @@ export function BookSearchDialog({
     setHasSearched(true);
 
     try {
-      // Google Books API 호출
+      // Google Books API 호출 (평균 4초 소요)
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15초 타임아웃
+
       const response = await fetch(
-        `/api/books/search?q=${encodeURIComponent(query)}`
+        `/api/books/search?q=${encodeURIComponent(query)}`,
+        { signal: controller.signal }
       );
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        throw new Error(`검색 실패: ${response.status}`);
+      }
+
       const data = await response.json();
 
       if (data.success) {
@@ -63,6 +74,13 @@ export function BookSearchDialog({
     } catch (err) {
       console.error('Search failed:', err);
       setResults([]);
+
+      // 타임아웃이나 네트워크 에러 시 사용자에게 알림
+      if (err instanceof Error) {
+        if (err.name === 'AbortError') {
+          console.warn('검색 시간이 초과되었습니다. 다시 시도해주세요.');
+        }
+      }
     } finally {
       setIsLoading(false);
     }

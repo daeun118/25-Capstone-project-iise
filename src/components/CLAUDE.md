@@ -119,14 +119,7 @@ import { Pagination } from '@/components/common/Pagination';
 />
 ```
 
-#### ThemeToggle
-다크모드 토글. localStorage 저장.
 
-```typescript
-import { ThemeToggle } from '@/components/common/ThemeToggle';
-
-<ThemeToggle />
-```
 
 #### ErrorBoundary
 에러 캐치 및 복구. React 클래스 컴포넌트.
@@ -186,9 +179,10 @@ import { FilterBar } from '@/components/common/FilterBar';
 ## ✅ 도메인 컴포넌트
 
 ### 인증 (Auth)
+- **LoginDialog**: 로그인 다이얼로그 (모달 형태)
+- **SignupDialog**: 회원가입 다이얼로그 (모달 형태)
 - **LoginForm**: 이메일/비밀번호 로그인 폼
 - **SignupForm**: 회원가입 폼 (닉네임, 약관 동의 포함)
-- **SocialLoginButtons**: Google, Kakao 소셜 로그인
 
 ### 도서 (Book)
 - **BookSearchDialog**: Google Books API 검색 다이얼로그

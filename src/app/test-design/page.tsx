@@ -11,7 +11,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { EmptyState } from '@/components/common/EmptyState';
 import { Pagination } from '@/components/common/Pagination';
-import { ThemeToggle } from '@/components/common/ThemeToggle';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import { ConfirmDialog } from '@/components/common/ConfirmDialog';
 import { FilterBar } from '@/components/common/FilterBar';
@@ -36,12 +35,9 @@ export default function TestDesignPage() {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 space-y-12">
         {/* Header */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">Component Showcase</h1>
-            <p className="text-muted-foreground">모든 컴포넌트를 한 페이지에서 확인</p>
-          </div>
-          <ThemeToggle />
+        <div>
+          <h1 className="text-4xl font-bold mb-2">Component Showcase</h1>
+          <p className="text-muted-foreground">모든 컴포넌트를 한 페이지에서 확인</p>
         </div>
 
         {/* Tabs for Categories */}
@@ -309,19 +305,6 @@ export default function TestDesignPage() {
                     totalPages={20}
                     onPageChange={setCurrentPage}
                   />
-                </CardContent>
-              </Card>
-            </section>
-
-            {/* ThemeToggle */}
-            <section className="space-y-4">
-              <h2 className="text-2xl font-semibold">ThemeToggle</h2>
-              <Card>
-                <CardContent className="pt-6 flex items-center gap-4">
-                  <ThemeToggle />
-                  <p className="text-sm text-muted-foreground">
-                    클릭하여 라이트/다크 모드를 전환하세요
-                  </p>
                 </CardContent>
               </Card>
             </section>

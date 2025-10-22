@@ -12,30 +12,47 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 주요 명령어
 
+### 개발 & 빌드
 ```bash
-# 개발 (포트 3000 자동 정리)
-npm run dev
+# 개발 서버 (포트 3000 자동 정리)
+npm run dev              # 권장 - 자동 포트 관리
+npm run dev:raw          # Turbopack만 (포트 관리 없음)
 
 # 서버 관리
-npm run server:status    # 상태 확인
-npm run server:kill      # 포트 강제 종료
+npm run server:status    # 포트 3000 상태 확인
+npm run server:kill      # 포트 3000 강제 종료
 
 # 빌드 & 배포
-npm run build
-npm start
+npm run build            # Production 빌드
+npm start                # Production 서버 실행
+```
 
-# 테스트
-npm test                 # Playwright E2E
-npm run test:ui          # UI 모드
+### 테스트
+```bash
+# E2E 테스트 (Playwright)
+npm test                 # Headless 모드
+npm run test:ui          # UI 모드 (권장)
+npm run test:headed      # Headed 모드 (브라우저 표시)
+npm run test:debug       # 디버그 모드
+npm run test:report      # 테스트 리포트 보기
 
-# 데이터베이스 타입 생성
+# 플로우 테스트 (Node 스크립트)
+npm run test:music-flow      # 음악 생성 플로우
+npm run test:complete-flow   # 완독 플로우
+npm run test:library         # 라이브러리 기능
+```
+
+### 데이터베이스
+```bash
+# 타입 생성 (DB 스키마 변경 시)
 supabase gen types typescript --project-id oelgskajaisratnbffip > src/types/database.ts
 ```
 
 **Troubleshooting**:
 - 포트 충돌: `npm run server:kill` → `npm run dev`
 - 빌드 에러: `rm -rf .next` → `npm run build`
-- 타입 에러: DB 타입 재생성 → 빌드
+- 타입 에러: DB 타입 재생성 → `npm run build`
+- Framer Motion 에러: `node scripts/fix-framer-motion.js`
 
 ## 환경 변수
 
@@ -81,16 +98,21 @@ src/
 ├── lib/
 │   ├── supabase/           # client.ts, server.ts
 │   ├── openai/             # 음악 프롬프트 생성 ⭐
-│   └── utils.ts
+│   ├── mureka/             # Mureka API 클라이언트
+│   └── google-books/       # Google Books API
 │
 ├── hooks/                   # Custom React Hooks
-├── services/                # 비즈니스 로직
+├── services/                # 비즈니스 로직 레이어 ⭐
+├── repositories/            # 데이터 접근 레이어 ⭐
 └── types/                   # TypeScript 타입
+    └── dto/                # Data Transfer Objects
 ```
 
 **⭐ 핵심 파일**:
 - `src/lib/openai/client.ts` - 3단계 음악 생성 로직
 - `src/components/CLAUDE.md` - 컴포넌트 사용 전 필수 확인
+- `src/services/*.service.ts` - 비즈니스 로직 (의존성 주입 패턴)
+- `src/repositories/*.repository.ts` - DB 접근 (Repository 패턴)
 
 ## MCP 도구 사용
 
@@ -127,7 +149,47 @@ bash("sed -i 's/old/new/g' file.tsx")
 
 ## 핵심 아키텍처 패턴
 
-### 1. Next.js 15 - Dynamic Route Params (중요!)
+### 1. 레이어드 아키텍처 (Repository + Service Pattern)
+
+```typescript
+// ✅ 레이어 분리
+API Route → Service → Repository → Database
+
+// Repository Layer - 데이터 접근만 담당
+export class JourneyRepository extends BaseRepository<Journey> {
+  async findByUserId(userId: string) {
+    return this.db.from('reading_journeys').select('*').eq('user_id', userId);
+  }
+}
+
+// Service Layer - 비즈니스 로직 담당
+export class JourneyService {
+  constructor(
+    private journeyRepo: IJourneyRepository,
+    private musicService: IMusicService
+  ) {}
+  
+  async create(userId: string, dto: CreateJourneyDto) {
+    const journey = await this.journeyRepo.create({...});
+    await this.musicService.generateV0Music({...});
+    return journey;
+  }
+}
+
+// API Route - 요청/응답 처리만
+export async function POST(req: Request) {
+  const service = new JourneyService(journeyRepo, musicService);
+  const result = await service.create(userId, dto);
+  return Response.json(result);
+}
+```
+
+**원칙**:
+- Repository: DB 쿼리만 (비즈니스 로직 없음)
+- Service: 비즈니스 로직 + 트랜잭션 관리
+- API Route: HTTP 요청/응답 처리만
+
+### 2. Next.js 15 - Dynamic Route Params (중요!)
 
 ```typescript
 // ❌ Next.js 14 방식 (작동 안 함)
@@ -141,7 +203,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 }
 ```
 
-### 2. 3단계 음악 생성 플로우 (핵심 비즈니스 로직)
+### 3. 3단계 음악 생성 플로우 (핵심 비즈니스 로직)
 
 ```typescript
 v0 (여정 시작): 책 정보만 → 첫 음악
@@ -157,7 +219,7 @@ vFinal (완독): 전체 히스토리 + 최종 감상 → 피날레 음악
 - Response: `{ type: 'json_object' }`
 - 컨텍스트: 최근 2개 로그만 (`previousLogs.slice(-2)`)
 
-### 3. Supabase 클라이언트 분리
+### 4. Supabase 클라이언트 분리
 
 ```typescript
 // ✅ 클라이언트 컴포넌트 ('use client')
@@ -169,7 +231,7 @@ import { createClient } from '@/lib/supabase/server'
 const supabase = await createClient()  // await 필수!
 ```
 
-### 4. 라우트 그룹 구조
+### 5. 라우트 그룹 구조
 
 - `(auth)/` → `/login`, `/signup` (최소 레이아웃)
 - `(main)/` → `/journey`, `/library` (Header + Sidebar)
@@ -195,11 +257,20 @@ const supabase = await createClient()  // await 필수!
 - Naming: camelCase (변수/함수), PascalCase (컴포넌트/타입)
 - 파일명: kebab-case
 - Import: `@/` 별칭 사용
+- **절대 금지**: 이모지 사용 (Lucide React 아이콘만 허용)
 
-**컴포넌트**:
-1. Server Components 우선
+**컴포넌트 원칙**:
+1. Server Components 우선 (RSC)
 2. 클라이언트 상태 필요시만 `'use client'`
-3. 단일 책임, hooks로 재사용
+3. 단일 책임 원칙 (SRP)
+4. Props 인터페이스 명시
+5. Variant 시스템 활용
+
+**아키텍처 원칙**:
+1. **레이어 분리**: API Route → Service → Repository → DB
+2. **의존성 주입**: 생성자로 의존성 주입
+3. **인터페이스 우선**: 구현보다 인터페이스에 의존
+4. **단일 책임**: 각 레이어는 하나의 책임만
 
 ### 컴포넌트 규칙 (중요!)
 
@@ -224,43 +295,76 @@ function MyBookCard() { /* ... */ }
 
 
 ### 에러 처리
-- API: try-catch + HTTP 상태 코드
-- UI: `sonner` toast
-- 로딩: 음악 생성 30초~2분 고려
+- **API Routes**: try-catch + 적절한 HTTP 상태 코드
+- **UI**: `sonner` toast 사용
+- **비동기 작업**: 로딩 상태 표시 (음악 생성 30초~2분)
+- **Repository**: 데이터베이스 에러를 도메인 에러로 변환
+- **Service**: 비즈니스 로직 검증 + 에러 처리
 
 ### 보안
-- 환경 변수: `NEXT_PUBLIC_*` (클라이언트), 나머지 (서버 전용)
-- RLS: 모든 테이블 활성화
-- 인증: Supabase Auth
-- 검증: Zod 스키마 사용
+- **환경 변수**: `NEXT_PUBLIC_*` (클라이언트), 나머지 (서버 전용)
+- **RLS**: 모든 테이블 활성화 (사용자는 자신의 데이터만 접근)
+- **인증**: Supabase Auth (세션 기반)
+- **검증**: Zod 스키마로 입력 검증
+- **Authorization**: Service 레이어에서 권한 확인
 
-## 알려진 이슈
+## 알려진 이슈 및 해결방법
 
-### 1. emotion_tags 조회
+### 1. emotion_tags 조회 (다대다 관계)
 
 `reading_logs`에 `emotion_tags` 필드 없음 → `log_emotions` 테이블로 조인 필요
 
 ```typescript
-// ❌ 에러
+// ❌ 에러 - emotion_tags 컬럼은 reading_logs에 없음
 select('*, emotion_tags')
 
-// ✅ 올바름
+// ✅ 올바름 - log_emotions 중간 테이블을 통해 조인
 select(`
   *,
   log_emotions!inner (
     emotion_tags (id, name, color)
   )
 `)
+
+// 또는 별도 쿼리로 가져오기
+const { data: logEmotions } = await supabase
+  .from('log_emotions')
+  .select('emotion_tags(id, name, color)')
+  .eq('log_id', logId);
 ```
 
-### 2. Framer Motion 에러
+### 2. Framer Motion 트리 쉐이킹 에러
 
-**문제**: `motion is not defined`
+**문제**: `motion is not defined` 또는 빌드 에러
 
 **해결**:
 ```typescript
-'use client'  // 필수
+// 1. 'use client' 필수
+'use client'
 import { motion } from 'framer-motion'
+
+// 2. MotionProvider로 감싸기 (layout.tsx에서)
+import { MotionProvider } from '@/components/providers/MotionProvider'
+
+<MotionProvider>
+  {children}
+</MotionProvider>
+```
+
+**참고**: `scripts/fix-framer-motion.js` 스크립트로 자동 수정 가능
+
+### 3. 포트 3000 충돌
+
+**문제**: `EADDRINUSE: address already in use :::3000`
+
+**해결**:
+```bash
+# 자동 해결 (dev 스크립트에 내장)
+npm run dev
+
+# 수동 해결
+npm run server:kill
+npm run dev:raw
 ```
 
 ## 개발 상태

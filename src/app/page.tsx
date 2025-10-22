@@ -1,13 +1,19 @@
 'use client';
 
+import { useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { LoginDialog } from '@/components/auth/LoginDialog';
+import { SignupDialog } from '@/components/auth/SignupDialog';
 import { BookOpen, Music, Users, Sparkles, ArrowRight, Play } from 'lucide-react';
 import Link from 'next/link';
 import { m } from 'framer-motion';
 
 export default function Home() {
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [signupOpen, setSignupOpen] = useState(false);
+
   const features = [
     {
       icon: BookOpen,
@@ -268,27 +274,43 @@ export default function Home() {
               무료로 회원가입하고 당신만의 독서 플레이리스트를 만들어보세요
             </p>
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
-              <Link href="/signup" className="w-full sm:w-auto">
-                <Button
-                  size="lg"
-                  className="w-full sm:w-auto bg-white text-primary hover:bg-white/90 font-semibold px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-xl min-h-[44px]"
-                >
-                  회원가입하기
-                </Button>
-              </Link>
-              <Link href="/login" className="w-full sm:w-auto">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="w-full sm:w-auto bg-white/10 backdrop-blur-sm text-white border-white/30 hover:bg-white/20 font-semibold px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-xl min-h-[44px]"
-                >
-                  로그인
-                </Button>
-              </Link>
+              <Button
+                size="lg"
+                className="w-full sm:w-auto bg-white text-primary hover:bg-white/90 font-semibold px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-xl min-h-[44px]"
+                onClick={() => setSignupOpen(true)}
+              >
+                회원가입하기
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full sm:w-auto bg-white/10 backdrop-blur-sm text-white border-white/30 hover:bg-white/20 font-semibold px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-xl min-h-[44px]"
+                onClick={() => setLoginOpen(true)}
+              >
+                로그인
+              </Button>
             </div>
           </m.div>
         </div>
       </section>
+
+      {/* Auth Dialogs */}
+      <LoginDialog 
+        open={loginOpen} 
+        onOpenChange={setLoginOpen}
+        onSwitchToSignup={() => {
+          setLoginOpen(false);
+          setSignupOpen(true);
+        }}
+      />
+      <SignupDialog 
+        open={signupOpen} 
+        onOpenChange={setSignupOpen}
+        onSwitchToLogin={() => {
+          setSignupOpen(false);
+          setLoginOpen(true);
+        }}
+      />
     </AppLayout>
   );
 }

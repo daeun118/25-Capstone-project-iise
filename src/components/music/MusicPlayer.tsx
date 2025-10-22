@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX } from 'lucide-react';
+import { Play, Pause, SkipBack, SkipForward, Volume2, VolumeX, Music } from 'lucide-react';
 import { Waveform } from './Waveform';
+import { m } from 'framer-motion';
 
 interface MusicPlayerProps {
   trackUrl: string;
@@ -95,69 +95,89 @@ export function MusicPlayer({
   };
 
   return (
-    <Card>
-      <CardContent className="pt-6 space-y-4">
-        {/* Track Info */}
-        <div className="text-center">
-          <p className="font-semibold text-lg">{trackTitle}</p>
-          <p className="text-sm text-muted-foreground">{trackVersion}</p>
+    <m.div
+      className="space-y-4"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      {/* Track Info */}
+      <div className="text-center space-y-2">
+        <p className="font-bold text-base">{trackTitle}</p>
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full" style={{
+          background: 'linear-gradient(135deg, #6366f1, #8b5cf6)'
+        }}>
+          <Music className="w-3.5 h-3.5 text-white" />
+          <span className="text-sm font-semibold text-white">{trackVersion}</span>
         </div>
+      </div>
 
-        {/* Waveform */}
-        {showWaveform && <Waveform audioUrl={trackUrl} height={100} />}
+      {/* Waveform */}
+      {showWaveform && <Waveform audioUrl={trackUrl} height={80} />}
 
-        {/* Progress Bar */}
-        <div className="space-y-2">
-          <Slider
-            value={[currentTime]}
-            max={duration || 100}
-            step={0.1}
-            onValueChange={handleSeek}
-            className="w-full"
-          />
-          <div className="flex justify-between text-xs text-muted-foreground">
-            <span>{formatTime(currentTime)}</span>
-            <span>{formatTime(duration)}</span>
-          </div>
+      {/* Progress Bar */}
+      <div className="space-y-2">
+        <Slider
+          value={[currentTime]}
+          max={duration || 100}
+          step={0.1}
+          onValueChange={handleSeek}
+          className="w-full [&>span:first-child]:bg-primary/20 [&_[role=slider]]:bg-primary [&_[role=slider]]:border-primary [&_[role=slider]]:shadow-lg"
+        />
+        <div className="flex justify-between text-xs font-medium text-foreground/70">
+          <span>{formatTime(currentTime)}</span>
+          <span>{formatTime(duration)}</span>
         </div>
+      </div>
 
-        {/* Controls */}
-        <div className="flex items-center justify-center gap-4">
-          <Button size="icon" variant="ghost" disabled>
-            <SkipBack className="size-5" />
-          </Button>
+      {/* Controls */}
+      <div className="flex items-center justify-center gap-6">
+        <Button size="icon" variant="ghost" disabled className="opacity-50">
+          <SkipBack className="size-5" />
+        </Button>
 
-          <Button size="icon" className="size-12" onClick={togglePlayPause}>
+        <m.div
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <Button
+            size="icon"
+            className="size-14 rounded-full shadow-lg"
+            style={{
+              background: 'linear-gradient(135deg, #6366f1, #8b5cf6)'
+            }}
+            onClick={togglePlayPause}
+          >
             {isPlaying ? (
-              <Pause className="size-6" />
+              <Pause className="size-6 text-white" fill="white" />
             ) : (
-              <Play className="size-6" />
+              <Play className="size-6 text-white ml-0.5" fill="white" />
             )}
           </Button>
+        </m.div>
 
-          <Button size="icon" variant="ghost" disabled>
-            <SkipForward className="size-5" />
-          </Button>
-        </div>
+        <Button size="icon" variant="ghost" disabled className="opacity-50">
+          <SkipForward className="size-5" />
+        </Button>
+      </div>
 
-        {/* Volume Control */}
-        <div className="flex items-center gap-3">
-          <Button size="icon" variant="ghost" onClick={toggleMute}>
-            {isMuted ? (
-              <VolumeX className="size-4" />
-            ) : (
-              <Volume2 className="size-4" />
-            )}
-          </Button>
-          <Slider
-            value={[isMuted ? 0 : volume]}
-            max={100}
-            step={1}
-            onValueChange={handleVolumeChange}
-            className="w-24"
-          />
-        </div>
-      </CardContent>
-    </Card>
+      {/* Volume Control */}
+      <div className="flex items-center justify-center gap-3 pt-2">
+        <Button size="icon" variant="ghost" onClick={toggleMute} className="size-9">
+          {isMuted ? (
+            <VolumeX className="size-4" />
+          ) : (
+            <Volume2 className="size-4" />
+          )}
+        </Button>
+        <Slider
+          value={[isMuted ? 0 : volume]}
+          max={100}
+          step={1}
+          onValueChange={handleVolumeChange}
+          className="w-32 [&>span:first-child]:bg-primary/20 [&_[role=slider]]:bg-primary [&_[role=slider]]:border-primary"
+        />
+      </div>
+    </m.div>
   );
 }

@@ -8,10 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { UserAvatar } from './UserAvatar';
-import { BookOpen, Bookmark, User, Settings, Moon, Sun, LogOut } from 'lucide-react';
-import { useTheme } from 'next-themes';
-import { useEffect, useState } from 'react';
+import { User as UserIcon, LogOut, ChevronDown } from 'lucide-react';
 
 interface User {
   id: string;
@@ -26,76 +23,42 @@ interface UserProfileDropdownProps {
 }
 
 export function UserProfileDropdown({ user, onLogout }: UserProfileDropdownProps) {
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const handleThemeToggle = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
-  };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-full">
-          <UserAvatar user={user} size="sm" />
+        <button className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary">
+          <span className="text-sm font-medium text-slate-900">
+            {user.nickname}
+          </span>
+          <ChevronDown className="w-4 h-4 text-slate-500" />
         </button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent align="end" className="w-56 bg-white border border-slate-200 shadow-lg">
         <DropdownMenuLabel>
           <div className="flex flex-col gap-1">
-            <p className="text-sm font-medium">{user.nickname}</p>
-            <p className="text-xs text-muted-foreground">{user.email}</p>
+            <p className="text-sm font-semibold text-slate-900">{user.nickname}</p>
+            <p className="text-xs text-slate-500 font-normal">{user.email}</p>
           </div>
         </DropdownMenuLabel>
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem onClick={() => window.location.href = '/my'}>
-          <User className="mr-2 size-4" />
-          마이페이지
+        <DropdownMenuItem 
+          onClick={() => window.location.href = '/my'}
+          className="cursor-pointer"
+        >
+          <UserIcon className="mr-2 size-4" />
+          <span>프로필</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem onClick={() => window.location.href = '/library'}>
-          <BookOpen className="mr-2 size-4" />
-          내 책장
-        </DropdownMenuItem>
-
-        <DropdownMenuItem onClick={() => window.location.href = '/bookmarks'}>
-          <Bookmark className="mr-2 size-4" />
-          보관함
-        </DropdownMenuItem>
-
-        <DropdownMenuSeparator />
-
-        <DropdownMenuItem onClick={() => window.location.href = '/settings'}>
-          <Settings className="mr-2 size-4" />
-          설정
-        </DropdownMenuItem>
-
-        <DropdownMenuItem onClick={handleThemeToggle}>
-          {mounted && theme === 'dark' ? (
-            <>
-              <Sun className="mr-2 size-4" />
-              라이트 모드
-            </>
-          ) : (
-            <>
-              <Moon className="mr-2 size-4" />
-              다크 모드
-            </>
-          )}
-        </DropdownMenuItem>
-
-        <DropdownMenuSeparator />
-
-        <DropdownMenuItem onClick={onLogout} className="text-destructive focus:text-destructive">
+        <DropdownMenuItem 
+          onClick={onLogout} 
+          className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50"
+        >
           <LogOut className="mr-2 size-4" />
-          로그아웃
+          <span>로그아웃</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

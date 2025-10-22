@@ -53,9 +53,9 @@ export function SignupForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="email">이메일</Label>
+        <Label htmlFor="email" className="text-sm font-medium">이메일</Label>
         <div className="relative">
           <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
           <Input
@@ -73,7 +73,7 @@ export function SignupForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="nickname">닉네임</Label>
+        <Label htmlFor="nickname" className="text-sm font-medium">닉네임</Label>
         <div className="relative">
           <User className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
           <Input
@@ -93,7 +93,7 @@ export function SignupForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password">비밀번호</Label>
+        <Label htmlFor="password" className="text-sm font-medium">비밀번호</Label>
         <div className="relative">
           <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
           <Input
@@ -112,7 +112,7 @@ export function SignupForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="confirmPassword">비밀번호 확인</Label>
+        <Label htmlFor="confirmPassword" className="text-sm font-medium">비밀번호 확인</Label>
         <div className="relative">
           <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
           <Input
@@ -149,7 +149,7 @@ export function SignupForm() {
         </Label>
       </div>
 
-      <Button type="submit" className="w-full" disabled={isLoading}>
+      <Button type="submit" className="w-full font-semibold" disabled={isLoading}>
         {isLoading ? (
           <>
             <Loader2 className="mr-2 size-4 animate-spin" />

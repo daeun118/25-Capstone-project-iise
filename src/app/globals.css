@@ -89,53 +89,6 @@
   }
 
   /* ========================================
-     🌙 Dark Mode (Optional)
-     ======================================== */
-
-  .dark {
-    /* 배경 색상 */
-    --background: #0a0a0a;
-    --background-secondary: #1a1a1a;
-    
-    /* 카드 & 서피스 */
-    --card: #171717;
-    --card-hover: #262626;
-    
-    /* 텍스트 색상 */
-    --foreground: #fafafa;
-    --muted: #a3a3a3;
-    --muted-foreground: #737373;
-    
-    /* 보더 */
-    --border: #2a2a2a;
-    --border-light: #1f1f1f;
-    
-    /* 액센트 색상 (다크모드에서 더 부드럽게) */
-    --primary: #818cf8;        /* Indigo 400 */
-    --primary-dark: #6366f1;   /* Indigo 500 */
-    --primary-light: #a5b4fc;  /* Indigo 300 */
-    
-    --secondary: #a78bfa;      /* Violet 400 */
-    --secondary-dark: #8b5cf6; /* Violet 500 */
-    --secondary-light: #c4b5fd;/* Violet 300 */
-    
-    /* 그라데이션 (다크모드 최적화) */
-    --gradient-hero: linear-gradient(135deg, #818cf8 0%, #a78bfa 50%, #f0abfc 100%);
-    --gradient-accent: linear-gradient(135deg, #818cf8 0%, #a78bfa 100%);
-    --gradient-warm: linear-gradient(135deg, #f0abfc 0%, #fb7185 100%);
-    --gradient-cool: linear-gradient(135deg, #67e8f9 0%, #22d3ee 100%);
-    --gradient-card: linear-gradient(135deg, #5eead4 0%, #f9a8d4 100%);
-    
-    /* 그림자 (다크모드에서 더 깊게) */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
-    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.6);
-    --shadow-primary: 0 8px 24px rgba(129, 140, 248, 0.2);
-    --shadow-primary-lg: 0 16px 48px rgba(129, 140, 248, 0.3);
-  }
-
-  /* ========================================
      🎯 Base Styles
      ======================================== */
 

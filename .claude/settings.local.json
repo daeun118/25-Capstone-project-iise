@@ -78,7 +78,17 @@
       "Bash(node scripts/check-server.js:*)",
       "Bash(node scripts/fix-framer-motion.js:*)",
       "Bash(rm:*)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(git log:*)",
+      "Bash(npx playwright test:*)",
+      "Bash(npx playwright:*)",
+      "WebFetch(domain:stripe.com)",
+      "Bash(npm run server:status:*)",
+      "Bash(node -e:*)",
+      "WebFetch(domain:ui.shadcn.com)",
+      "mcp__shadcn-ui__get_component_demo",
+      "mcp__shadcn-ui__list_blocks",
+      "mcp__shadcn-ui__get_block"
     ],
     "deny": [],
     "ask": []

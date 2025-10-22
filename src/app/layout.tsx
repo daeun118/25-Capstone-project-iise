@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
-import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { MotionProvider } from "@/components/providers/MotionProvider";
 import "./globals.css";
 
@@ -26,21 +25,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" suppressHydrationWarning>
+    <html lang="ko">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <MotionProvider>
-            {children}
-            <Toaster position="top-center" richColors />
-          </MotionProvider>
-        </ThemeProvider>
+        <MotionProvider>
+          {children}
+          <Toaster position="top-center" richColors />
+        </MotionProvider>
       </body>
     </html>
   );

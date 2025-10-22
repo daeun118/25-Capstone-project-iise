@@ -2,7 +2,6 @@
 
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { EmptyState } from '@/components/common/EmptyState';
-import { ThemeToggle } from '@/components/common/ThemeToggle';
 import { Pagination } from '@/components/common/Pagination';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen, Inbox, Search } from 'lucide-react';
@@ -135,23 +134,6 @@ export default function CommonComponentsTestPage() {
         </div>
       </section>
 
-      {/* ThemeToggle */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">ThemeToggle</h2>
-        <Card>
-          <CardHeader>
-            <CardTitle>다크모드 토글</CardTitle>
-            <CardDescription>라이트/다크 모드 전환</CardDescription>
-          </CardHeader>
-          <CardContent className="flex items-center gap-4">
-            <ThemeToggle />
-            <p className="text-sm text-muted-foreground">
-              버튼을 클릭하여 테마를 변경하세요. 전체 페이지에 적용됩니다.
-            </p>
-          </CardContent>
-        </Card>
-      </section>
-
       {/* Pagination */}
       <section className="space-y-4">
         <h2 className="text-2xl font-semibold">Pagination</h2>
@@ -262,33 +244,7 @@ export default function CommonComponentsTestPage() {
         </div>
       </section>
 
-      {/* Dark Mode Test */}
-      <section className="space-y-4 rounded-lg bg-slate-950 p-6">
-        <h2 className="text-2xl font-semibold text-white">Dark Mode Test</h2>
-        <div className="grid md:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>로딩 스피너</CardTitle>
-            </CardHeader>
-            <CardContent className="py-8">
-              <LoadingSpinner size="md" text="로딩 중..." />
-            </CardContent>
-          </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>페이지네이션</CardTitle>
-            </CardHeader>
-            <CardContent className="py-8">
-              <Pagination
-                currentPage={5}
-                totalPages={10}
-                onPageChange={setCurrentPage}
-              />
-            </CardContent>
-          </Card>
-        </div>
-      </section>
     </div>
   );
 }

@@ -38,9 +38,9 @@ export function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="email">이메일</Label>
+        <Label htmlFor="email" className="text-sm font-medium">이메일</Label>
         <div className="relative">
           <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
           <Input
@@ -58,7 +58,12 @@ export function LoginForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password">비밀번호</Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="password" className="text-sm font-medium">비밀번호</Label>
+          <Link href="/forgot-password" className="text-sm text-muted-foreground underline-offset-4 hover:underline">
+            비밀번호 찾기
+          </Link>
+        </div>
         <div className="relative">
           <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
           <Input
@@ -75,13 +80,7 @@ export function LoginForm() {
         </div>
       </div>
 
-      <div className="flex items-center justify-between text-sm">
-        <Link href="/forgot-password" className="text-primary hover:underline">
-          비밀번호 찾기
-        </Link>
-      </div>
-
-      <Button type="submit" className="w-full" disabled={isLoading}>
+      <Button type="submit" className="w-full font-semibold" disabled={isLoading}>
         {isLoading ? (
           <>
             <Loader2 className="mr-2 size-4 animate-spin" />
