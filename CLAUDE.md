@@ -30,8 +30,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### 애플리케이션 실행
 ```bash
-# 개발 서버 실행 (Turbopack 사용 - 가장 빠름)
+# 개발 서버 실행 (자동 포트 정리 + Turbopack)
 npm run dev
+# ✅ 포트 3000이 사용 중이면 자동으로 종료 후 새 서버 시작
+# ✅ scripts/dev-server.js를 통해 안전하게 관리됨
+
+# 원시 개발 서버 실행 (포트 정리 없음)
+npm run dev:raw
+# ⚠️ 수동으로 포트를 관리해야 함
 
 # 개발 서버 + Mureka MCP 브릿지 동시 실행
 npm run dev:with-mureka
@@ -46,7 +52,23 @@ npm run build
 npm start
 ```
 
-**중요**: 여러 개의 dev 서버가 백그라운드에서 실행 중일 수 있습니다. 새 서버 시작 전 `netstat -ano | findstr :3000` (Windows) 또는 `lsof -i :3000` (Mac/Linux)로 확인하세요.
+### 서버 관리 유틸리티
+```bash
+# 서버 상태 확인
+npm run server:status
+# 포트 3000 사용 여부 및 프로세스 정보 확인
+
+# 포트 강제 종료
+npm run server:kill
+# 포트 3000을 사용하는 프로세스를 강제 종료
+```
+
+**개발 서버 워크플로우**:
+1. `npm run dev` - 자동으로 포트를 정리하고 서버 시작 (권장)
+2. 문제 발생 시 `npm run server:status`로 상태 확인
+3. 필요시 `npm run server:kill`로 수동 종료 후 재시작
+
+**주의**: `npm run dev`는 이미 실행 중인 서버를 자동으로 종료하므로, 여러 개의 서버가 백그라운드에서 실행되는 문제를 방지합니다.
 
 ### 데이터베이스 타입 생성
 ```bash
@@ -79,6 +101,19 @@ npm run test:report
 - `playwright.config.ts` - Playwright 설정
 
 ### 유틸리티 스크립트
+
+#### 서버 관리 스크립트
+```bash
+# 개발 서버 관리 (자동 포트 정리 + 서버 시작)
+node scripts/dev-server.js
+# 또는: npm run dev
+
+# 서버 상태 확인
+node scripts/check-server.js
+# 또는: npm run server:status
+```
+
+#### E2E 테스트 스크립트
 ```bash
 # 음악 생성 플로우 E2E 테스트 (개발 서버 실행 필요)
 npm run test:music-flow
@@ -91,7 +126,10 @@ npm run test:complete-flow
 # 내 책장 페이지 E2E 테스트 (개발 서버 실행 필요)
 npm run test:library
 # 또는: node scripts/test-library.js
+```
 
+#### 개발 유틸리티 스크립트
+```bash
 # Mureka API 연결 테스트
 node scripts/test-mureka-api.js
 
