@@ -62,29 +62,31 @@ export interface ReadingLogResponseDto {
   id: string;
   journey_id: string;
   version: number;
-  log_type: 'v0' | 'vN' | 'vFinal';
-  quote?: string;
-  memo?: string;
+  log_type: string;
+  quote: string | null;
+  memo: string | null;
   emotion_tags?: string[];
-  music_prompt?: string;
-  music_track_id?: string;
+  music_prompt: string | null;
+  music_track_id: string | null;
   music_track?: MusicTrackResponseDto;
-  is_public: boolean;
-  created_at: string;
+  is_public: boolean | null;
+  created_at: string | null;
 }
 
 export interface MusicTrackResponseDto {
   id: string;
   prompt: string;
-  genre: string;
-  mood: string;
-  tempo: string;
-  description?: string;
+  genre: string | null;
+  mood: string | null;
+  tempo: number | null;
+  description: string | null;
   file_url: string;
-  status: 'pending' | 'generating' | 'completed' | 'error';
-  mureka_task_id?: string;
-  error_message?: string;
-  created_at: string;
+  file_size: number | null;
+  duration: number | null;
+  status: string | null;
+  mureka_task_id: string | null;
+  error_message: string | null;
+  created_at: string | null;
 }
 
 // ============================================

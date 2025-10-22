@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 interface StatsCardSkeletonProps {
   delay?: number;
@@ -8,7 +8,7 @@ interface StatsCardSkeletonProps {
 
 export function StatsCardSkeleton({ delay = 0 }: StatsCardSkeletonProps) {
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.5 }}
@@ -23,6 +23,6 @@ export function StatsCardSkeleton({ delay = 0 }: StatsCardSkeletonProps) {
           <Skeleton className="h-3 w-32" />
         </CardContent>
       </Card>
-    </motion.div>
+    </m.div>
   );
 }

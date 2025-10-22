@@ -11,62 +11,10 @@ import { BookCover } from '@/components/book/BookCover';
 import { Playlist } from '@/components/music/Playlist';
 import { Star, Calendar, Music } from 'lucide-react';
 import { useState } from 'react';
-
-interface MusicTrack {
-  id: string;
-  version: number;
-  logType: string;
-  title: string;
-  fileUrl: string;
-  prompt?: string;
-  genre?: string;
-  mood?: string;
-  tempo?: number;
-  duration?: number;
-  description?: string;
-}
-
-interface Comment {
-  id: string;
-  content: string;
-  createdAt: string;
-  user: {
-    id: string;
-    nickname: string;
-    email: string;
-  };
-}
+import { PostDetailDto, CommentDto } from '@/types/dto/post.dto';
 
 interface PostDetailProps {
-  post: {
-    id: string;
-    user: {
-      id: string;
-      nickname: string;
-      email: string;
-    };
-    journey: {
-      id: string;
-      bookTitle: string;
-      bookAuthor: string;
-      bookCoverUrl?: string;
-      bookCategory?: string;
-      bookDescription?: string;
-      rating?: number;
-      oneLiner?: string;
-      review?: string;
-      completedAt?: string;
-    };
-    albumCoverUrl?: string | null;
-    likesCount: number;
-    commentsCount: number;
-    bookmarksCount: number;
-    isLiked: boolean;
-    isBookmarked: boolean;
-    createdAt: string;
-    playlist: MusicTrack[];
-    comments: Comment[];
-  };
+  post: PostDetailDto;
   currentUserId?: string;
 }
 
@@ -76,7 +24,7 @@ export function PostDetail({
 }: PostDetailProps) {
   const [currentTrackId, setCurrentTrackId] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [comments, setComments] = useState<Comment[]>(post.comments);
+  const [comments, setComments] = useState<CommentDto[]>(post.comments);
 
   const handleTrackSelect = (trackId: string) => {
     setCurrentTrackId(trackId);

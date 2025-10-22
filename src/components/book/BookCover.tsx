@@ -3,7 +3,7 @@ import { BookOpen } from 'lucide-react';
 import Image from 'next/image';
 
 interface BookCoverProps {
-  src?: string;
+  src?: string | null;
   alt: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
   className?: string;

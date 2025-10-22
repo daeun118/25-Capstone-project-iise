@@ -1,8 +1,9 @@
 'use client';
 
+import { memo } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Music, BookOpen, Star, Play, Trash2, MoreVertical } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import Image from 'next/image';
 import { useState } from 'react';
 import {
@@ -45,7 +46,7 @@ interface JourneyCardProps {
   onDelete?: (journeyId: string) => void;
 }
 
-export function JourneyCard({ journey, onClick, onDelete }: JourneyCardProps) {
+export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelete }: JourneyCardProps) {
   const router = useRouter();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -81,7 +82,7 @@ export function JourneyCard({ journey, onClick, onDelete }: JourneyCardProps) {
   const progress = journey.progress || (isCompleted ? 100 : 0);
 
   return (
-    <motion.div
+    <m.div
       className="card-elevated group cursor-pointer overflow-hidden"
       whileHover={{ y: -4 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
@@ -108,7 +109,7 @@ export function JourneyCard({ journey, onClick, onDelete }: JourneyCardProps) {
         )}
 
         {/* 그라데이션 오버레이 (호버 시) */}
-        <motion.div
+        <m.div
           className="absolute inset-0"
           style={{
             background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
@@ -163,24 +164,24 @@ export function JourneyCard({ journey, onClick, onDelete }: JourneyCardProps) {
 
         {/* 진행률 (하단, 읽는 중일 때만) */}
         {!isCompleted && progress > 0 && (
-          <motion.div
+          <m.div
             className="absolute bottom-0 left-0 right-0 h-1"
             initial={{ opacity: 0 }}
             whileHover={{ opacity: 1 }}
           >
             <div className="absolute inset-0 bg-white/20" />
-            <motion.div
+            <m.div
               className="absolute inset-y-0 left-0"
               style={{
                 background: 'linear-gradient(90deg, #6366f1, #8b5cf6)',
                 width: `${progress}%`,
               }}
             />
-          </motion.div>
+          </m.div>
         )}
 
         {/* 재생 버튼 (Mureka 스타일 - 호버 시만 표시) */}
-        <motion.button
+        <m.button
           className="absolute bottom-4 right-4 w-14 h-14 rounded-full flex items-center justify-center shadow-xl"
           style={{
             background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
@@ -195,7 +196,7 @@ export function JourneyCard({ journey, onClick, onDelete }: JourneyCardProps) {
           }}
         >
           <Play className="w-6 h-6 text-white ml-0.5" />
-        </motion.button>
+        </m.button>
       </div>
 
       {/* 책 정보 */}
@@ -261,6 +262,6 @@ export function JourneyCard({ journey, onClick, onDelete }: JourneyCardProps) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </motion.div>
+    </m.div>
   );
-}
+});

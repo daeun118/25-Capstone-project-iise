@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Search, X } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 interface FilterOption {
   value: string;
@@ -94,7 +94,7 @@ export function FilterBar({
             {categories.map((category, index) => {
               const isSelected = selectedCategory === category.value;
               return (
-                <motion.button
+                <m.button
                   key={category.value}
                   onClick={() => handleCategoryClick(category.value)}
                   className={
@@ -116,7 +116,7 @@ export function FilterBar({
                   whileTap={{ scale: 0.98 }}
                 >
                   {category.label}
-                </motion.button>
+                </m.button>
               );
             })}
           </div>
@@ -124,7 +124,7 @@ export function FilterBar({
 
         {/* Sort Select - Enhanced */}
         {sortOptions.length > 0 && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4 }}
@@ -141,7 +141,7 @@ export function FilterBar({
                 ))}
               </SelectContent>
             </Select>
-          </motion.div>
+          </m.div>
         )}
       </div>
     </div>

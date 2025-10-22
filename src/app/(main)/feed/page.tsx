@@ -10,33 +10,7 @@ import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { EmptyState } from '@/components/common/EmptyState';
 import { BookOpen } from 'lucide-react';
 import { toast } from 'sonner';
-
-interface Post {
-  id: string;
-  user: {
-    id: string;
-    nickname: string;
-    email: string;
-    avatarUrl?: string;
-  };
-  journey: {
-    id: string;
-    bookTitle: string;
-    bookAuthor: string;
-    bookCoverUrl?: string;
-    bookCategory?: string;
-    rating?: number;
-    oneLiner?: string;
-    review?: string;
-  };
-  albumCoverUrl?: string | null;
-  likesCount: number;
-  commentsCount: number;
-  bookmarksCount: number;
-  isLiked: boolean;
-  isBookmarked: boolean;
-  createdAt: string;
-}
+import { PostDto } from '@/types/dto/post.dto';
 
 interface PaginationInfo {
   page: number;
@@ -65,7 +39,7 @@ const SORT_OPTIONS = [
 
 export default function FeedPage() {
   const router = useRouter();
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<PostDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState('all');
   const [sort, setSort] = useState('latest');
@@ -124,7 +98,7 @@ export default function FeedPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handlePostClick = (post: Post) => {
+  const handlePostClick = (post: PostDto) => {
     router.push(`/feed/${post.id}`);
   };
 

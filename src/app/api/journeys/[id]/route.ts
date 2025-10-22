@@ -69,11 +69,13 @@ export async function DELETE(
       .not('music_track_id', 'is', null);
 
     if (logs && logs.length > 0) {
-      const trackIds = logs.map(log => log.music_track_id);
-      await supabase
-        .from('music_tracks')
-        .delete()
-        .in('id', trackIds);
+      const trackIds = logs.map(log => log.music_track_id).filter((id): id is string => id !== null);
+      if (trackIds.length > 0) {
+        await supabase
+          .from('music_tracks')
+          .delete()
+          .in('id', trackIds);
+      }
     }
 
     // 2. Delete reading logs

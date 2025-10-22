@@ -9,36 +9,12 @@ import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { ArrowLeft, Bookmark } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-
-interface Post {
-  id: string;
-  albumCoverUrl: string | null;
-  albumCoverThumbnailUrl: string | null;
-  likesCount: number;
-  commentsCount: number;
-  bookmarksCount: number;
-  createdAt: string;
-  author: {
-    id: string;
-    nickname: string;
-    email: string;
-  };
-  journey: {
-    id: string;
-    bookIsbn: string | null;
-    bookTitle: string;
-    bookAuthor: string | null;
-    bookCoverUrl: string | null;
-    bookCategory: string | null;
-    rating: number | null;
-    oneLiner: string | null;
-  };
-}
+import { PostDto } from '@/types/dto/post.dto';
 
 interface BookmarkData {
   bookmarkId: string;
   bookmarkedAt: string;
-  post: Post;
+  post: PostDto;
 }
 
 export default function BookmarksPage() {
@@ -93,7 +69,7 @@ export default function BookmarksPage() {
     fetchBookmarks(true);
   };
 
-  const handlePostClick = (post: Post) => {
+  const handlePostClick = (post: PostDto) => {
     router.push(`/feed/${post.id}`);
   };
 

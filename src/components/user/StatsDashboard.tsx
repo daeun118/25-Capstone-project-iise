@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Book, Music, FileText, Heart, MessageSquare, Bookmark, Star, Tag } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import { StatsCard } from '@/components/common/StatsCard';
 import { StatsCardSkeleton } from '@/components/common/StatsCardSkeleton';
 
@@ -102,7 +102,7 @@ export function StatsDashboard() {
   return (
     <div className="space-y-8">
       {/* Journey Stats */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
@@ -139,10 +139,10 @@ export function StatsDashboard() {
             delay={0.2}
           />
         </div>
-      </motion.div>
+      </m.div>
 
       {/* Content Stats */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.6 }}
@@ -179,10 +179,10 @@ export function StatsDashboard() {
             delay={0.4}
           />
         </div>
-      </motion.div>
+      </m.div>
 
       {/* Engagement Stats */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.6 }}
@@ -219,10 +219,10 @@ export function StatsDashboard() {
             delay={0.6}
           />
         </div>
-      </motion.div>
+      </m.div>
 
       {/* Insights */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6, duration: 0.6 }}
@@ -251,7 +251,7 @@ export function StatsDashboard() {
             delay={0.75}
           />
         </div>
-      </motion.div>
+      </m.div>
     </div>
   );
 }

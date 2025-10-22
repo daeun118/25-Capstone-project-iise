@@ -1,7 +1,8 @@
+import { memo } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { LucideIcon, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 interface StatsCardProps {
   label: string;
@@ -16,7 +17,7 @@ interface StatsCardProps {
   className?: string;
 }
 
-export function StatsCard({
+export const StatsCard = memo(function StatsCard({
   label,
   value,
   description,
@@ -55,7 +56,7 @@ export function StatsCard({
   };
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay, duration: 0.5 }}
@@ -66,24 +67,24 @@ export function StatsCard({
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm font-medium text-gray-600">{label}</span>
             {Icon && (
-              <motion.div
+              <m.div
                 className="w-12 h-12 rounded-xl flex items-center justify-center"
                 style={{ background: gradient }}
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 transition={{ type: 'spring', stiffness: 400 }}
               >
                 <Icon className={cn('w-6 h-6', iconColor || 'text-white')} />
-              </motion.div>
+              </m.div>
             )}
           </div>
-          <motion.div
+          <m.div
             className="text-4xl font-bold mb-2"
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: delay + 0.2, type: 'spring', stiffness: 200 }}
           >
             {value}
-          </motion.div>
+          </m.div>
           {description && (
             <p className="text-sm text-gray-500">{description}</p>
           )}
@@ -95,6 +96,6 @@ export function StatsCard({
           )}
         </CardContent>
       </Card>
-    </motion.div>
+    </m.div>
   );
-}
+});

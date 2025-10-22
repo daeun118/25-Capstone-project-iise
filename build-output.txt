@@ -1,0 +1,29 @@
+
+> bookbeats@0.1.0 build
+> next build --turbopack
+
+   ▲ Next.js 15.5.6 (Turbopack)
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Finished writing to disk in 284ms
+ ✓ Compiled successfully in 4.0s
+   Linting and checking validity of types ...
+Failed to compile.
+
+./src/app/(main)/feed/page.tsx:191:19
+Type error: Type '(post: Post) => void' is not assignable to type '(post: Post) => void'. Two different types with this name exist, but they are unrelated.
+  Types of parameters 'post' and 'post' are incompatible.
+    Type 'Post' is not assignable to type 'Post'. Two different types with this name exist, but they are unrelated.
+      The types of 'journey.bookAuthor' are incompatible between these types.
+        Type 'string | null' is not assignable to type 'string'.
+          Type 'null' is not assignable to type 'string'.
+
+[0m [90m 189 |[39m                   key[33m=[39m{post[33m.[39mid}
+ [90m 190 |[39m                   post[33m=[39m{post}
+[31m[1m>[22m[39m[90m 191 |[39m                   onClick[33m=[39m{handlePostClick}
+ [90m     |[39m                   [31m[1m^[22m[39m
+ [90m 192 |[39m                 [33m/[39m[33m>[39m
+ [90m 193 |[39m               ))}
+ [90m 194 |[39m             [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m[0m
+Next.js build worker exited with code: 1 and signal: null

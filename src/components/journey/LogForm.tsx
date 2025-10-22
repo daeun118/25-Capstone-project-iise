@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { EmotionTagSelector } from './EmotionTagSelector';
 import { Loader2, Save, Music2, X } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 interface LogFormProps {
   onSubmit: (data: LogFormData, generateMusic: boolean) => Promise<void>;
@@ -51,7 +51,7 @@ export function LogForm({ onSubmit, onCancel }: LogFormProps) {
   };
 
   return (
-    <motion.div 
+    <m.div 
       className="space-y-6"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
@@ -208,7 +208,7 @@ export function LogForm({ onSubmit, onCancel }: LogFormProps) {
       </div>
 
       {/* Info Box */}
-      <motion.div 
+      <m.div 
         className="p-4 rounded-lg border border-primary/20 bg-primary/5"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -220,7 +220,7 @@ export function LogForm({ onSubmit, onCancel }: LogFormProps) {
           {' '}<strong>"음악 생성하기"</strong>를 선택하면 기록과 함께 AI가 당신의 감정을 담은 음악을 만들어줍니다.
           여러 기록을 빠르게 저장한 뒤, 원할 때 음악을 생성할 수도 있습니다.
         </p>
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   );
 }

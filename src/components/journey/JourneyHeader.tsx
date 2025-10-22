@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { BookCover } from '@/components/book/BookCover';
 import { Calendar, Music, FileText, Star, Share2, CheckCircle, BookOpen } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import Image from 'next/image';
 
 interface JourneyHeaderProps {
@@ -39,7 +39,7 @@ export function JourneyHeader({
   const isCompleted = status === 'completed';
 
   return (
-    <motion.div
+    <m.div
       className="relative rounded-2xl overflow-hidden"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -55,7 +55,7 @@ export function JourneyHeader({
       <div className="relative p-8 md:p-12">
         <div className="flex flex-col md:flex-row gap-8 items-start">
           {/* 책 커버 - 더 크게 */}
-          <motion.div
+          <m.div
             className="relative"
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -79,12 +79,12 @@ export function JourneyHeader({
                 </div>
               )}
             </div>
-          </motion.div>
+          </m.div>
 
           {/* 책 정보 */}
           <div className="flex-1 space-y-6">
             {/* 상태 배지 */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3 }}
@@ -98,10 +98,10 @@ export function JourneyHeader({
               >
                 {isCompleted ? '✓ 완독' : '읽는 중'}
               </Badge>
-            </motion.div>
+            </m.div>
 
             {/* 제목 & 저자 */}
-            <motion.div
+            <m.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
@@ -115,16 +115,16 @@ export function JourneyHeader({
               {bookPublisher && (
                 <p className="text-sm text-white/70 mt-2">{bookPublisher}</p>
               )}
-            </motion.div>
+            </m.div>
 
             {/* 통계 카드 */}
-            <motion.div
+            <m.div
               className="grid grid-cols-2 md:grid-cols-4 gap-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
             >
-              <motion.div
+              <m.div
                 className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20"
                 whileHover={{ scale: 1.05, backgroundColor: 'rgba(255, 255, 255, 0.15)' }}
                 transition={{ type: 'spring', stiffness: 300 }}
@@ -139,9 +139,9 @@ export function JourneyHeader({
                   <span className="text-sm text-white/80">독서 기록</span>
                 </div>
                 <p className="text-3xl font-bold text-white">{logsCount}</p>
-              </motion.div>
+              </m.div>
 
-              <motion.div
+              <m.div
                 className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20"
                 whileHover={{ scale: 1.05, backgroundColor: 'rgba(255, 255, 255, 0.15)' }}
                 transition={{ type: 'spring', stiffness: 300 }}
@@ -156,9 +156,9 @@ export function JourneyHeader({
                   <span className="text-sm text-white/80">생성 음악</span>
                 </div>
                 <p className="text-3xl font-bold text-white">{musicTracksCount}</p>
-              </motion.div>
+              </m.div>
 
-              <motion.div
+              <m.div
                 className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20"
                 whileHover={{ scale: 1.05, backgroundColor: 'rgba(255, 255, 255, 0.15)' }}
                 transition={{ type: 'spring', stiffness: 300 }}
@@ -175,10 +175,10 @@ export function JourneyHeader({
                 <p className="text-lg font-semibold text-white">
                   {new Date(startedAt).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })}
                 </p>
-              </motion.div>
+              </m.div>
 
               {rating && (
-                <motion.div
+                <m.div
                   className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20"
                   whileHover={{ scale: 1.05, backgroundColor: 'rgba(255, 255, 255, 0.15)' }}
                   transition={{ type: 'spring', stiffness: 300 }}
@@ -193,12 +193,12 @@ export function JourneyHeader({
                     <span className="text-sm text-white/80">별점</span>
                   </div>
                   <p className="text-3xl font-bold text-white">{rating}.0</p>
-                </motion.div>
+                </m.div>
               )}
-            </motion.div>
+            </m.div>
 
             {/* 액션 버튼 */}
-            <motion.div
+            <m.div
               className="flex flex-wrap gap-3"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -224,10 +224,10 @@ export function JourneyHeader({
                   커뮤니티에 공유
                 </Button>
               )}
-            </motion.div>
+            </m.div>
           </div>
         </div>
       </div>
-    </motion.div>
+    </m.div>
   );
 }

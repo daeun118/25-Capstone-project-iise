@@ -1,46 +1,21 @@
 'use client';
 
+import { memo } from 'react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { UserAvatar } from '@/components/user/UserAvatar';
 import { InteractionBar } from './InteractionBar';
 import { Star, Music, Play, BookOpen } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 import Image from 'next/image';
-
-interface Post {
-  id: string;
-  user: {
-    id: string;
-    nickname: string;
-    email: string;
-    avatarUrl?: string;
-  };
-  journey: {
-    id: string;
-    bookTitle: string;
-    bookAuthor: string;
-    bookCoverUrl?: string;
-    bookCategory?: string;
-    rating?: number;
-    oneLiner?: string;
-    review?: string;
-  };
-  albumCoverUrl?: string | null;
-  likesCount: number;
-  commentsCount: number;
-  bookmarksCount: number;
-  isLiked: boolean;
-  isBookmarked: boolean;
-  createdAt: string;
-}
+import { PostDto } from '@/types/dto/post.dto';
 
 interface PostCardProps {
-  post: Post;
-  onClick?: (post: Post) => void;
+  post: PostDto;
+  onClick?: (post: PostDto) => void;
 }
 
-export function PostCard({ post, onClick }: PostCardProps) {
+export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps) {
   const handleCardClick = () => {
     onClick?.(post);
   };
@@ -50,7 +25,7 @@ export function PostCard({ post, onClick }: PostCardProps) {
   };
 
   return (
-    <motion.div
+    <m.div
       className="card-elevated group cursor-pointer overflow-hidden"
       whileHover={{ y: -8 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
@@ -72,7 +47,7 @@ export function PostCard({ post, onClick }: PostCardProps) {
         )}
 
         {/* Gradient overlay on hover */}
-        <motion.div
+        <m.div
           className="absolute inset-0"
           style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.9), transparent 60%)' }}
           initial={{ opacity: 0 }}
@@ -103,7 +78,7 @@ export function PostCard({ post, onClick }: PostCardProps) {
         </div>
 
         {/* Play Button (center, appears on hover) */}
-        <motion.button
+        <m.button
           className="absolute inset-0 flex items-center justify-center"
           initial={{ opacity: 0, scale: 0 }}
           whileHover={{ opacity: 1, scale: 1 }}
@@ -116,10 +91,10 @@ export function PostCard({ post, onClick }: PostCardProps) {
           <div className="w-20 h-20 rounded-full flex items-center justify-center shadow-2xl bg-gradient-accent">
             <Play className="w-10 h-10 text-white ml-1" />
           </div>
-        </motion.button>
+        </m.button>
 
         {/* User Info (bottom-left, on hover) */}
-        <motion.div
+        <m.div
           className="absolute bottom-4 left-4 z-10 flex items-center gap-2"
           initial={{ opacity: 0, y: 10 }}
           whileHover={{ opacity: 1, y: 0 }}
@@ -138,7 +113,7 @@ export function PostCard({ post, onClick }: PostCardProps) {
               {new Date(post.createdAt).toLocaleDateString('ko-KR')}
             </p>
           </div>
-        </motion.div>
+        </m.div>
       </div>
 
       {/* Content Section */}
@@ -197,6 +172,6 @@ export function PostCard({ post, onClick }: PostCardProps) {
           />
         </div>
       </div>
-    </motion.div>
+    </m.div>
   );
-}
+});

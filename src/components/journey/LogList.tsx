@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Music, Play, Clock, Lock, Loader2, AlertCircle, CheckCircle2, BookOpen } from 'lucide-react';
 import { EmptyState } from '@/components/common/EmptyState';
-import { motion } from 'framer-motion';
+import { m } from 'framer-motion';
 
 interface MusicTrack {
   id: string;
@@ -60,7 +60,7 @@ export function LogList({ logs, onPlayMusic }: LogListProps) {
           const isFailed = log.music_track?.status === 'error';
 
           return (
-            <motion.div
+            <m.div
               key={log.id}
               className="relative pl-16"
               initial={{ opacity: 0, x: -20 }}
@@ -68,7 +68,7 @@ export function LogList({ logs, onPlayMusic }: LogListProps) {
               transition={{ delay: index * 0.1, duration: 0.5 }}
             >
               {/* Timeline 아이콘 */}
-              <motion.div
+              <m.div
                 className={`absolute left-0 w-12 h-12 rounded-full flex items-center justify-center shadow-lg ${
                   isFinal ? 'bg-gradient-warm' : isV0 ? 'bg-gradient-hero' : 'bg-gradient-accent'
                 }`}
@@ -80,10 +80,10 @@ export function LogList({ logs, onPlayMusic }: LogListProps) {
                 ) : (
                   <BookOpen className="w-6 h-6 text-white" />
                 )}
-              </motion.div>
+              </m.div>
 
               {/* 카드 */}
-              <motion.div
+              <m.div
                 className="card-elevated overflow-hidden"
                 whileHover={{ y: -4 }}
                 transition={{ type: 'spring', stiffness: 300 }}
@@ -116,7 +116,7 @@ export function LogList({ logs, onPlayMusic }: LogListProps) {
                         </Badge>
                       )}
                       {isCompleted && onPlayMusic && (
-                        <motion.button
+                        <m.button
                           onClick={() => onPlayMusic(log.music_track!)}
                           className="w-10 h-10 rounded-full flex items-center justify-center shadow-md"
                           style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
@@ -124,7 +124,7 @@ export function LogList({ logs, onPlayMusic }: LogListProps) {
                           whileTap={{ scale: 0.95 }}
                         >
                           <Play className="w-5 h-5 text-white ml-0.5" />
-                        </motion.button>
+                        </m.button>
                       )}
                     </div>
                   </div>
@@ -189,7 +189,7 @@ export function LogList({ logs, onPlayMusic }: LogListProps) {
                   {log.emotions.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {log.emotions.map((emotion, i) => (
-                        <motion.span
+                        <m.span
                           key={emotion}
                           className="text-xs px-3 py-1.5 rounded-full font-medium text-white shadow-sm"
                           style={{
@@ -201,13 +201,13 @@ export function LogList({ logs, onPlayMusic }: LogListProps) {
                           whileHover={{ scale: 1.05 }}
                         >
                           {emotion}
-                        </motion.span>
+                        </m.span>
                       ))}
                     </div>
                   )}
                 </div>
-              </motion.div>
-            </motion.div>
+              </m.div>
+            </m.div>
           );
         })}
       </div>

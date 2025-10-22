@@ -9,69 +9,14 @@ import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
-
-interface MusicTrack {
-  id: string;
-  version: number;
-  logType: string;
-  title: string;
-  fileUrl: string;
-  prompt?: string;
-  genre?: string;
-  mood?: string;
-  tempo?: number;
-  duration?: number;
-  description?: string;
-}
-
-interface Comment {
-  id: string;
-  content: string;
-  createdAt: string;
-  user: {
-    id: string;
-    nickname: string;
-    email: string;
-  };
-}
-
-interface Post {
-  id: string;
-  user: {
-    id: string;
-    nickname: string;
-    email: string;
-  };
-  journey: {
-    id: string;
-    bookTitle: string;
-    bookAuthor: string;
-    bookCoverUrl?: string;
-    bookCategory?: string;
-    bookIsbn?: string;
-    bookDescription?: string;
-    rating?: number;
-    oneLiner?: string;
-    review?: string;
-    completedAt?: string;
-  };
-  albumCoverUrl?: string | null;
-  likesCount: number;
-  commentsCount: number;
-  bookmarksCount: number;
-  isLiked: boolean;
-  isBookmarked: boolean;
-  createdAt: string;
-  playlist: MusicTrack[];
-  comments: Comment[];
-}
+import { PostDetailDto } from '@/types/dto/post.dto';
 
 export default function PostDetailPage() {
   const params = useParams();
   const router = useRouter();
   const postId = params.id as string;
 
-  const [post, setPost] = useState<Post | null>(null);
+  const [post, setPost] = useState<PostDetailDto | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Fetch post detail
