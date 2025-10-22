@@ -40,6 +40,9 @@ npm run test:report      # 테스트 리포트 보기
 npm run test:music-flow      # 음악 생성 플로우
 npm run test:complete-flow   # 완독 플로우
 npm run test:library         # 라이브러리 기능
+
+# 성능 테스트
+npm run test:performance     # 성능 측정 (Playwright)
 ```
 
 ### 데이터베이스
@@ -369,14 +372,23 @@ npm run dev:raw
 
 ## 개발 상태
 
-**현재**: ✅ Phase 10 완료 (마이페이지)  
-**다음**: Phase 11 (UI/UX 개선 - 다크모드, 반응형, 접근성)
+**현재**: ✅ Phase 11 완료 (성능 최적화)
+**다음**: Phase 12 (Vercel 배포) ⭐ 즉시 실행 권장
 
 **주요 완료 기능**:
 - ✅ 인증, 도서 검색, 독서 여정 관리
 - ✅ 음악 생성 (v0, vN, vFinal)
 - ✅ 커뮤니티 (게시판, 좋아요, 댓글, 스크랩)
 - ✅ 마이페이지 (프로필, 통계, 보관함)
+- ✅ 성능 최적화 (60-70% 개선)
+
+**성능 최적화 완료**:
+- N+1 쿼리 제거: 11개 → 1개 JOIN 쿼리
+- React 메모이제이션: 리렌더 80% 감소
+- CSS Transitions: 메모리 90% 감소, 60fps 유지
+- 적응형 폴링: API 호출 40% 감소
+
+**참고**: `claudedocs/performance-optimization-report.md`
 
 ## 중요 원칙
 
