@@ -73,6 +73,9 @@ export function useAuth() {
   const signOut = async () => {
     const { error } = await supabase.auth.signOut()
     if (error) throw error
+
+    // 로그아웃 후 메인페이지로 리다이렉트
+    window.location.href = '/'
   }
 
   return {
