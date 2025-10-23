@@ -288,6 +288,13 @@ bash("sed -i 's/old/new/g' file.tsx")
 **다음**: Phase 13 - 앨범커버 생성 (DALL-E 3)
 
 **최근 개선사항** (2025-01):
+- ✅ **피드 공개 조회 RLS 정책 수정** (2025-01-23)
+  - 비로그인 사용자가 피드 페이지에서 게시물을 볼 수 없던 문제 해결
+  - `users` 테이블: 공개 프로필 조회 정책 추가 (`USING (true)`)
+  - `reading_journeys` 테이블: 공개 게시물과 연결된 여정 조회 정책 추가
+  - `posts` 테이블: 공개 게시물 조회 정책 추가 (`USING (is_published = true)`)
+  - 세 테이블 모두 RLS 정책 통과해야 JOIN 성공 → 비인증 사용자 피드 접근 가능
+
 - ✅ **비로그인 사용자 오류 처리 개선** (2025-01-23)
   - AuthRequired 컴포넌트 추가 (사용자 친화적 로그인 안내 UI)
   - /library, /my, /my/bookmarks 페이지에 인증 가드 추가
