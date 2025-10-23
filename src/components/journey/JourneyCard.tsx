@@ -96,6 +96,9 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
             src={journey.bookCoverUrl}
             alt={journey.bookTitle}
             fill
+            quality={85}
+            loading="lazy"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover"
           />
         ) : (

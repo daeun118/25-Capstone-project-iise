@@ -40,6 +40,9 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
             src={post.journey.bookCoverUrl}
             alt={post.journey.bookTitle}
             fill
+            quality={85}
+            loading="lazy"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover"
           />
         ) : (

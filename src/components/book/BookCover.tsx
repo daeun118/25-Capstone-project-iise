@@ -30,6 +30,8 @@ export function BookCover({ src, alt, size = 'md', className }: BookCoverProps) 
           src={src}
           alt={alt}
           fill
+          quality={85}
+          loading="lazy"
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />

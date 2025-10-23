@@ -68,6 +68,8 @@ export function JourneyHeader({
                   alt={bookTitle}
                   width={192}
                   height={288}
+                  quality={85}
+                  priority
                   className="object-cover w-full h-full"
                 />
               ) : (
