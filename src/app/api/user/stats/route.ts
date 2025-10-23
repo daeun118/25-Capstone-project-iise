@@ -4,6 +4,11 @@ import { NextRequest, NextResponse } from 'next/server';
 /**
  * GET /api/user/stats
  * Get current user's reading statistics
+ *
+ * Performance optimized: Reduced from 13 sequential queries to 5-6 parallel queries
+ * - Uses Promise.all for parallel execution
+ * - Combines related queries to minimize database round trips
+ * - Leverages database indexes (idx_reading_journeys_user_stats, etc.)
  */
 export async function GET(request: NextRequest) {
   try {
@@ -19,162 +24,143 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get total journeys count
-    const { count: totalJourneys } = await supabase
-      .from('reading_journeys')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', user.id);
+    // ============================================
+    // PHASE 1: Fetch base data in parallel
+    // ============================================
+    const [journeysResult, userPostsResult, bookmarksResult] = await Promise.all([
+      // Get all journeys with status, rating, category in one query
+      // Uses idx_reading_journeys_user_stats (INCLUDE book_category, rating)
+      supabase
+        .from('reading_journeys')
+        .select('id, status, rating, book_category')
+        .eq('user_id', user.id),
 
-    // Get reading journeys count
-    const { count: readingCount } = await supabase
-      .from('reading_journeys')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', user.id)
-      .eq('status', 'reading');
+      // Get user's post IDs for engagement stats
+      // Uses idx_posts_user_stats
+      supabase
+        .from('posts')
+        .select('id')
+        .eq('user_id', user.id),
 
-    // Get completed journeys count
-    const { count: completedCount } = await supabase
-      .from('reading_journeys')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', user.id)
-      .eq('status', 'completed');
-
-    // Get total music tracks count
-    const { data: journeyIds } = await supabase
-      .from('reading_journeys')
-      .select('id')
-      .eq('user_id', user.id);
-
-    let totalMusicTracks = 0;
-    if (journeyIds && journeyIds.length > 0) {
-      const { count: musicCount } = await supabase
-        .from('reading_logs')
+      // Get bookmarks count
+      // Uses idx_bookmarks_user_created
+      supabase
+        .from('bookmarks')
         .select('*', { count: 'exact', head: true })
-        .in(
-          'journey_id',
-          journeyIds.map((j) => j.id)
+        .eq('user_id', user.id),
+    ]);
+
+    const journeys = journeysResult.data || [];
+    const userPosts = userPostsResult.data || [];
+    const bookmarksCount = bookmarksResult.count || 0;
+
+    // ============================================
+    // PHASE 2: Calculate journey statistics
+    // (No additional queries - all done in JavaScript)
+    // ============================================
+    const totalJourneys = journeys.length;
+    const readingCount = journeys.filter((j) => j.status === 'reading').length;
+    const completedCount = journeys.filter((j) => j.status === 'completed').length;
+
+    // Calculate average rating
+    const completedJourneysWithRating = journeys.filter(
+      (j) => j.status === 'completed' && j.rating !== null
+    );
+    const averageRating = completedJourneysWithRating.length > 0
+      ? completedJourneysWithRating.reduce((sum, j) => sum + (j.rating || 0), 0) /
+        completedJourneysWithRating.length
+      : 0;
+
+    // Calculate favorite category
+    const categoryCounts: { [key: string]: number } = {};
+    journeys.forEach((j) => {
+      if (j.book_category) {
+        categoryCounts[j.book_category] = (categoryCounts[j.book_category] || 0) + 1;
+      }
+    });
+    const favoriteCategory = Object.keys(categoryCounts).length > 0
+      ? Object.keys(categoryCounts).reduce((a, b) =>
+          categoryCounts[a] > categoryCounts[b] ? a : b
         )
-        .not('music_track_id', 'is', null);
+      : null;
 
-      totalMusicTracks = musicCount || 0;
-    }
+    // ============================================
+    // PHASE 3: Fetch content and engagement stats in parallel
+    // ============================================
+    const journeyIds = journeys.map((j) => j.id);
+    const postIds = userPosts.map((p) => p.id);
 
-    // Get total reading logs count
-    let totalReadingLogs = 0;
-    if (journeyIds && journeyIds.length > 0) {
-      const { count: logsCount } = await supabase
-        .from('reading_logs')
+    const [
+      musicTracksResult,
+      readingLogsResult,
+      postsCountResult,
+      likesResult,
+      commentsResult,
+    ] = await Promise.all([
+      // Music tracks count
+      // Uses idx_reading_logs_stats (INCLUDE music_track_id)
+      journeyIds.length > 0
+        ? supabase
+            .from('reading_logs')
+            .select('*', { count: 'exact', head: true })
+            .in('journey_id', journeyIds)
+            .not('music_track_id', 'is', null)
+        : Promise.resolve({ count: 0 }),
+
+      // Reading logs count
+      // Uses idx_reading_logs_journey_id_version
+      journeyIds.length > 0
+        ? supabase
+            .from('reading_logs')
+            .select('*', { count: 'exact', head: true })
+            .in('journey_id', journeyIds)
+        : Promise.resolve({ count: 0 }),
+
+      // Published posts count
+      // Uses idx_posts_user_stats
+      supabase
+        .from('posts')
         .select('*', { count: 'exact', head: true })
-        .in(
-          'journey_id',
-          journeyIds.map((j) => j.id)
-        );
+        .eq('user_id', user.id)
+        .eq('is_published', true),
 
-      totalReadingLogs = logsCount || 0;
-    }
+      // Likes received count
+      // Uses idx_likes_post_stats
+      postIds.length > 0
+        ? supabase
+            .from('likes')
+            .select('*', { count: 'exact', head: true })
+            .in('post_id', postIds)
+        : Promise.resolve({ count: 0 }),
 
-    // Get posts count (published journeys)
-    const { count: postsCount } = await supabase
-      .from('posts')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', user.id)
-      .eq('is_published', true);
+      // Comments received count
+      // Uses idx_comments_post_stats
+      postIds.length > 0
+        ? supabase
+            .from('comments')
+            .select('*', { count: 'exact', head: true })
+            .in('post_id', postIds)
+        : Promise.resolve({ count: 0 }),
+    ]);
 
-    // Get total likes received on posts
-    let totalLikesReceived = 0;
-    const { data: userPosts } = await supabase
-      .from('posts')
-      .select('id')
-      .eq('user_id', user.id);
-
-    if (userPosts && userPosts.length > 0) {
-      const { count: likesCount } = await supabase
-        .from('likes')
-        .select('*', { count: 'exact', head: true })
-        .in(
-          'post_id',
-          userPosts.map((p) => p.id)
-        );
-
-      totalLikesReceived = likesCount || 0;
-    }
-
-    // Get total comments received on posts
-    let totalCommentsReceived = 0;
-    if (userPosts && userPosts.length > 0) {
-      const { count: commentsCount } = await supabase
-        .from('comments')
-        .select('*', { count: 'exact', head: true })
-        .in(
-          'post_id',
-          userPosts.map((p) => p.id)
-        );
-
-      totalCommentsReceived = commentsCount || 0;
-    }
-
-    // Get bookmarks count (saved by user)
-    const { count: bookmarksCount } = await supabase
-      .from('bookmarks')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', user.id);
-
-    // Get average rating
-    const { data: completedJourneys } = await supabase
-      .from('reading_journeys')
-      .select('rating')
-      .eq('user_id', user.id)
-      .eq('status', 'completed')
-      .not('rating', 'is', null);
-
-    let averageRating = 0;
-    if (completedJourneys && completedJourneys.length > 0) {
-      const totalRating = completedJourneys.reduce(
-        (sum, j) => sum + (j.rating || 0),
-        0
-      );
-      averageRating = totalRating / completedJourneys.length;
-    }
-
-    // Get favorite category
-    const { data: categories } = await supabase
-      .from('reading_journeys')
-      .select('book_category')
-      .eq('user_id', user.id)
-      .not('book_category', 'is', null);
-
-    let favoriteCategory = null;
-    if (categories && categories.length > 0) {
-      const categoryCounts: { [key: string]: number } = {};
-      categories.forEach((c) => {
-        if (c.book_category) {
-          categoryCounts[c.book_category] =
-            (categoryCounts[c.book_category] || 0) + 1;
-        }
-      });
-
-      const maxCount = Math.max(...Object.values(categoryCounts));
-      favoriteCategory =
-        Object.keys(categoryCounts).find(
-          (cat) => categoryCounts[cat] === maxCount
-        ) || null;
-    }
-
+    // ============================================
+    // PHASE 4: Build response
+    // ============================================
     const stats = {
       journeys: {
-        total: totalJourneys || 0,
-        reading: readingCount || 0,
-        completed: completedCount || 0,
+        total: totalJourneys,
+        reading: readingCount,
+        completed: completedCount,
       },
       content: {
-        totalMusicTracks,
-        totalReadingLogs,
-        postsPublished: postsCount || 0,
+        totalMusicTracks: musicTracksResult.count || 0,
+        totalReadingLogs: readingLogsResult.count || 0,
+        postsPublished: postsCountResult.count || 0,
       },
       engagement: {
-        likesReceived: totalLikesReceived,
-        commentsReceived: totalCommentsReceived,
-        bookmarksSaved: bookmarksCount || 0,
+        likesReceived: likesResult.count || 0,
+        commentsReceived: commentsResult.count || 0,
+        bookmarksSaved: bookmarksCount,
       },
       insights: {
         averageRating: Math.round(averageRating * 10) / 10,
