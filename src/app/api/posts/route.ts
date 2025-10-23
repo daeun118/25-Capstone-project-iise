@@ -164,62 +164,60 @@ export async function GET(request: NextRequest) {
     // ✅ UPDATED: User may be null for unauthenticated requests
     const { data: { user } } = await supabase.auth.getUser();
 
+    // ✅ OPTIMIZED: Batch query for likes/bookmarks to eliminate N+1 problem
     // Transform data to match PostCard interface
-    // ✅ UPDATED: Only check likes/bookmarks for authenticated users
-    const transformedPosts = await Promise.all(
-      (posts || []).map(async (post: any) => {
-        let isLiked = false;
-        let isBookmarked = false;
+    let likedPostIds = new Set<string>();
+    let bookmarkedPostIds = new Set<string>();
 
-        if (user) {
-          // Check if user liked this post (only if authenticated)
-          const { data: like } = await supabase
-            .from('likes')
-            .select('id')
-            .eq('post_id', post.id)
-            .eq('user_id', user.id)
-            .single();
+    if (user && posts && posts.length > 0) {
+      // Batch query for all likes and bookmarks in parallel
+      // Uses idx_likes_post_user and idx_bookmarks_post_user indexes
+      const postIds = posts.map(p => p.id);
 
-          isLiked = !!like;
+      const [likesData, bookmarksData] = await Promise.all([
+        supabase
+          .from('likes')
+          .select('post_id')
+          .in('post_id', postIds)
+          .eq('user_id', user.id),
+        supabase
+          .from('bookmarks')
+          .select('post_id')
+          .in('post_id', postIds)
+          .eq('user_id', user.id)
+      ]);
 
-          // Check if user bookmarked this post
-          const { data: bookmark } = await supabase
-            .from('bookmarks')
-            .select('id')
-            .eq('post_id', post.id)
-            .eq('user_id', user.id)
-            .single();
+      // Create Sets for O(1) lookup
+      likedPostIds = new Set(likesData.data?.map(l => l.post_id) || []);
+      bookmarkedPostIds = new Set(bookmarksData.data?.map(b => b.post_id) || []);
+    }
 
-          isBookmarked = !!bookmark;
-        }
-
-        return {
-          id: post.id,
-          user: {
-            id: post.users.id,
-            nickname: post.users.nickname,
-            email: post.users.email,
-          },
-          journey: {
-            id: post.reading_journeys.id,
-            bookTitle: post.reading_journeys.book_title,
-            bookAuthor: post.reading_journeys.book_author,
-            bookCoverUrl: post.reading_journeys.book_cover_url,
-            bookCategory: post.reading_journeys.book_category,
-            rating: post.reading_journeys.rating,
-            oneLiner: post.reading_journeys.one_liner,
-            review: post.reading_journeys.review,
-          },
-          albumCoverUrl: post.album_cover_url,
-          likesCount: post.likes_count || 0,
-          commentsCount: post.comments_count || 0,
-          bookmarksCount: post.bookmarks_count || 0,
-          isLiked,
-          isBookmarked,
-          createdAt: post.created_at,
-        };
-      })
-    );
+    // Transform posts with pre-fetched like/bookmark data
+    const transformedPosts = (posts || []).map((post: any) => ({
+      id: post.id,
+      user: {
+        id: post.users.id,
+        nickname: post.users.nickname,
+        email: post.users.email,
+      },
+      journey: {
+        id: post.reading_journeys.id,
+        bookTitle: post.reading_journeys.book_title,
+        bookAuthor: post.reading_journeys.book_author,
+        bookCoverUrl: post.reading_journeys.book_cover_url,
+        bookCategory: post.reading_journeys.book_category,
+        rating: post.reading_journeys.rating,
+        oneLiner: post.reading_journeys.one_liner,
+        review: post.reading_journeys.review,
+      },
+      albumCoverUrl: post.album_cover_url,
+      likesCount: post.likes_count || 0,
+      commentsCount: post.comments_count || 0,
+      bookmarksCount: post.bookmarks_count || 0,
+      isLiked: likedPostIds.has(post.id),
+      isBookmarked: bookmarkedPostIds.has(post.id),
+      createdAt: post.created_at,
+    }));
 
     // Get total count for pagination
     const { count: totalCount } = await supabase
