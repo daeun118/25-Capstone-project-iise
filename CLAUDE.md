@@ -93,6 +93,7 @@ src/
 **⭐ 핵심 파일**:
 - `src/lib/openai/client.ts` - 3단계 음악 프롬프트 생성 로직 (v0/vN/vFinal)
 - `src/components/music/MusicPlayerBar.tsx` - 하단 재생 바 (Spotify 스타일, 2025-01 개선)
+- `src/components/auth/AuthRequired.tsx` - 로그인 필요 안내 컴포넌트 (비로그인 UX 개선)
 - `src/components/CLAUDE.md` - **컴포넌트 생성 전 필수 확인** (재사용 가이드)
 - `src/services/` - 비즈니스 로직 레이어
 - `src/repositories/` - 데이터 접근 레이어
@@ -287,6 +288,12 @@ bash("sed -i 's/old/new/g' file.tsx")
 **다음**: Phase 13 - 앨범커버 생성 (DALL-E 3)
 
 **최근 개선사항** (2025-01):
+- ✅ **비로그인 사용자 오류 처리 개선** (2025-01-23)
+  - AuthRequired 컴포넌트 추가 (사용자 친화적 로그인 안내 UI)
+  - /library, /my, /my/bookmarks 페이지에 인증 가드 추가
+  - 비인증 사용자 API 호출 차단으로 반복적인 401 오류 방지
+  - useEffect에 user 의존성 추가 및 로딩 상태 관리 개선
+
 - ✅ **음악 재생 바 UX/디자인 대폭 개선** (Spotify/YouTube Music 스타일)
   - 재생/일시정지 상태 동기화 오류 수정
   - Audio 메모리 누수 해결 (이벤트 리스너 cleanup)
