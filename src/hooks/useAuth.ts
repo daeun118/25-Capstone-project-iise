@@ -39,6 +39,24 @@ export function useAuth() {
     })
 
     if (error) throw error
+
+    // users 테이블에 프로필 데이터 삽입 (중복 시 upsert)
+    if (data.user) {
+      const { error: upsertError } = await supabase.from('users').upsert({
+        id: data.user.id,
+        email: data.user.email!,
+        nickname,
+        auth_provider: 'email',
+      }, {
+        onConflict: 'id',
+      })
+
+      if (upsertError) {
+        console.error('Error creating user profile:', upsertError)
+        throw new Error('Database error saving new user')
+      }
+    }
+
     return data
   }
 

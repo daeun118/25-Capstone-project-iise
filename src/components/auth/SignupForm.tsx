@@ -37,12 +37,21 @@ export function SignupForm() {
     setIsLoading(true);
 
     try {
-      await signUp(email, password, nickname);
+      const data = await signUp(email, password, nickname);
+
+      // 이메일 확인이 필요한 경우 (세션이 생성되지 않음)
+      if (data.user && !data.session) {
+        toast.success('회원가입이 완료되었습니다!\n이메일을 확인하여 계정을 활성화해주세요.');
+        router.push('/signup/check-email');
+        return;
+      }
+
+      // 즉시 로그인된 경우 (이메일 확인 불필요)
       toast.success('회원가입이 완료되었습니다!');
-      
+
       // 인증 상태 업데이트를 위한 약간의 딜레이
       await new Promise(resolve => setTimeout(resolve, 500));
-      
+
       router.refresh();
       router.push('/library');
     } catch (err: any) {
