@@ -158,7 +158,7 @@ export function SignupForm() {
         </Label>
       </div>
 
-      <Button type="submit" className="w-full font-semibold" disabled={isLoading}>
+      <Button type="submit" variant="gradient" className="w-full" disabled={isLoading}>
         {isLoading ? (
           <>
             <Loader2 className="mr-2 size-4 animate-spin" />

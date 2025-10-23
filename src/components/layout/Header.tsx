@@ -88,9 +88,9 @@ export function Header() {
                   >
                     로그인
                   </Button>
-                  <Button 
-                    size="sm" 
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                  <Button
+                    variant="default"
+                    size="sm"
                     onClick={() => setSignupOpen(true)}
                   >
                     회원가입
@@ -151,9 +151,10 @@ export function Header() {
               >
                 로그인
               </Button>
-              <Button 
-                size="sm" 
-                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white"
+              <Button
+                variant="default"
+                size="sm"
+                className="w-full"
                 onClick={() => {
                   setSignupOpen(true);
                   setIsMenuOpen(false);
