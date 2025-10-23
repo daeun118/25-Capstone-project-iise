@@ -251,6 +251,33 @@ bash("sed -i 's/old/new/g' file.tsx")
 - 인증: Supabase Auth (세션 기반)
 - 검증: Zod 스키마
 
+### Git 워크플로우 (중요!)
+
+**⚠️ 중요**: 사용자가 "깃에 올리고 푸시해줘" 요청 시 **반드시 main 브랜치까지 푸시**해야 함
+
+```bash
+# 1. Feature 브랜치 생성 및 커밋
+git checkout -b feature/[feature-name]
+git add [files]
+git commit -m "feat: [description]"
+git push -u origin feature/[feature-name]
+
+# 2. Main 브랜치에 merge 및 푸시 (필수!)
+git checkout main
+git merge feature/[feature-name]
+git push origin main
+```
+
+**커밋 메시지 규칙**:
+- `feat:` - 새 기능
+- `fix:` - 버그 수정
+- `docs:` - 문서 변경
+- `refactor:` - 리팩토링
+- `style:` - 코드 스타일 (포맷팅)
+- `test:` - 테스트 추가/수정
+
+**자동 배포**: main 브랜치 push → Vercel 자동 배포
+
 ---
 
 ## 주요 API 엔드포인트
