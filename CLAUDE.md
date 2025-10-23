@@ -315,6 +315,22 @@ git push origin main
 **다음**: Phase 13 - 앨범커버 생성 (DALL-E 3)
 
 **최근 개선사항** (2025-01):
+- ✅ **이미지 최적화 구현** (2025-01-23)
+  - Next.js Image 최적화 설정: AVIF/WebP 포맷 자동 변환
+  - 모든 Image 컴포넌트에 quality=85, lazy loading 적용
+  - JourneyHeader에 priority loading (LCP 최적화)
+  - 예상 효과: 이미지 용량 80-90% 감소, 페이지 로드 20-30% 개선
+  - 적용 파일: JourneyCard, PostCard, BookCover, JourneyHeader
+  - 참고: `claudedocs/image-optimization-implementation.md`
+
+- ✅ **데이터베이스 인덱스 최적화** (2025-01-23)
+  - 29개 전략적 인덱스 추가 (commit f45523c)
+  - 복합 인덱스: `idx_reading_journeys_user_status_started`
+  - 부분 인덱스: `idx_posts_published_created_at WHERE is_published = true`
+  - Production 성능 측정: 피드 72% 개선, 책장 71% 개선
+  - N+1 쿼리 제거: 11개 → 1개 JOIN
+  - 참고: `claudedocs/db-index-performance-evaluation.md`
+
 - ✅ **회원가입 이메일 컨펼 프로세스 개선** (2025-01-23)
   - 이메일 확인이 필요한 경우 사용자 친화적 안내 추가
   - `/signup/check-email` 페이지 생성 (이메일 확인 안내 UI)
