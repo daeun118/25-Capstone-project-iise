@@ -183,6 +183,27 @@ import { FilterBar } from '@/components/common/FilterBar';
 - **SignupDialog**: 회원가입 다이얼로그 (모달 형태)
 - **LoginForm**: 이메일/비밀번호 로그인 폼
 - **SignupForm**: 회원가입 폼 (닉네임, 약관 동의 포함)
+- **AuthRequired**: 로그인 필요 안내 컴포넌트 (비로그인 사용자 친화적 UI)
+
+```typescript
+import { AuthRequired } from '@/components/auth/AuthRequired';
+import { useAuth } from '@/hooks/useAuth';
+
+function ProtectedPage() {
+  const { user, loading } = useAuth();
+
+  if (loading) return <LoadingSpinner />;
+  if (!user) return <AuthRequired />;
+
+  return <div>보호된 콘텐츠</div>;
+}
+
+// 커스텀 메시지
+<AuthRequired
+  title="내 책장은 로그인 후 이용 가능합니다"
+  description="독서 여정을 기록하고 관리하려면 로그인해주세요."
+/>
+```
 
 ### 도서 (Book)
 - **BookSearchDialog**: Google Books API 검색 다이얼로그

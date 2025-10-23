@@ -11,6 +11,8 @@ import { EmptyState } from '@/components/common/EmptyState';
 import { Pagination } from '@/components/common/Pagination';
 import { Button } from '@/components/ui/button';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { AuthRequired } from '@/components/auth/AuthRequired';
+import { useAuth } from '@/hooks/useAuth';
 import { BookOpen, Plus, TrendingUp, Clock, Music } from 'lucide-react';
 import { m } from 'framer-motion';
 import Link from 'next/link';
@@ -32,6 +34,7 @@ interface Journey {
 
 export default function LibraryPage() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const [activeTab, setActiveTab] = useState<'reading' | 'completed'>('reading');
   const [sort, setSort] = useState('latest');
   const [page, setPage] = useState(1);
@@ -40,6 +43,11 @@ export default function LibraryPage() {
 
   // Fetch journeys from API
   useEffect(() => {
+    if (!user) {
+      setLoading(false); // 비인증 시 로딩 상태 해제
+      return;
+    }
+
     const fetchJourneys = async () => {
       setLoading(true);
       try {
@@ -60,7 +68,7 @@ export default function LibraryPage() {
     };
 
     fetchJourneys();
-  }, []);
+  }, [user]);
 
   // ✅ OPTIMIZED: Memoize filtered and sorted journeys to prevent recalculation
   const filteredJourneys = useMemo(
@@ -114,12 +122,24 @@ export default function LibraryPage() {
   }, []);
 
   // Show loading state
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <AppLayout>
         <div className="container mx-auto px-4 py-8">
           <LoadingSpinner size="lg" text="독서 여정을 불러오는 중..." />
         </div>
+      </AppLayout>
+    );
+  }
+
+  // Show auth required if not logged in
+  if (!user) {
+    return (
+      <AppLayout>
+        <AuthRequired
+          title="로그인이 필요한 서비스입니다"
+          description="내 책장을 확인하려면 로그인해주세요."
+        />
       </AppLayout>
     );
   }

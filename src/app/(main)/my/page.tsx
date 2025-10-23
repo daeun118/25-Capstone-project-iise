@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Button } from '@/components/ui/button';
+import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { AuthRequired } from '@/components/auth/AuthRequired';
+import { useAuth } from '@/hooks/useAuth';
 import { ProfileEditDialog } from '@/components/user/ProfileEditDialog';
 import { StatsDashboard } from '@/components/user/StatsDashboard';
 import { User, Mail, Calendar, Edit, Bookmark } from 'lucide-react';
@@ -21,13 +24,18 @@ interface UserProfile {
 
 export default function MyPage() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   useEffect(() => {
+    if (!user) {
+      setIsLoading(false); // 비인증 시 로딩 상태 해제
+      return;
+    }
     fetchProfile();
-  }, []);
+  }, [user]);
 
   const fetchProfile = async () => {
     try {
@@ -75,6 +83,29 @@ export default function MyPage() {
         return provider;
     }
   };
+
+  // Show loading state
+  if (authLoading || isLoading) {
+    return (
+      <AppLayout>
+        <div className="container mx-auto px-4 py-8">
+          <LoadingSpinner size="lg" text="프로필을 불러오는 중..." />
+        </div>
+      </AppLayout>
+    );
+  }
+
+  // Show auth required if not logged in
+  if (!user) {
+    return (
+      <AppLayout>
+        <AuthRequired
+          title="로그인이 필요한 서비스입니다"
+          description="마이페이지를 확인하려면 로그인해주세요."
+        />
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout>

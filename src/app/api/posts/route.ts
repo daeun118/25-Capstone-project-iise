@@ -92,6 +92,7 @@ export async function POST(request: NextRequest) {
 }
 
 // GET /api/posts - List posts with filtering and sorting
+// ✅ UPDATED: Authentication is now OPTIONAL for reading posts
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
@@ -160,16 +161,18 @@ export async function GET(request: NextRequest) {
     }
 
     // Get current user to check if they liked/bookmarked posts
+    // ✅ UPDATED: User may be null for unauthenticated requests
     const { data: { user } } = await supabase.auth.getUser();
 
     // Transform data to match PostCard interface
+    // ✅ UPDATED: Only check likes/bookmarks for authenticated users
     const transformedPosts = await Promise.all(
       (posts || []).map(async (post: any) => {
         let isLiked = false;
         let isBookmarked = false;
 
         if (user) {
-          // Check if user liked this post
+          // Check if user liked this post (only if authenticated)
           const { data: like } = await supabase
             .from('likes')
             .select('id')

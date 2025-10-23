@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { PostCard } from '@/components/post/PostCard';
 import { EmptyState } from '@/components/common/EmptyState';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { AuthRequired } from '@/components/auth/AuthRequired';
+import { useAuth } from '@/hooks/useAuth';
 import { ArrowLeft, Bookmark } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
@@ -19,6 +21,7 @@ interface BookmarkData {
 
 export default function BookmarksPage() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const [bookmarks, setBookmarks] = useState<BookmarkData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasMore, setHasMore] = useState(false);
@@ -28,8 +31,12 @@ export default function BookmarksPage() {
   const limit = 12;
 
   useEffect(() => {
+    if (!user) {
+      setIsLoading(false); // 비인증 시 로딩 상태 해제
+      return;
+    }
     fetchBookmarks();
-  }, []);
+  }, [user]);
 
   const fetchBookmarks = async (loadMore = false) => {
     try {
@@ -77,6 +84,29 @@ export default function BookmarksPage() {
     setBookmarks((prev) => prev.filter((b) => b.post.id !== postId));
     toast.success('보관함에서 제거되었습니다');
   };
+
+  // Show loading state
+  if (authLoading || isLoading) {
+    return (
+      <AppLayout>
+        <div className="container mx-auto px-4 py-8">
+          <LoadingSpinner size="lg" text="보관함을 불러오는 중..." />
+        </div>
+      </AppLayout>
+    );
+  }
+
+  // Show auth required if not logged in
+  if (!user) {
+    return (
+      <AppLayout>
+        <AuthRequired
+          title="로그인이 필요한 서비스입니다"
+          description="보관함을 확인하려면 로그인해주세요."
+        />
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout>
