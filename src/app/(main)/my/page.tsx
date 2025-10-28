@@ -8,7 +8,8 @@ import { AuthRequired } from '@/components/auth/AuthRequired';
 import { useAuth } from '@/hooks/useAuth';
 import { ProfileEditDialog } from '@/components/user/ProfileEditDialog';
 import { StatsDashboard } from '@/components/user/StatsDashboard';
-import { User, Mail, Calendar, Edit, Bookmark } from 'lucide-react';
+import { DeleteAccountDialog } from '@/components/my/DeleteAccountDialog';
+import { User, Mail, Calendar, Edit, Bookmark, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { m } from 'framer-motion';
@@ -288,6 +289,64 @@ export default function MyPage() {
           >
             <h2 className="text-3xl font-bold mb-6">독서 통계</h2>
             <StatsDashboard />
+          </m.div>
+
+          {/* Account Settings - Danger Zone */}
+          <m.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9, duration: 0.6 }}
+          >
+            <h2 className="text-3xl font-bold mb-6">계정 설정</h2>
+
+            {/* Enhanced Danger Zone with Glass Morphism */}
+            <div className="relative rounded-2xl overflow-hidden">
+              {/* Subtle red gradient background */}
+              <div
+                className="absolute inset-0 opacity-10"
+                style={{
+                  background: 'linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f87171 100%)',
+                }}
+              />
+
+              {/* Glass morphism overlay */}
+              <div className="relative backdrop-blur-sm bg-white/80 dark:bg-gray-900/80 border-2 border-destructive/30 rounded-2xl p-8">
+                <div className="flex items-start gap-6">
+                  {/* Enhanced icon with gradient background */}
+                  <m.div
+                    className="flex-shrink-0"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 1.0, type: 'spring', stiffness: 200 }}
+                  >
+                    <div className="w-16 h-16 rounded-full flex items-center justify-center relative">
+                      <div
+                        className="absolute inset-0 rounded-full opacity-20"
+                        style={{
+                          background: 'linear-gradient(135deg, #dc2626, #ef4444)',
+                        }}
+                      />
+                      <AlertTriangle className="w-8 h-8 text-destructive relative z-10" />
+                    </div>
+                  </m.div>
+
+                  <div className="flex-1">
+                    <h3 className="text-2xl font-bold mb-2 text-destructive">위험 영역</h3>
+                    <p className="text-muted-foreground mb-6 leading-relaxed">
+                      계정을 삭제하면 모든 데이터가 영구적으로 삭제되며 복구할 수 없습니다.
+                      <br />
+                      독서 여정, 음악, 게시물이 모두 사라집니다. 신중하게 결정해주세요.
+                    </p>
+
+                    {/* Enhanced delete button */}
+                    <DeleteAccountDialog
+                      variant="outline"
+                      className="border-2 border-destructive/50 text-destructive hover:bg-destructive hover:text-white hover:border-destructive transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 font-medium"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           </m.div>
         </div>
 
