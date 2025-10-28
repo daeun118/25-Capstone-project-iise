@@ -17,10 +17,6 @@ interface PostCardProps {
 
 export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps) {
   const [isHovered, setIsHovered] = useState(false);
-  
-  const handleCardClick = () => {
-    onClick?.(post);
-  };
 
   const handleCommentClick = () => {
     onClick?.(post);
@@ -28,13 +24,15 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
 
   return (
     <div
-      className="card-elevated group cursor-pointer overflow-hidden transition-transform hover:-translate-y-2"
-      onClick={handleCardClick}
+      className="card-elevated group overflow-hidden transition-transform hover:-translate-y-2"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Album Cover / Book Cover - Mureka Style */}
-      <div className="relative aspect-square rounded-xl overflow-hidden">
+      <Link 
+        href={`/journey/${post.journey.id}`}
+        className="relative aspect-square rounded-xl overflow-hidden block"
+      >
         {post.journey.bookCoverUrl ? (
           <Image
             src={post.journey.bookCoverUrl}
@@ -116,15 +114,20 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
             </p>
           </div>
         </div>
-      </div>
+      </Link>
 
       {/* Content Section */}
       <div className="p-5">
-        {/* Book Title & Author */}
-        <div className="mb-3">
-          <h3 className="font-bold text-lg mb-1 line-clamp-2">{post.journey.bookTitle}</h3>
+        {/* Book Title & Author - Clickable */}
+        <Link 
+          href={`/journey/${post.journey.id}`}
+          className="block mb-3 group/title hover:opacity-80 transition-opacity"
+        >
+          <h3 className="font-bold text-lg mb-1 line-clamp-2 group-hover/title:text-primary transition-colors">
+            {post.journey.bookTitle}
+          </h3>
           <p className="text-sm text-gray-500">{post.journey.bookAuthor}</p>
-        </div>
+        </Link>
 
         {/* Rating */}
         {post.journey.rating && (
