@@ -1,5 +1,37 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { Database } from '@/types/database';
+
+// Type definitions for the query response
+type BookmarkWithRelations = {
+  id: string;
+  created_at: string | null;
+  posts: {
+    id: string;
+    album_cover_url: string | null;
+    album_cover_thumbnail_url: string | null;
+    likes_count: number | null;
+    comments_count: number | null;
+    bookmarks_count: number | null;
+    created_at: string | null;
+    users: {
+      id: string;
+      nickname: string;
+      email: string;
+    };
+    reading_journeys: {
+      id: string;
+      book_isbn: string | null;
+      book_title: string;
+      book_author: string | null;
+      book_cover_url: string | null;
+      book_category: string | null;
+      rating: number | null;
+      one_liner: string | null;
+      review: string | null;
+    };
+  };
+};
 
 /**
  * GET /api/user/bookmarks
@@ -57,7 +89,8 @@ export async function GET(request: NextRequest) {
             book_cover_url,
             book_category,
             rating,
-            one_liner
+            one_liner,
+            review
           )
         )
       `
@@ -85,7 +118,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform data to flatten structure
-    const transformedBookmarks = bookmarks.map((bookmark: any) => ({
+    const transformedBookmarks = bookmarks.map((bookmark: BookmarkWithRelations) => ({
       bookmarkId: bookmark.id,
       bookmarkedAt: bookmark.created_at,
       post: {
@@ -110,6 +143,7 @@ export async function GET(request: NextRequest) {
           bookCategory: bookmark.posts.reading_journeys.book_category,
           rating: bookmark.posts.reading_journeys.rating,
           oneLiner: bookmark.posts.reading_journeys.one_liner,
+          review: bookmark.posts.reading_journeys.review,
         },
       },
     }));
