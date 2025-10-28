@@ -39,14 +39,14 @@ export async function GET(
     }
 
     // Initialize playlist array
-    let playlist = [];
+    let playlist: any[] = [];
 
     // If journey is completed and has logs, compile playlist
     if (journey.status === 'completed' && logsData && logsData.length > 0) {
       // Extract music track IDs
       const musicTrackIds = logsData
         .map(log => log.music_track_id)
-        .filter(Boolean);
+        .filter((id): id is string => id !== null);
 
       if (musicTrackIds.length > 0) {
         // Fetch music tracks

@@ -65,9 +65,9 @@ export async function GET(
     }
 
     // Then fetch music tracks for each log
-    let logs = [];
+    let logs: any[] = [];
     if (logsData && logsData.length > 0) {
-      const musicTrackIds = logsData.map(log => log.music_track_id).filter(Boolean);
+      const musicTrackIds = logsData.map(log => log.music_track_id).filter((id): id is string => id !== null);
 
       const { data: musicTracks, error: musicError } = await supabase
         .from('music_tracks')

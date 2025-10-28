@@ -192,9 +192,9 @@ export function PostDetail({
                     version: track.version.toString(),
                     title: track.title,
                     fileUrl: track.fileUrl,
-                    genre: track.genre,
-                    mood: track.mood,
-                    duration: track.duration,
+                    genre: track.genre ?? null,
+                    mood: track.mood ?? null,
+                    duration: track.duration ?? null,
                   });
                 }
               }}
@@ -243,9 +243,9 @@ export function PostDetail({
           trackUrl={currentTrack.fileUrl}
           trackTitle={`${post.journey.bookTitle} - ${currentTrack.title}`}
           trackVersion={currentTrack.version}
-          bookCoverUrl={post.journey.bookCoverUrl}
-          genre={currentTrack.genre}
-          mood={currentTrack.mood}
+          bookCoverUrl={post.journey.bookCoverUrl ?? undefined}
+          genre={currentTrack.genre ?? undefined}
+          mood={currentTrack.mood ?? undefined}
           onClose={handleClosePlayer}
         />
       )}

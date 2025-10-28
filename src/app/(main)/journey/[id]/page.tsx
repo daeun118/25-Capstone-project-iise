@@ -549,15 +549,14 @@ export default function JourneyDetailPage() {
                   <Playlist
                     tracks={playlist.map(track => ({
                       id: track.id,
+                      version: `v${track.version}`,
                       title: track.title,
-                      artist: journey.book_author || 'ReadTune',
-                      duration: track.duration,
-                      albumCover: journey.book_cover_url,
-                      fileUrl: track.fileUrl,
+                      url: track.fileUrl,
                       genre: track.genre,
-                      mood: track.mood
+                      mood: track.mood,
+                      duration: track.duration
                     }))}
-                    currentTrackId={currentTrackId}
+                    currentTrackId={currentTrackId ?? undefined}
                     isPlaying={!!currentTrack}
                     onTrackSelect={(trackId) => {
                       const track = playlist.find(t => t.id === trackId);
