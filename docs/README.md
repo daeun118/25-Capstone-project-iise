@@ -1,4 +1,4 @@
-# BookBeats 문서
+# ReadTune 문서
 
 **프로젝트**: Reading Experience Platform (독서 여정 플랫폼)
 **최종 업데이트**: 2025-10-22
@@ -22,7 +22,7 @@ docs/
 ## 🏗️ Architecture (아키텍처)
 
 ### [design-system.md](./architecture/design-system.md)
-BookBeats 디자인 시스템 전체 명세
+ReadTune 디자인 시스템 전체 명세
 
 **포함 내용**:
 - 디자인 철학 및 핵심 가치

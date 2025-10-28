@@ -34,7 +34,7 @@ export class SignupPage extends BasePage {
    */
   async goto() {
     await super.goto('/signup');
-    await this.expectTitle(/회원가입|Sign ?up|BookBeats/);
+    await this.expectTitle(/회원가입|Sign ?up|ReadTune/);
   }
 
   /**

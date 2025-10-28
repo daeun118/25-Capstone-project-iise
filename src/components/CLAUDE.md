@@ -1,7 +1,7 @@
-# BookBeats Component Library
+# ReadTune Component Library
 
 **작성일**: 2025-10-21
-**목적**: BookBeats 프로젝트의 재사용 가능한 컴포넌트 가이드
+**목적**: ReadTune 프로젝트의 재사용 가능한 컴포넌트 가이드
 **테스트 페이지**: http://localhost:3000/test-design
 
 ---

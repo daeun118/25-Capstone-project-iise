@@ -10,7 +10,7 @@ test.describe('도서 검색 기능', () => {
   });
 
   test('홈페이지가 정상적으로 로드된다', async ({ page }) => {
-    await expect(page).toHaveTitle(/BookBeats/);
+    await expect(page).toHaveTitle(/ReadTune/);
   });
 
   test('헤더에 검색 입력창이 표시된다', async ({ page }) => {

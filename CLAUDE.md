@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ---
 
-# BookBeats - 독서 여정 플랫폼
+# ReadTune - 독서 여정 플랫폼
 
 독서 과정을 AI 생성 음악으로 기록하고 공유하는 웹 서비스. 각 독서 단계마다 음악이 자동 생성되어 완독 시 플레이리스트가 완성됩니다.
 
@@ -29,6 +29,8 @@ npm run test:ui          # 테스트 UI 모드 (권장)
 npx playwright test tests/auth.spec.ts           # 특정 파일
 npx playwright test -g "독서 여정 시작"            # 특정 테스트
 npx playwright test --headed --debug             # 디버그 모드
+npx playwright test --trace on                   # Trace 기록 (디버깅용)
+npx playwright show-report                       # 테스트 리포트 보기
 ```
 
 ### DB 타입 생성 (스키마 변경 시 필수)
@@ -210,6 +212,13 @@ select(`
 
 **보안**: 모든 테이블 RLS 활성화 (사용자는 자신의 데이터만 접근)
 
+**성능 최적화** (중요!):
+- **인덱스**: 29개 전략적 인덱스 추가 (복합 인덱스, 부분 인덱스)
+- **복합 인덱스 예시**: `idx_reading_journeys_user_status_started (user_id, status, started_at DESC)`
+- **부분 인덱스 예시**: `idx_posts_published_created_at (created_at DESC) WHERE is_published = true`
+- **쿼리 패턴**: WHERE 조건, ORDER BY, JOIN에 사용되는 컬럼 조합에 인덱스 생성
+- **측정 결과**: 피드 72% 개선, 책장 71% 개선 (Production 환경)
+
 ---
 
 ## 개발 가이드
@@ -245,11 +254,59 @@ bash("sed -i 's/old/new/g' file.tsx")
 - UI: `sonner` toast
 - 비동기: 로딩 상태 표시 (음악 생성 30초~2분)
 
+### 성능 최적화 패턴 (중요!)
+
+**N+1 쿼리 방지** - JOIN을 사용한 단일 쿼리로 해결:
+
+```typescript
+// ❌ N+1 쿼리 (여러 번 DB 호출)
+const journeys = await db.from('reading_journeys').select('*');
+for (const journey of journeys) {
+  const user = await db.from('users').select('*').eq('id', journey.user_id).single();
+  const logs = await db.from('reading_logs').select('*').eq('journey_id', journey.id);
+}
+
+// ✅ 단일 쿼리 (JOIN 사용)
+const journeys = await db.from('reading_journeys').select(`
+  *,
+  users (id, nickname, avatar_url),
+  reading_logs (*)
+`);
+```
+
+**이미지 최적화**:
+- Next.js Image 컴포넌트 필수 사용
+- AVIF/WebP 자동 변환 (next.config.ts 설정)
+- `quality={85}` 기본값
+- LCP 최적화: 첫 화면 이미지는 `priority` prop
+- 나머지는 lazy loading (기본값)
+
+```typescript
+// ✅ 올바른 이미지 사용
+import Image from 'next/image';
+
+<Image
+  src={bookCover}
+  alt={bookTitle}
+  width={200}
+  height={300}
+  quality={85}
+  priority={isAboveFold}  // 첫 화면만 true
+/>
+```
+
 ### 보안
 - 환경 변수: `NEXT_PUBLIC_*` (클라이언트 노출), 나머지 (서버 전용)
-- RLS: 모든 테이블 활성화
+- **중요**: API 토큰은 절대 클라이언트 코드에 하드코딩 금지 → 환경 변수 사용
+- RLS: 모든 테이블 활성화 (사용자는 자신의 데이터만 접근)
+- 공개 데이터: RLS 정책에 `USING (true)` 또는 `USING (is_published = true)` 추가
 - 인증: Supabase Auth (세션 기반)
-- 검증: Zod 스키마
+- 검증: Zod 스키마 (API 요청/응답 모두)
+
+**환경 변수 체크리스트**:
+- `.env.local` 파일 생성 (`.env.example` 참고)
+- `.env.local`은 `.gitignore`에 포함 (절대 커밋 금지)
+- Vercel 배포 시 Environment Variables 설정
 
 ### Git 워크플로우 (중요!)
 

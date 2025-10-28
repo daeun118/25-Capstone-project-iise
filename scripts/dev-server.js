@@ -106,7 +106,7 @@ async function startDevServer() {
 }
 
 async function main() {
-  log('\n📦 BookBeats 개발 서버 관리 도구', GREEN);
+  log('\n📦 ReadTune 개발 서버 관리 도구', GREEN);
   log('='.repeat(50), GREEN);
   
   const portCleared = await killPort(PORT);

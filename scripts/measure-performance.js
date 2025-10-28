@@ -6,7 +6,7 @@
 const { chromium } = require('@playwright/test');
 
 async function measurePerformance() {
-  console.log('\n🎯 BookBeats 성능 측정 시작\n');
+  console.log('\n🎯 ReadTune 성능 측정 시작\n');
   console.log('='.repeat(60));
 
   const browser = await chromium.launch({ headless: true });

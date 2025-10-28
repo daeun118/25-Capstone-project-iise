@@ -26,7 +26,7 @@ export function SignupDialog({ open, onOpenChange, onSwitchToLogin }: SignupDial
               <BookOpen className="w-8 h-8 text-primary" />
             </div>
           </div>
-          <DialogTitle className="text-2xl font-bold">BookBeats 회원가입</DialogTitle>
+          <DialogTitle className="text-2xl font-bold">ReadTune 회원가입</DialogTitle>
           <DialogDescription className="text-sm text-balance">
             이메일로 계정을 만들어 독서 여정을 시작하세요
           </DialogDescription>

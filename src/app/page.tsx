@@ -186,7 +186,7 @@ export default function Home() {
             className="text-center space-y-3 sm:space-y-4 mb-12 sm:mb-16"
           >
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold">
-              BookBeats의 특별한 경험
+              ReadTune의 특별한 경험
             </h2>
             <p className="text-base sm:text-lg text-gray-600">
               독서와 음악이 만나는 새로운 방식

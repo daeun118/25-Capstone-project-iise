@@ -1,4 +1,4 @@
-# BookBeats E2E Test Plan
+# ReadTune E2E Test Plan
 
 **생성일**: 2025-10-22  
 **테스트 환경**: Playwright E2E Testing (Chromium, Headed Mode)  

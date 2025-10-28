@@ -54,7 +54,7 @@ async function measureApiCall(url, description, options = {}) {
 }
 
 async function runPerformanceTests() {
-  log('\n🚀 BookBeats Performance Test Suite', colors.bright + colors.blue);
+  log('\n🚀 ReadTune Performance Test Suite', colors.bright + colors.blue);
   log('=' .repeat(60), colors.blue);
   
   const results = {

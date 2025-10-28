@@ -12,7 +12,7 @@ test.describe('회원가입 기능', () => {
 
   test('회원가입 페이지가 정상적으로 로드된다', async ({ page }) => {
     // 페이지 타이틀 확인
-    await expect(page).toHaveTitle(/회원가입|Sign.*up|BookBeats/);
+    await expect(page).toHaveTitle(/회원가입|Sign.*up|ReadTune/);
 
     // 회원가입 폼 요소들이 보이는지 확인
     await expect(signupPage.emailInput).toBeVisible();

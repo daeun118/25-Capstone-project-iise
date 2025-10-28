@@ -51,7 +51,7 @@ export function Sidebar({ readingCount = 0, completedCount = 0, className }: Sid
         <div className="px-4 py-2">
           <Link href="/" className="flex items-center gap-2 font-bold text-xl">
             <BookOpen className="size-6 text-primary" />
-            <span>BookBeats</span>
+            <span>ReadTune</span>
           </Link>
         </div>
 

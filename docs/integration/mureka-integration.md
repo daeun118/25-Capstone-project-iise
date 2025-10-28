@@ -7,7 +7,7 @@
 
 ## 📖 개요
 
-BookBeats 플랫폼에 Mureka AI 음악 생성을 통합하여 독서 여정마다 실제 음악 파일을 자동 생성합니다.
+ReadTune 플랫폼에 Mureka AI 음악 생성을 통합하여 독서 여정마다 실제 음악 파일을 자동 생성합니다.
 
 ### 아키텍처
 
@@ -223,7 +223,7 @@ Claude Code에서 사용 가능한 4가지 도구:
 3. **Generate Background Music** - 인스트루멘탈 BGM 생성 ⭐ (BookBeats 사용)
 4. **Generate from Lyrics** - 기존 가사로 곡 생성
 
-BookBeats는 **Generate Background Music**을 사용하여 독서 분위기에 맞는 인스트루멘탈 트랙을 생성합니다.
+ReadTune는 **Generate Background Music**을 사용하여 독서 분위기에 맞는 인스트루멘탈 트랙을 생성합니다.
 
 ---
 

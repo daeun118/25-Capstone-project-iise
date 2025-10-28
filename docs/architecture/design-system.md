@@ -1,4 +1,4 @@
-# BookBeats Design System
+# ReadTune Design System
 
 **버전**: 1.0
 **작성일**: 2025-10-21

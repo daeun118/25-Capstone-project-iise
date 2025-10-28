@@ -11,7 +11,7 @@ test.describe('로그인 기능', () => {
 
   test('로그인 페이지가 정상적으로 로드된다', async ({ page }) => {
     // 페이지 타이틀 확인
-    await expect(page).toHaveTitle(/로그인|Login|BookBeats/);
+    await expect(page).toHaveTitle(/로그인|Login|ReadTune/);
 
     // 로그인 폼 요소들이 보이는지 확인
     await expect(loginPage.emailInput).toBeVisible();

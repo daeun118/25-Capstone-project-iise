@@ -26,7 +26,7 @@ export function LoginDialog({ open, onOpenChange, onSwitchToSignup }: LoginDialo
               <BookOpen className="w-8 h-8 text-primary" />
             </div>
           </div>
-          <DialogTitle className="text-2xl font-bold">BookBeats에 로그인</DialogTitle>
+          <DialogTitle className="text-2xl font-bold">ReadTune에 로그인</DialogTitle>
           <DialogDescription className="text-sm text-balance">
             이메일과 비밀번호를 입력하여 로그인하세요
           </DialogDescription>

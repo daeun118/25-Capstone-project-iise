@@ -12,7 +12,7 @@ export function Footer() {
           <div className="space-y-3">
             <Link href="/" className="flex items-center gap-2 font-bold text-lg">
               <BookOpen className="size-5 text-primary" />
-              <span>BookBeats</span>
+              <span>ReadTune</span>
             </Link>
             <p className="text-sm text-muted-foreground">
               독서 여정을 음악으로 기록하는 플랫폼
@@ -94,7 +94,7 @@ export function Footer() {
 
         {/* Copyright */}
         <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground">
-          <p>&copy; {currentYear} BookBeats. All rights reserved.</p>
+          <p>&copy; {currentYear} ReadTune. All rights reserved.</p>
         </div>
       </div>
     </footer>

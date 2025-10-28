@@ -20,7 +20,7 @@ export default function LoginPage() {
                 <BookOpen className="w-8 h-8 text-primary" />
               </div>
             </div>
-            <CardTitle className="text-2xl font-bold">BookBeats에 로그인</CardTitle>
+            <CardTitle className="text-2xl font-bold">ReadTune에 로그인</CardTitle>
             <CardDescription className="text-sm text-balance">
               이메일과 비밀번호를 입력하여 로그인하세요
             </CardDescription>

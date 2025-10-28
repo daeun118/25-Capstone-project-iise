@@ -134,7 +134,7 @@ Google Books API 연동, 검색 UI 구현 완료
 
 **도메인 설정**:
 - 기본 도메인: `25-capstone-project-iise.vercel.app` (현재 사용)
-- 커스텀 도메인: 향후 필요시 추가 가능 (bookbeats.com DNS 대기 중)
+- 커스텀 도메인: 향후 필요시 추가 가능 (readtune.com DNS 대기 중)
 
 **설정된 환경 변수** (Production):
 - `NEXT_PUBLIC_SUPABASE_URL`

@@ -36,7 +36,7 @@ export function Header() {
         <Link href="/" className="flex items-center gap-2 group">
           <BookOpen className="w-5 h-5 text-indigo-600" />
           <span className="font-semibold text-lg text-slate-900 hidden sm:inline">
-            BookBeats
+            ReadTune
           </span>
         </Link>
 

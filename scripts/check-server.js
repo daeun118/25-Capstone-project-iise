@@ -53,7 +53,7 @@ function getProcessInfo(port) {
 }
 
 async function main() {
-  log('\n📊 BookBeats 개발 서버 상태 확인', YELLOW);
+  log('\n📊 ReadTune 개발 서버 상태 확인', YELLOW);
   log('='.repeat(50), YELLOW);
   
   const isInUse = await checkPort(PORT);

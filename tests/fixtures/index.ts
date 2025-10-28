@@ -2,7 +2,7 @@ import { test as base } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
 /**
- * BookBeats 테스트용 Fixtures
+ * ReadTune 테스트용 Fixtures
  *
  * Playwright의 test를 확장하여 재사용 가능한 설정을 제공합니다.
  * - authenticatedPage: 로그인된 상태의 페이지

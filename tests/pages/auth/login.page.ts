@@ -30,7 +30,7 @@ export class LoginPage extends BasePage {
    */
   async goto() {
     await super.goto('/login');
-    await this.expectTitle(/로그인|Login|BookBeats/);
+    await this.expectTitle(/로그인|Login|ReadTune/);
   }
 
   /**
