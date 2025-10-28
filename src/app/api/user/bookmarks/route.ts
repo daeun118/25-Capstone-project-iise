@@ -117,6 +117,35 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Batch query for likes and bookmarks to check current user's interaction state
+    // This prevents N+1 queries and uses indexed lookups
+    let likedPostIds = new Set<string>();
+    let bookmarkedPostIds = new Set<string>();
+
+    if (bookmarks && bookmarks.length > 0) {
+      // Extract post IDs from bookmarks
+      const postIds = bookmarks.map(b => b.posts.id);
+
+      // Parallel query for likes and bookmarks using indexed columns
+      // Uses idx_likes_post_user and idx_bookmarks_post_user indexes
+      const [likesData, bookmarksData] = await Promise.all([
+        supabase
+          .from('likes')
+          .select('post_id')
+          .in('post_id', postIds)
+          .eq('user_id', user.id),
+        supabase
+          .from('bookmarks')
+          .select('post_id')
+          .in('post_id', postIds)
+          .eq('user_id', user.id)
+      ]);
+
+      // Create Sets for O(1) lookup during transformation
+      likedPostIds = new Set(likesData.data?.map(l => l.post_id) || []);
+      bookmarkedPostIds = new Set(bookmarksData.data?.map(b => b.post_id) || []);
+    }
+
     // Transform data to flatten structure
     const transformedBookmarks = bookmarks.map((bookmark: BookmarkWithRelations) => ({
       bookmarkId: bookmark.id,
@@ -128,8 +157,10 @@ export async function GET(request: NextRequest) {
         likesCount: bookmark.posts.likes_count,
         commentsCount: bookmark.posts.comments_count,
         bookmarksCount: bookmark.posts.bookmarks_count,
+        isLiked: likedPostIds.has(bookmark.posts.id),
+        isBookmarked: bookmarkedPostIds.has(bookmark.posts.id),
         createdAt: bookmark.posts.created_at,
-        author: {
+        user: {
           id: bookmark.posts.users.id,
           nickname: bookmark.posts.users.nickname,
           email: bookmark.posts.users.email,
