@@ -53,28 +53,40 @@ export async function GET(
       );
     }
 
-    // Fetch music tracks (playlist) for this journey
-    const { data: logs } = await supabase
+    // Fetch reading logs first
+    const { data: logsData, error: logsError } = await supabase
       .from('reading_logs')
-      .select(`
-        id,
-        version,
-        log_type,
-        created_at,
-        music_tracks (
-          id,
-          file_url,
-          prompt,
-          genre,
-          mood,
-          tempo,
-          duration,
-          description
-        )
-      `)
+      .select('*')
       .eq('journey_id', post.journey_id)
-      .not('music_track_id', 'is', null)
       .order('version', { ascending: true });
+
+    if (logsError) {
+      console.error('Error fetching logs:', logsError);
+    }
+
+    // Then fetch music tracks for each log
+    let logs = [];
+    if (logsData && logsData.length > 0) {
+      const musicTrackIds = logsData.map(log => log.music_track_id).filter(Boolean);
+
+      const { data: musicTracks, error: musicError } = await supabase
+        .from('music_tracks')
+        .select('*')
+        .in('id', musicTrackIds);
+
+      if (musicError) {
+        console.error('Error fetching music tracks:', musicError);
+      }
+
+      // Combine logs with their music tracks
+      logs = logsData.map(log => {
+        const track = musicTracks?.find(t => t.id === log.music_track_id);
+        return {
+          ...log,
+          music_tracks: track || null
+        };
+      });
+    }
 
     // Fetch comments
     const { data: comments } = await supabase
@@ -120,7 +132,7 @@ export async function GET(
 
     // Transform music tracks
     const playlist = (logs || [])
-      .filter((log: any) => log.music_tracks)
+      .filter((log: any) => log.music_tracks && log.music_tracks.file_url)
       .map((log: any) => ({
         id: log.music_tracks.id,
         version: log.version,

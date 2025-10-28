@@ -9,6 +9,7 @@ import { CommentForm } from './CommentForm';
 import { CommentList } from './CommentList';
 import { BookCover } from '@/components/book/BookCover';
 import { Playlist } from '@/components/music/Playlist';
+import { MusicPlayerBar } from '@/components/music/MusicPlayerBar';
 import { Star, Calendar, Music } from 'lucide-react';
 import { useState } from 'react';
 import { PostDetailDto, CommentDto } from '@/types/dto/post.dto';
@@ -18,21 +19,29 @@ interface PostDetailProps {
   currentUserId?: string;
 }
 
+interface MusicTrack {
+  id: string;
+  version: string;
+  title: string;
+  fileUrl: string;
+  genre: string | null;
+  mood: string | null;
+  duration: number | null;
+}
+
 export function PostDetail({
   post,
   currentUserId,
 }: PostDetailProps) {
-  const [currentTrackId, setCurrentTrackId] = useState<string | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTrack, setCurrentTrack] = useState<MusicTrack | null>(null);
   const [comments, setComments] = useState<CommentDto[]>(post.comments);
 
-  const handleTrackSelect = (trackId: string) => {
-    setCurrentTrackId(trackId);
-    setIsPlaying(true);
+  const handlePlayMusic = (track: MusicTrack) => {
+    setCurrentTrack(track);
   };
 
-  const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
+  const handleClosePlayer = () => {
+    setCurrentTrack(null);
   };
 
   const handleComment = () => {
@@ -173,10 +182,28 @@ export function PostDetail({
                 mood: track.mood,
                 duration: track.duration,
               }))}
-              currentTrackId={currentTrackId || undefined}
-              isPlaying={isPlaying}
-              onTrackSelect={handleTrackSelect}
-              onPlayPause={handlePlayPause}
+              currentTrackId={currentTrack?.id}
+              isPlaying={!!currentTrack}
+              onTrackSelect={(trackId) => {
+                const track = post.playlist.find(t => t.id === trackId);
+                if (track) {
+                  handlePlayMusic({
+                    id: track.id,
+                    version: track.version.toString(),
+                    title: track.title,
+                    fileUrl: track.fileUrl,
+                    genre: track.genre,
+                    mood: track.mood,
+                    duration: track.duration,
+                  });
+                }
+              }}
+              onPlayPause={() => {
+                if (currentTrack) {
+                  // Dispatch custom event to control the MusicPlayerBar
+                  window.dispatchEvent(new CustomEvent('togglePlayPause'));
+                }
+              }}
             />
           </CardContent>
         </Card>
@@ -209,6 +236,19 @@ export function PostDetail({
           )}
         </CardContent>
       </Card>
+
+      {/* Music Player Bar */}
+      {currentTrack && (
+        <MusicPlayerBar
+          trackUrl={currentTrack.fileUrl}
+          trackTitle={`${post.journey.bookTitle} - ${currentTrack.title}`}
+          trackVersion={currentTrack.version}
+          bookCoverUrl={post.journey.bookCoverUrl}
+          genre={currentTrack.genre}
+          mood={currentTrack.mood}
+          onClose={handleClosePlayer}
+        />
+      )}
     </div>
   );
 }
