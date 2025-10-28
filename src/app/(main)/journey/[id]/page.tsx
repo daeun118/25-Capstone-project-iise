@@ -8,6 +8,7 @@ import { LogForm, type LogFormData } from '@/components/journey/LogForm';
 import { LogList } from '@/components/journey/LogList';
 import { MusicPlayer } from '@/components/music/MusicPlayer';
 import { MusicPlayerBar } from '@/components/music/MusicPlayerBar';
+import { Playlist } from '@/components/music/Playlist';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -51,6 +52,23 @@ interface ReadingLog {
   music_track: MusicTrack | null;
 }
 
+interface PlaylistTrack {
+  id: string;
+  version: number;
+  logType: string;
+  title: string;
+  fileUrl: string;
+  prompt: string;
+  genre: string;
+  mood: string;
+  tempo: number;
+  duration: number;
+  description: string | null;
+  createdAt: string;
+  quote?: string | null;
+  memo?: string | null;
+}
+
 export default function JourneyDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -58,6 +76,7 @@ export default function JourneyDetailPage() {
 
   const [journey, setJourney] = useState<Journey | null>(null);
   const [logs, setLogs] = useState<ReadingLog[]>([]);
+  const [playlist, setPlaylist] = useState<PlaylistTrack[]>([]);
   const [currentTrack, setCurrentTrack] = useState<MusicTrack | null>(null);
   const [currentTrackId, setCurrentTrackId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -67,6 +86,7 @@ export default function JourneyDetailPage() {
   const [isSharingToFeed, setIsSharingToFeed] = useState(false);
   const [hasShared, setHasShared] = useState(false);
   const [isPolling, setIsPolling] = useState(false);
+  const [isPlayingPlaylist, setIsPlayingPlaylist] = useState(false);
 
   const { triggerGeneration } = useMusicGeneration();
 
@@ -180,6 +200,11 @@ export default function JourneyDetailPage() {
 
       const data = await response.json();
       setJourney(data.journey);
+      
+      // Set playlist if journey is completed
+      if (data.playlist && data.playlist.length > 0) {
+        setPlaylist(data.playlist);
+      }
 
       // Check if already shared to feed
       if (data.journey.status === 'completed') {
@@ -473,6 +498,89 @@ export default function JourneyDetailPage() {
                       독서 중 인상 깊었던 구절이나 생각을 기록해보세요.
                     </p>
                   )}
+                </div>
+              </m.div>
+            )}
+
+            {/* Playlist - Only for completed journeys */}
+            {journey.status === 'completed' && playlist.length > 0 && (
+              <m.div
+                className="card-elevated rounded-2xl overflow-hidden"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+              >
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-2">
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{
+                        background: 'linear-gradient(135deg, #ff6b6b, #f06595)'
+                      }}>
+                        <Music2 className="w-5 h-5 text-white" />
+                      </div>
+                      <h2 className="text-2xl font-bold">독서 플레이리스트</h2>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="gradient"
+                      onClick={() => {
+                        if (playlist.length > 0 && playlist[0].fileUrl) {
+                          // Play first track to start playlist
+                          const firstTrack: MusicTrack = {
+                            id: playlist[0].id,
+                            prompt: playlist[0].prompt,
+                            genre: playlist[0].genre,
+                            mood: playlist[0].mood,
+                            tempo: playlist[0].tempo.toString(),
+                            file_url: playlist[0].fileUrl,
+                            description: playlist[0].description,
+                            status: 'completed',
+                            created_at: playlist[0].createdAt
+                          };
+                          handlePlayMusic(firstTrack);
+                          setIsPlayingPlaylist(true);
+                        }
+                      }}
+                    >
+                      <Music2 className="size-4 mr-1" />
+                      전체 재생
+                    </Button>
+                  </div>
+                  <Playlist
+                    tracks={playlist.map(track => ({
+                      id: track.id,
+                      title: track.title,
+                      artist: journey.book_author || 'ReadTune',
+                      duration: track.duration,
+                      albumCover: journey.book_cover_url,
+                      fileUrl: track.fileUrl,
+                      genre: track.genre,
+                      mood: track.mood
+                    }))}
+                    currentTrackId={currentTrackId}
+                    isPlaying={!!currentTrack}
+                    onTrackSelect={(trackId) => {
+                      const track = playlist.find(t => t.id === trackId);
+                      if (track) {
+                        const musicTrack: MusicTrack = {
+                          id: track.id,
+                          prompt: track.prompt,
+                          genre: track.genre,
+                          mood: track.mood,
+                          tempo: track.tempo.toString(),
+                          file_url: track.fileUrl,
+                          description: track.description,
+                          status: 'completed',
+                          created_at: track.createdAt
+                        };
+                        handlePlayMusic(musicTrack);
+                      }
+                    }}
+                    onPlayPause={() => {
+                      const event = new CustomEvent('togglePlayPause');
+                      window.dispatchEvent(event);
+                    }}
+                  />
                 </div>
               </m.div>
             )}

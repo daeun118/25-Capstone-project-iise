@@ -27,7 +27,78 @@ export async function GET(
       return NextResponse.json({ error: 'Journey not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ journey });
+    // Fetch reading logs
+    const { data: logsData, error: logsError } = await supabase
+      .from('reading_logs')
+      .select('*')
+      .eq('journey_id', id)
+      .order('version', { ascending: true });
+
+    if (logsError) {
+      console.error('Error fetching logs:', logsError);
+    }
+
+    // Initialize playlist array
+    let playlist = [];
+
+    // If journey is completed and has logs, compile playlist
+    if (journey.status === 'completed' && logsData && logsData.length > 0) {
+      // Extract music track IDs
+      const musicTrackIds = logsData
+        .map(log => log.music_track_id)
+        .filter(Boolean);
+
+      if (musicTrackIds.length > 0) {
+        // Fetch music tracks
+        const { data: musicTracks, error: musicError } = await supabase
+          .from('music_tracks')
+          .select('*')
+          .in('id', musicTrackIds)
+          .eq('status', 'completed'); // Only include completed tracks
+
+        if (musicError) {
+          console.error('Error fetching music tracks:', musicError);
+        }
+
+        if (musicTracks && musicTracks.length > 0) {
+          // Compile playlist from logs and music tracks
+          playlist = logsData
+            .map(log => {
+              const track = musicTracks.find(t => t.id === log.music_track_id);
+              if (!track || !track.file_url) return null;
+
+              return {
+                id: track.id,
+                version: log.version,
+                logType: log.log_type,
+                title: log.log_type === 'start' ? 'v0 - 여정의 시작' : 
+                       log.log_type === 'complete' ? 'vFinal - 여정의 완성' :
+                       `v${log.version} - 독서 중`,
+                fileUrl: track.file_url,
+                prompt: track.prompt,
+                genre: track.genre,
+                mood: track.mood,
+                tempo: track.tempo,
+                duration: track.duration,
+                description: track.description,
+                createdAt: track.created_at,
+                // Include log context for crossfade optimization
+                quote: log.quote,
+                memo: log.memo,
+              };
+            })
+            .filter(Boolean); // Remove null entries
+        }
+      }
+    }
+
+    // Return journey with playlist (if completed)
+    const response = {
+      journey,
+      ...(journey.status === 'completed' && playlist.length > 0 && { playlist })
+    };
+
+    return NextResponse.json(response);
   } catch (error) {
     console.error('Error fetching journey:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

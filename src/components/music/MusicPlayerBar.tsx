@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
-import { Play, Pause, Volume2, VolumeX, X, Music } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, X, Music, SkipBack, SkipForward } from 'lucide-react';
 import { m, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { toast } from 'sonner';
@@ -17,6 +17,14 @@ interface MusicPlayerBarProps {
   genre?: string | null;
   mood?: string | null;
   onClose: () => void;
+  // Playlist mode props
+  playlistMode?: boolean;
+  currentTrackIndex?: number;
+  totalTracks?: number;
+  onPrevious?: () => void;
+  onNext?: () => void;
+  hasNext?: boolean;
+  hasPrevious?: boolean;
 }
 
 export function MusicPlayerBar({
@@ -27,6 +35,13 @@ export function MusicPlayerBar({
   genre,
   mood,
   onClose,
+  playlistMode = false,
+  currentTrackIndex = 0,
+  totalTracks = 0,
+  onPrevious,
+  onNext,
+  hasNext = false,
+  hasPrevious = false,
 }: MusicPlayerBarProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -236,24 +251,59 @@ export function MusicPlayerBar({
             </div>
 
             {/* Center: Playback Controls */}
-            <div className="flex items-center gap-3 md:gap-4">
-              {/* Play/Pause Button - Spotify style (48x48px, hover scale) */}
-              <m.button
-                onClick={togglePlayPause}
-                disabled={isLoading}
-                className="relative w-11 h-11 md:w-12 md:h-12 rounded-full flex items-center justify-center shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150"
-                style={{
-                  background: 'linear-gradient(135deg, #6366f1, #8b5cf6)'
-                }}
-                whileHover={{ scale: isLoading ? 1 : 1.06 }}
-                whileTap={{ scale: isLoading ? 1 : 0.98 }}
-              >
-                {isPlaying ? (
-                  <Pause className="size-5 md:size-6 text-white" fill="white" />
-                ) : (
-                  <Play className="size-5 md:size-6 text-white ml-0.5" fill="white" />
+            <div className="flex flex-col items-center gap-1">
+              {/* Playlist Progress (only in playlist mode) */}
+              {playlistMode && totalTracks > 0 && (
+                <div className="text-xs text-muted-foreground/70 font-medium mb-1">
+                  {currentTrackIndex + 1} / {totalTracks} 트랙
+                </div>
+              )}
+              
+              <div className="flex items-center gap-3 md:gap-4">
+                {/* Previous Button (only in playlist mode) */}
+                {playlistMode && (
+                  <m.button
+                    onClick={onPrevious}
+                    disabled={!hasPrevious}
+                    className="relative w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-150 bg-accent/50 hover:bg-accent"
+                    whileHover={{ scale: hasPrevious ? 1.05 : 1 }}
+                    whileTap={{ scale: hasPrevious ? 0.95 : 1 }}
+                  >
+                    <SkipBack className="size-4 md:size-5" />
+                  </m.button>
                 )}
-              </m.button>
+                
+                {/* Play/Pause Button - Spotify style (48x48px, hover scale) */}
+                <m.button
+                  onClick={togglePlayPause}
+                  disabled={isLoading}
+                  className="relative w-11 h-11 md:w-12 md:h-12 rounded-full flex items-center justify-center shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150"
+                  style={{
+                    background: 'linear-gradient(135deg, #6366f1, #8b5cf6)'
+                  }}
+                  whileHover={{ scale: isLoading ? 1 : 1.06 }}
+                  whileTap={{ scale: isLoading ? 1 : 0.98 }}
+                >
+                  {isPlaying ? (
+                    <Pause className="size-5 md:size-6 text-white" fill="white" />
+                  ) : (
+                    <Play className="size-5 md:size-6 text-white ml-0.5" fill="white" />
+                  )}
+                </m.button>
+                
+                {/* Next Button (only in playlist mode) */}
+                {playlistMode && (
+                  <m.button
+                    onClick={onNext}
+                    disabled={!hasNext}
+                    className="relative w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-150 bg-accent/50 hover:bg-accent"
+                    whileHover={{ scale: hasNext ? 1.05 : 1 }}
+                    whileTap={{ scale: hasNext ? 0.95 : 1 }}
+                  >
+                    <SkipForward className="size-4 md:size-5" />
+                  </m.button>
+                )}
+              </div>
 
               {/* Progress Bar + Time - Spotify style with hover effects */}
               <div className="hidden md:flex items-center gap-3 min-w-[300px] lg:min-w-[400px]">
