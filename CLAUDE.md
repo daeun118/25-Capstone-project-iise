@@ -10,7 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **핵심 플로우**: 책 선택(v0) → 독서 기록(v1~vN) → 완독(vFinal) → 플레이리스트 완성
 
-**현재 상태**: Phase 12 배포 완료 ✅ | Production: https://25-capstone-project-iise.vercel.app
+**현재 상태**: Phase 12 배포 완료 + 플레이리스트 크로스페이드 기능 추가 ✅ | Production: https://25-capstone-project-iise.vercel.app
 
 ---
 
@@ -87,14 +87,18 @@ src/
 │   └── google-books/        # Google Books API
 │
 ├── services/                # 비즈니스 로직 (의존성 주입) ⭐
+│   └── audio-crossfade-manager.ts  # Web Audio API 크로스페이드 ⭐
 ├── repositories/            # 데이터 접근 (Repository 패턴) ⭐
 ├── hooks/                   # Custom React Hooks
+│   └── useMusicPlayer.ts    # 플레이리스트 + 크로스페이드 통합 ⭐
 └── types/                   # TypeScript 타입 정의
 ```
 
 **⭐ 핵심 파일**:
-- `src/lib/openai/client.ts` - 3단계 음악 프롬프트 생성 로직 (v0/vN/vFinal)
-- `src/components/music/MusicPlayerBar.tsx` - 하단 재생 바 (Spotify 스타일, 2025-01 개선)
+- `src/lib/openai/client.ts` - 3단계 음악 프롬프트 생성 로직 (v0/vN/vFinal, 크로스페이드 최적화)
+- `src/services/audio-crossfade-manager.ts` - Web Audio API 기반 Equal Power Crossfade
+- `src/hooks/useMusicPlayer.ts` - 플레이리스트 관리 + 크로스페이드 통합
+- `src/components/music/MusicPlayerBar.tsx` - 하단 재생 바 (Spotify 스타일, 플레이리스트 모드)
 - `src/components/auth/AuthRequired.tsx` - 로그인 필요 안내 컴포넌트 (비로그인 UX 개선)
 - `src/components/CLAUDE.md` - **컴포넌트 생성 전 필수 확인** (재사용 가이드)
 - `src/services/` - 비즈니스 로직 레이어
@@ -344,6 +348,7 @@ git push origin main
 **Journeys**:
 - `POST /api/journeys/create` - 여정 시작 (v0 생성)
 - `GET /api/journeys?status=all&sort=latest` - 목록
+- `GET /api/journeys/[id]` - 여정 상세 (완독 시 플레이리스트 포함)
 - `POST /api/journeys/[id]/logs` - 기록 추가 (vN 생성)
 - `POST /api/journeys/[id]/complete` - 완독 (vFinal 생성)
 
@@ -367,7 +372,7 @@ git push origin main
 
 ## 개발 상태 및 다음 단계
 
-**현재**: ✅ Phase 12 완료 (Vercel 배포) + 음악 재생 바 개선 완료
+**현재**: ✅ Phase 12 완료 (Vercel 배포) + 플레이리스트 크로스페이드 기능 완료
 **Production**: https://25-capstone-project-iise.vercel.app
 **다음**: Phase 13 - 앨범커버 생성 (DALL-E 3)
 
@@ -417,6 +422,22 @@ git push origin main
   - Glass morphism + pulse 애니메이션
   - 모바일 터치 영역 최적화
 
+- ✅ **완독 플레이리스트 및 크로스페이드 자동 재생 구현** (2025-01-28)
+  - Journey API: 완독된 여정의 플레이리스트 컴파일 로직 추가 (v0~vFinal)
+  - Journey Detail: 플레이리스트 UI 섹션 및 "전체 재생" 버튼 추가
+  - AudioCrossfadeManager: Web Audio API 기반 전문가 수준 크로스페이드
+    - Equal Power Crossfade (cosine/sine curves)
+    - Adaptive duration (tempo/mood 기반 5-10초)
+    - 15초 사전 로딩으로 끊김 없는 재생
+  - useMusicPlayer: 플레이리스트 관리 및 크로스페이드 통합
+  - MusicPlayerBar: 이전/다음 트랙 버튼 및 진행 상태 표시
+  - GPT-4o-mini 프롬프트: 크로스페이드 최적화 힌트 추가
+    - 템포 일관성 유지 (±10-15 BPM)
+    - 페이드 인/아웃 명시
+    - 장르 호환성 확보
+  - E2E Tests: 플레이리스트 및 크로스페이드 기능 검증
+  - 참고: `claudedocs/music-generation-api-guide.md` (팀 공유용)
+
 **완료된 최적화** (Phase 11):
 - N+1 쿼리 제거: 11개 → 1개 JOIN (60-70% 성능 개선)
 - React 메모이제이션: 리렌더 80% 감소
@@ -453,3 +474,4 @@ git push origin main
 - [PRD_instruction.md](./PRD_instruction.md) - 제품 요구사항
 - [execution_plan.md](./execution_plan.md) - 개발 계획
 - [claudedocs/performance-optimization-report.md](./claudedocs/performance-optimization-report.md) - 성능 최적화 상세
+- [claudedocs/music-generation-api-guide.md](./claudedocs/music-generation-api-guide.md) - 음악 생성 API 가이드 (팀 공유용) ⭐
