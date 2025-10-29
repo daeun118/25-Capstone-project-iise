@@ -148,7 +148,7 @@ export function StatsDashboard() {
         transition={{ delay: 0.2, duration: 0.6 }}
       >
         <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#f59e0b' }}>
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-amber-500">
             <FileText className="w-4 h-4 text-white" />
           </div>
           생성한 콘텐츠
@@ -188,7 +188,7 @@ export function StatsDashboard() {
         transition={{ delay: 0.4, duration: 0.6 }}
       >
         <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#ec4899' }}>
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-pink-500">
             <Heart className="w-4 h-4 text-white" />
           </div>
           커뮤니티 활동
@@ -228,7 +228,7 @@ export function StatsDashboard() {
         transition={{ delay: 0.6, duration: 0.6 }}
       >
         <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#f59e0b' }}>
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-amber-500">
             <Star className="w-4 h-4 text-white" />
           </div>
           독서 인사이트

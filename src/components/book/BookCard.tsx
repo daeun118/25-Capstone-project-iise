@@ -104,14 +104,11 @@ export function BookCard({
         {showActions && (
           <CardFooter>
             <m.div className="w-full" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Button 
-                onClick={handleAction} 
-                className="w-full h-11 font-semibold shadow-md hover:shadow-lg transition-all border-0"
-                style={{
-                  background: variant === 'search'
-                    ? 'linear-gradient(135deg, #6366f1, #8b5cf6)'
-                    : 'linear-gradient(135deg, #10b981, #059669)',
-                }}
+              <Button
+                onClick={handleAction}
+                className={`w-full h-11 font-semibold shadow-md hover:shadow-lg transition-all border-0 text-white ${
+                  variant === 'search' ? 'bg-gradient-accent' : 'bg-gradient-to-r from-green-500 to-emerald-600'
+                }`}
               >
                 {variant === 'search' ? (
                   <>

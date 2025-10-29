@@ -51,29 +51,23 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
 
         {/* ✅ Suno 스타일: 하단에서 위로 올라오는 그라데이션 */}
         <div
-          className={`absolute inset-0 transition-opacity duration-300 ${
+          className={`absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent transition-opacity duration-300 ${
             isHovered ? 'opacity-100' : 'opacity-0'
           }`}
-          style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.6) 40%, transparent 70%)' }}
         />
 
         {/* Category Badge (top-left) */}
         {post.journey.bookCategory && (
-          <div className="absolute z-10" style={{ top: 'var(--spacing-sm)', left: 'var(--spacing-sm)' }}>
-            <Badge
-              className="bg-gradient-to-r from-primary to-primary-dark text-white border-0 shadow-lg"
-            >
+          <div className="absolute z-10 top-3 left-3">
+            <Badge className="bg-gradient-to-r from-primary to-primary-dark text-white border-0 shadow-lg">
               {post.journey.bookCategory}
             </Badge>
           </div>
         )}
 
         {/* Music Badge (top-right) */}
-        <div className="absolute z-10" style={{ top: 'var(--spacing-sm)', right: 'var(--spacing-sm)' }}>
-          <div
-            className="flex items-center rounded-full text-white text-xs font-medium shadow-lg bg-gradient-warm"
-            style={{ gap: 'var(--spacing-xs)', paddingLeft: 'var(--spacing-sm)', paddingRight: 'var(--spacing-sm)', paddingTop: 'var(--spacing-xs)', paddingBottom: 'var(--spacing-xs)' }}
-          >
+        <div className="absolute z-10 top-3 right-3">
+          <div className="flex items-center gap-2 rounded-full px-3 py-1.5 text-white text-xs font-medium shadow-lg bg-gradient-warm">
             <Music className="w-3 h-3" />
             <span>플레이리스트</span>
           </div>
@@ -94,10 +88,9 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
 
         {/* ✅ Suno 스타일: 호버 시 하단 유저 정보 슬라이드 업 */}
         <div
-          className={`absolute z-10 flex items-center transition-all duration-300 ${
+          className={`absolute z-10 bottom-3 left-3 flex items-center gap-2 transition-all duration-300 ${
             isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'
           }`}
-          style={{ bottom: 'var(--spacing-sm)', left: 'var(--spacing-sm)', gap: 'var(--spacing-xs)' }}
         >
           <UserAvatar user={post.user} size="sm" />
           <div>
@@ -116,12 +109,11 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
       </Link>
 
       {/* Content Section - Suno 스타일: 최소한의 정보 */}
-      <div style={{ padding: 'var(--spacing-sm)' }}>
+      <div className="p-3">
         {/* Book Title - 1줄만 */}
-        <Link 
+        <Link
           href={`/journey/${post.journey.id}`}
-          className="block group/title hover:opacity-80 transition-opacity"
-          style={{ marginBottom: 'var(--spacing-xs)' }}
+          className="block group/title hover:opacity-80 transition-opacity mb-1"
         >
           <h3 className="font-bold text-base line-clamp-1 group-hover/title:text-primary transition-colors">
             {post.journey.bookTitle}
@@ -129,12 +121,12 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
         </Link>
 
         {/* 메타데이터 압축: 저자 · 별점 (한 줄) */}
-        <div className="flex items-center text-xs text-muted-foreground" style={{ gap: 'var(--spacing-xs)', marginBottom: 'var(--spacing-sm)' }}>
+        <div className="flex items-center gap-2 text-xs text-muted-foreground mb-3">
           <span className="line-clamp-1 flex-shrink">{post.journey.bookAuthor}</span>
           {post.journey.rating && (
             <>
               <span>·</span>
-              <span className="flex items-center" style={{ gap: '2px' }}>
+              <span className="flex items-center gap-0.5">
                 <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
                 {post.journey.rating}.0
               </span>

@@ -73,10 +73,7 @@ export function JourneyHeader({
                   className="object-cover w-full h-full"
                 />
               ) : (
-                <div
-                  className="w-full h-full flex items-center justify-center"
-                  style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
-                >
+                <div className="w-full h-full flex items-center justify-center bg-gradient-accent">
                   <BookOpen className="w-20 h-20 text-white/60" />
                 </div>
               )}
@@ -132,10 +129,7 @@ export function JourneyHeader({
                 transition={{ type: 'spring', stiffness: 300 }}
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center"
-                    style={{ background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1))' }}
-                  >
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/20">
                     <FileText className="w-4 h-4 text-white" />
                   </div>
                   <span className="text-sm text-white/80">독서 기록</span>
@@ -149,10 +143,7 @@ export function JourneyHeader({
                 transition={{ type: 'spring', stiffness: 300 }}
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center"
-                    style={{ background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1))' }}
-                  >
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/20">
                     <Music className="w-4 h-4 text-white" />
                   </div>
                   <span className="text-sm text-white/80">생성 음악</span>
@@ -166,10 +157,7 @@ export function JourneyHeader({
                 transition={{ type: 'spring', stiffness: 300 }}
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <div
-                    className="w-8 h-8 rounded-lg flex items-center justify-center"
-                    style={{ background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1))' }}
-                  >
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/20">
                     <Calendar className="w-4 h-4 text-white" />
                   </div>
                   <span className="text-sm text-white/80">시작일</span>
@@ -186,10 +174,7 @@ export function JourneyHeader({
                   transition={{ type: 'spring', stiffness: 300 }}
                 >
                   <div className="flex items-center gap-2 mb-2">
-                    <div
-                      className="w-8 h-8 rounded-lg flex items-center justify-center"
-                      style={{ background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1))' }}
-                    >
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-white/20">
                       <Star className="w-4 h-4 text-white fill-white" />
                     </div>
                     <span className="text-sm text-white/80">별점</span>

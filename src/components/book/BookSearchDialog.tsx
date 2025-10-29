@@ -105,12 +105,7 @@ export function BookSearchDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col border-2 shadow-2xl">
         {/* Gradient Top Border */}
-        <div
-          className="absolute inset-x-0 top-0 h-1"
-          style={{
-            background: 'linear-gradient(90deg, #a855f7, #ec4899, #f472b6)',
-          }}
-        />
+        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-pink-400" />
 
         <DialogHeader className="space-y-3">
           <div className="flex items-center gap-3">
@@ -118,10 +113,7 @@ export function BookSearchDialog({
               initial={{ scale: 0, rotate: -180 }}
               animate={{ scale: 1, rotate: 0 }}
               transition={{ type: 'spring', stiffness: 200, delay: 0.1 }}
-              className="w-12 h-12 rounded-full flex items-center justify-center"
-              style={{
-                background: 'linear-gradient(135deg, #a855f7, #ec4899)',
-              }}
+              className="w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-br from-purple-500 to-pink-500"
             >
               <Search className="w-6 h-6 text-white" />
             </m.div>
@@ -177,13 +169,10 @@ export function BookSearchDialog({
             )}
           </div>
           <m.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               disabled={isLoading || !query.trim()}
-              className="h-12 px-6 font-bold border-0 shadow-lg hover:shadow-xl transition-all"
-              style={{
-                background: 'linear-gradient(135deg, #a855f7, #ec4899)',
-              }}
+              className="h-12 px-6 font-bold border-0 shadow-lg hover:shadow-xl transition-all text-white bg-gradient-to-r from-purple-500 to-pink-500"
             >
               <Search className="mr-2 size-5" />
               검색
@@ -204,14 +193,14 @@ export function BookSearchDialog({
                   className="flex gap-4 p-4 rounded-xl border-2 border-purple-200/30 bg-gradient-to-br from-purple-50/30 to-pink-50/30"
                 >
                   {/* Book Cover Skeleton */}
-                  <div className="w-20 h-28 rounded-lg bg-gradient-to-br from-purple-200 to-pink-200 animate-pulse" />
+                  <div className="w-20 h-28 rounded-lg animate-pulse bg-gradient-to-br from-purple-200 to-pink-200" />
                   <div className="flex-1 space-y-3">
                     {/* Title Skeleton */}
-                    <div className="h-5 w-3/4 rounded bg-gradient-to-r from-purple-200 to-pink-200 animate-pulse" />
+                    <div className="h-5 w-3/4 rounded animate-pulse bg-gradient-to-r from-purple-200 to-pink-200" />
                     {/* Author Skeleton */}
-                    <div className="h-4 w-1/2 rounded bg-gradient-to-r from-purple-100 to-pink-100 animate-pulse" />
+                    <div className="h-4 w-1/2 rounded animate-pulse bg-gradient-to-r from-purple-100 to-pink-100" />
                     {/* Details Skeleton */}
-                    <div className="h-3 w-2/3 rounded bg-gradient-to-r from-purple-100 to-pink-100 animate-pulse" />
+                    <div className="h-3 w-2/3 rounded animate-pulse bg-gradient-to-r from-purple-100 to-pink-100" />
                   </div>
                 </m.div>
               ))}

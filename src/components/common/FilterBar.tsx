@@ -99,15 +99,8 @@ export function FilterBar({
                   onClick={() => handleCategoryClick(category.value)}
                   className={
                     isSelected
-                      ? 'px-5 py-2.5 rounded-xl font-semibold text-white shadow-md transition-all'
+                      ? 'px-5 py-2.5 rounded-xl font-semibold text-white shadow-md transition-all bg-gradient-accent'
                       : 'px-5 py-2.5 rounded-xl font-medium text-gray-600 bg-white border border-gray-200 hover:border-primary/30 transition-all'
-                  }
-                  style={
-                    isSelected
-                      ? {
-                          background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-                        }
-                      : undefined
                   }
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}

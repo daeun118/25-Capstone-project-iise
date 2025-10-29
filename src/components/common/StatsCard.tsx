@@ -25,7 +25,7 @@ export const StatsCard = memo(function StatsCard({
   iconColor,
   trend,
   trendValue,
-  gradient = 'linear-gradient(135deg, #6366f1, #8b5cf6)',
+  gradient,
   delay = 0,
   className,
 }: StatsCardProps) {
@@ -68,8 +68,10 @@ export const StatsCard = memo(function StatsCard({
             <span className="text-sm font-medium text-gray-600">{label}</span>
             {Icon && (
               <m.div
-                className="w-12 h-12 rounded-xl flex items-center justify-center"
-                style={{ background: gradient }}
+                className={cn(
+                  'w-12 h-12 rounded-xl flex items-center justify-center',
+                  gradient || 'bg-gradient-accent'
+                )}
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 transition={{ type: 'spring', stiffness: 400 }}
               >

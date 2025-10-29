@@ -43,17 +43,18 @@ function TabsTrigger({
       data-slot="tabs-trigger"
       className={cn(
         // Base styles
-        "inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-all",
-        // Default state
-        "text-muted-foreground hover:text-foreground",
-        // Active state - gradient background
-        "data-[state=active]:bg-gradient-accent data-[state=active]:text-white data-[state=active]:shadow-md",
+        "inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-3 py-1.5 text-sm font-semibold whitespace-nowrap transition-all",
+        // Default state - 더 진한 회색으로 가독성 향상
+        "text-gray-600 hover:text-gray-900 hover:bg-gray-50",
+        // Active state - gradient background with white text and stronger shadow
+        "data-[state=active]:bg-gradient-accent data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:border-indigo-300/20",
         // Focus state
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
         // Disabled state
         "disabled:pointer-events-none disabled:opacity-50",
-        // Icon styles
+        // Icon styles - 활성 상태에서 아이콘도 흰색으로
         "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "data-[state=active]:[&_svg]:text-white",
         className
       )}
       {...props}

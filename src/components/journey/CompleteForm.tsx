@@ -144,7 +144,7 @@ export function CompleteForm({ onSubmit, onCancel }: CompleteFormProps) {
         <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
           <div
             className="h-full bg-gradient-accent transition-all"
-            style={{ width: `${(oneLiner.length / 100) * 100}%` }}
+            style={{ width: `${Math.min((oneLiner.length / 100) * 100, 100)}%` }}
           />
         </div>
       </div>
@@ -188,7 +188,7 @@ export function CompleteForm({ onSubmit, onCancel }: CompleteFormProps) {
             <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
               <div
                 className="h-full bg-gradient-accent transition-all"
-                style={{ width: `${(review.length / 2000) * 100}%` }}
+                style={{ width: `${Math.min((review.length / 2000) * 100, 100)}%` }}
               />
             </div>
           </TabsContent>

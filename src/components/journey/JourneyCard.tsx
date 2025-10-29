@@ -90,7 +90,7 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* 책 표지 + 호버 오버레이 (Suno 스타일) */}
-      <div className="relative aspect-[2/3] rounded-xl overflow-hidden" style={{ marginBottom: 'var(--spacing-sm)' }}>
+      <div className="relative aspect-[2/3] rounded-xl overflow-hidden mb-3">
         {journey.bookCoverUrl ? (
           <Image
             src={journey.bookCoverUrl}
@@ -102,25 +102,20 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
             className="object-cover"
           />
         ) : (
-          <div
-            className="absolute inset-0 flex items-center justify-center bg-gradient-accent"
-          >
+          <div className="absolute inset-0 flex items-center justify-center bg-gradient-accent">
             <BookOpen className="w-16 h-16 text-white/60" />
           </div>
         )}
 
         {/* ✅ Suno 스타일: 하단 그라데이션 */}
         <div
-          className={`absolute inset-0 transition-opacity duration-200 ${
+          className={`absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent transition-opacity duration-200 ${
             isHovered ? 'opacity-100' : 'opacity-0'
           }`}
-          style={{
-            background: 'linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.6) 40%, transparent 70%)',
-          }}
         />
 
         {/* 상태 배지 (상단 좌측) */}
-        <div className="absolute z-10" style={{ top: 'var(--spacing-sm)', left: 'var(--spacing-sm)' }}>
+        <div className="absolute z-10 top-3 left-3">
           <Badge
             className={
               isCompleted
@@ -133,7 +128,7 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
         </div>
 
         {/* 더보기 메뉴 (상단 우측) */}
-        <div className="absolute z-10" style={{ top: 'var(--spacing-sm)', right: 'var(--spacing-sm)' }}>
+        <div className="absolute z-10 top-3 right-3">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -164,14 +159,10 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
 
         {/* ✅ Suno 스타일: 진행률 표시 (하단) */}
         {!isCompleted && progress > 0 && (
-          <div
-            className="absolute bottom-0 left-0 right-0 h-1 bg-white/20"
-          >
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20">
             <div
               className="absolute inset-y-0 left-0 transition-all duration-300 bg-gradient-accent"
-              style={{
-                width: `${progress}%`,
-              }}
+              style={{ width: `${progress}%` }}
             />
           </div>
         )}
@@ -191,21 +182,21 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
       </div>
 
       {/* 책 정보 - Suno 스타일: 최소한의 정보 */}
-      <div style={{ padding: 'var(--spacing-sm)' }}>
-        <h3 className="font-bold text-base line-clamp-1" style={{ marginBottom: 'var(--spacing-xs)' }}>{journey.bookTitle}</h3>
-        
+      <div className="p-3">
+        <h3 className="font-bold text-base line-clamp-1 mb-1">{journey.bookTitle}</h3>
+
         {/* 메타데이터 압축: 저자 · 음악 · 별점/진행률 */}
-        <div className="flex items-center text-xs text-muted-foreground" style={{ gap: 'var(--spacing-xs)' }}>
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <span className="line-clamp-1 flex-shrink">{journey.bookAuthor}</span>
           <span>·</span>
-          <span className="flex items-center" style={{ gap: '2px' }}>
+          <span className="flex items-center gap-0.5">
             <Music className="w-3 h-3" />
             {journey.musicTracksCount}곡
           </span>
           {isCompleted && journey.rating && (
             <>
               <span>·</span>
-              <span className="flex items-center" style={{ gap: '2px' }}>
+              <span className="flex items-center gap-0.5">
                 <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
                 {journey.rating}.0
               </span>
@@ -214,9 +205,7 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
           {!isCompleted && progress > 0 && (
             <>
               <span>·</span>
-              <span className="font-semibold text-primary">
-                {progress}%
-              </span>
+              <span className="font-semibold text-primary">{progress}%</span>
             </>
           )}
         </div>

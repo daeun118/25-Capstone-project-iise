@@ -107,13 +107,11 @@ export function Playlist({
                   {/* Version Badge + Playing Status */}
                   <div className="flex items-center gap-2">
                     <div
-                      className="px-3 py-1 rounded-full text-xs font-bold shadow-md"
-                      style={{
-                        background: isCurrent
-                          ? 'linear-gradient(135deg, #10b981, #059669)'
-                          : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-                        color: 'white',
-                      }}
+                      className={`px-3 py-1 rounded-full text-xs font-bold shadow-md text-white ${
+                        isCurrent
+                          ? 'bg-gradient-to-r from-green-500 to-emerald-600'
+                          : 'bg-gradient-accent'
+                      }`}
                     >
                       {track.version}
                     </div>

@@ -213,12 +213,11 @@ export function LogForm({ onSubmit, onCancel }: LogFormProps) {
             type="button"
             onClick={() => handleSubmit(true)}
             disabled={!quote.trim() || isLoading}
-            className="w-full h-12 font-bold text-base shadow-xl hover:shadow-2xl transition-all duration-300 border-0"
-            style={{
-              background: isLoading && loadingMode === 'generate'
-                ? 'linear-gradient(135deg, #9ca3af, #6b7280)'
-                : 'linear-gradient(135deg, #a855f7, #ec4899, #f472b6)',
-            }}
+            className={`w-full h-12 font-bold text-base text-white shadow-xl hover:shadow-2xl transition-all duration-300 border-0 ${
+              isLoading && loadingMode === 'generate'
+                ? 'bg-gradient-to-r from-gray-400 to-gray-600'
+                : 'bg-gradient-to-r from-purple-500 via-pink-500 to-pink-400'
+            }`}
           >
             {isLoading && loadingMode === 'generate' ? (
               <>

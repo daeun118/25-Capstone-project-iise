@@ -141,16 +141,11 @@ export function DeleteAccountDialog({
         </Button>
       </DialogTrigger>
 
-      <DialogContent 
-        className="sm:max-w-[600px] max-h-[75vh] overflow-y-auto border-2"
+      <DialogContent
+        className="sm:max-w-[600px] max-h-[75vh] overflow-y-auto border-2 border-red-200"
       >
-        {/* Gradient border accent */}
-        <div
-          className="absolute inset-x-0 top-0 h-1"
-          style={{
-            background: 'linear-gradient(90deg, #dc2626, #ef4444, #f87171)',
-          }}
-        />
+        {/* Gradient border accent using CSS variable */}
+        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-red-600 via-red-500 to-red-400" />
 
         <DialogHeader className="space-y-3">
           <DialogTitle className="flex items-center gap-3 text-2xl">
@@ -158,15 +153,9 @@ export function DeleteAccountDialog({
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: 'spring', stiffness: 200 }}
-              className="w-12 h-12 rounded-full flex items-center justify-center relative"
+              className="w-12 h-12 rounded-full flex items-center justify-center relative bg-red-100"
             >
-              <div
-                className="absolute inset-0 rounded-full opacity-20"
-                style={{
-                  background: 'linear-gradient(135deg, #dc2626, #ef4444)',
-                }}
-              />
-              <ShieldAlert className="w-6 h-6 text-destructive relative z-10" />
+              <ShieldAlert className="w-6 h-6 text-destructive" />
             </m.div>
             <span className="text-destructive font-bold">회원탈퇴</span>
           </DialogTitle>
@@ -176,15 +165,8 @@ export function DeleteAccountDialog({
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          {/* Enhanced warning message with gradient */}
-          <div className="relative rounded-xl overflow-hidden">
-            <div
-              className="absolute inset-0 opacity-5"
-              style={{
-                background: 'linear-gradient(135deg, #dc2626, #ef4444)',
-              }}
-            />
-            <div className="relative backdrop-blur-sm bg-white/90 border-2 border-destructive/20 rounded-xl p-4">
+          {/* Enhanced warning message */}
+          <div className="relative rounded-xl overflow-hidden border-2 border-red-200 bg-red-50/30 p-4">
               <div className="flex items-start gap-3 mb-4">
                 <div className="w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center flex-shrink-0">
                   <AlertCircle className="w-5 h-5 text-destructive" />
@@ -197,8 +179,8 @@ export function DeleteAccountDialog({
                 </div>
               </div>
 
-              {/* Animated list with icons */}
-              <ul className="space-y-2">
+            {/* Animated list with icons */}
+            <ul className="space-y-2">
                 {deletedDataItems.map((item, index) => (
                   <m.li
                     key={item.id}
@@ -219,8 +201,7 @@ export function DeleteAccountDialog({
                     </span>
                   </m.li>
                 ))}
-              </ul>
-            </div>
+            </ul>
           </div>
 
           {/* Additional warnings with better styling */}
@@ -286,15 +267,7 @@ export function DeleteAccountDialog({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
-            className="relative rounded-lg overflow-hidden"
-          >
-            <div
-              className="absolute inset-0 opacity-5"
-              style={{
-                background: 'linear-gradient(135deg, #dc2626, #ef4444)',
-              }}
-            />
-            <div className="relative flex items-start space-x-3 space-y-0 rounded-lg border-2 border-destructive/30 p-4 bg-white/50">
+            className="flex items-start space-x-3 space-y-0 rounded-lg border-2 border-red-200 p-4 bg-red-50/20">
               <Checkbox
                 id="confirm"
                 checked={confirmed}
@@ -319,7 +292,6 @@ export function DeleteAccountDialog({
                   </m.p>
                 )}
               </div>
-            </div>
           </m.div>
         </div>
 
@@ -329,15 +301,16 @@ export function DeleteAccountDialog({
             variant="outline"
             onClick={handleCancel}
             disabled={loading}
-            className="shadow-sm hover:shadow-md transition-all border-2"
+            className="shadow-sm hover:shadow-md transition-all border-2 font-semibold"
           >
             취소
           </Button>
           <Button
             type="button"
+            variant="destructive"
             onClick={handleDelete}
             disabled={loading || !password.trim() || !confirmed}
-            className="bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:from-gray-400 disabled:to-gray-400 border-0"
+            className="shadow-lg hover:shadow-xl transition-all duration-200 font-semibold"
           >
             {loading ? (
               <>

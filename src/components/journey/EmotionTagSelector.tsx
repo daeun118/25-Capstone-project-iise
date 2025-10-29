@@ -65,17 +65,15 @@ export function EmotionTagSelector({
             감정 태그 선택
           </p>
           <m.div
-            className="text-xs font-bold px-3 py-1.5 rounded-full shadow-sm"
-            style={{
-              background: selectedTags.length >= maxTags
-                ? 'linear-gradient(135deg, #f59e0b, #ea580c)'
-                : 'linear-gradient(135deg, #ec4899, #f472b6)',
-              color: 'white',
-            }}
-            animate={{ 
+            className={`text-xs font-bold px-3 py-1.5 rounded-full shadow-sm text-white ${
+              selectedTags.length >= maxTags
+                ? 'bg-gradient-to-r from-amber-500 to-orange-600'
+                : 'bg-gradient-to-r from-pink-500 to-pink-400'
+            }`}
+            animate={{
               scale: selectedTags.length >= maxTags ? [1, 1.15, 1] : 1,
             }}
-            transition={{ 
+            transition={{
               duration: 0.5,
               repeat: selectedTags.length >= maxTags ? Infinity : 0,
               repeatDelay: 2
@@ -119,17 +117,13 @@ export function EmotionTagSelector({
               >
                 <Badge
                   variant={selectedTags.includes(tag.name) ? 'default' : 'outline'}
-                  className="cursor-pointer transition-all h-9 px-3 text-sm font-medium shadow-sm hover:shadow-md"
-                  style={{
-                    background: selectedTags.includes(tag.name)
-                      ? 'linear-gradient(135deg, #ec4899, #f472b6)'
+                  className={`cursor-pointer transition-all h-9 px-3 text-sm font-medium shadow-sm hover:shadow-md ${
+                    selectedTags.includes(tag.name)
+                      ? 'bg-gradient-to-r from-pink-500 to-pink-400 text-white border-transparent'
                       : selectedTags.length >= maxTags
-                      ? '#f3f4f6'
-                      : 'transparent',
-                    borderColor: selectedTags.includes(tag.name) ? 'transparent' : '#e5e7eb',
-                    color: selectedTags.includes(tag.name) ? 'white' : selectedTags.length >= maxTags ? '#9ca3af' : 'inherit',
-                    opacity: selectedTags.length >= maxTags && !selectedTags.includes(tag.name) ? 0.5 : 1,
-                  }}
+                      ? 'bg-gray-100 text-gray-400 border-gray-200 opacity-50'
+                      : 'bg-transparent border-gray-200'
+                  }`}
                   onClick={() => handleToggleTag(tag.name)}
                 >
                   {tag.name}
@@ -181,12 +175,11 @@ export function EmotionTagSelector({
             size="icon"
             onClick={handleAddCustomTag}
             disabled={!customTag.trim() || selectedTags.length >= maxTags}
-            className="h-11 w-11 border-0 shadow-lg hover:shadow-xl transition-all"
-            style={{
-            background: !customTag.trim() || selectedTags.length >= maxTags
-            ? '#9ca3af'
-            : 'linear-gradient(135deg, #a855f7, #ec4899)',
-            }}
+            className={`h-11 w-11 border-0 shadow-lg hover:shadow-xl transition-all text-white ${
+              !customTag.trim() || selectedTags.length >= maxTags
+                ? 'bg-gray-400'
+                : 'bg-gradient-to-r from-purple-500 to-pink-500'
+            }`}
             >
             <Plus className="size-5" />
             </Button>
@@ -219,12 +212,9 @@ export function EmotionTagSelector({
                 exit={{ scale: 0, rotate: 180 }}
                 transition={{ delay: index * 0.05 }}
               >
-                <Badge 
+                <Badge
                   variant="default"
-                  className="h-9 text-sm font-semibold shadow-md"
-                  style={{
-                    background: 'linear-gradient(135deg, #ec4899, #f472b6)',
-                  }}
+                  className="h-9 text-sm font-semibold shadow-md bg-gradient-to-r from-pink-500 to-pink-400 text-white"
                 >
                   {tag}
                   <m.button

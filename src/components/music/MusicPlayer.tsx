@@ -153,9 +153,7 @@ export function MusicPlayer({
       {/* Track Info */}
       <div className="text-center space-y-2">
         <p className="font-bold text-base">{trackTitle}</p>
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full" style={{
-          background: 'linear-gradient(135deg, #6366f1, #8b5cf6)'
-        }}>
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-accent">
           <Music className="w-3.5 h-3.5 text-white" />
           <span className="text-sm font-semibold text-white">{trackVersion}</span>
         </div>
@@ -191,10 +189,7 @@ export function MusicPlayer({
         >
           <Button
             size="icon"
-            className="size-14 rounded-full shadow-lg"
-            style={{
-              background: 'linear-gradient(135deg, #6366f1, #8b5cf6)'
-            }}
+            className="size-14 rounded-full shadow-lg bg-gradient-accent text-white"
             onClick={togglePlayPause}
             disabled={isLoading}
           >
