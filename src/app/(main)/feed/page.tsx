@@ -118,7 +118,7 @@ export default function FeedPage() {
 
   return (
     <AppLayout>
-      <div className="container mx-auto px-4 section-spacing">
+      <div className="container mx-auto px-4 section-spacing" style={{ maxWidth: '1600px' }}>
         {/* Header */}
         <div style={{ marginBottom: 'var(--spacing-xl)' }}>
           <h1 className="text-3xl font-bold mb-2">독서 여정 피드</h1>
@@ -156,8 +156,8 @@ export default function FeedPage() {
           />
         ) : (
           <>
-            {/* Posts Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-spacing" style={{ marginBottom: 'var(--spacing-xl)' }}>
+            {/* Posts Grid - Suno 스타일: 반응형 5단계 그리드 */}
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3" style={{ marginBottom: 'var(--spacing-xl)' }}>
               {posts.map((post) => (
                 <PostCard
                   key={post.id}

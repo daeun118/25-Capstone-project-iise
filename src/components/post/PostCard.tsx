@@ -28,10 +28,10 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Album Cover / Book Cover - Mureka Style */}
+      {/* Album Cover / Book Cover - Suno Style (2:3 세로형) */}
       <Link 
         href={`/journey/${post.journey.id}`}
-        className="relative aspect-square rounded-xl overflow-hidden block"
+        className="relative aspect-[2/3] rounded-xl overflow-hidden block"
       >
         {post.journey.bookCoverUrl ? (
           <Image
@@ -40,7 +40,7 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
             fill
             quality={85}
             loading="lazy"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
             className="object-cover"
           />
         ) : (
@@ -49,12 +49,12 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
           </div>
         )}
 
-        {/* ✅ OPTIMIZED: CSS transition instead of Framer Motion */}
+        {/* ✅ Suno 스타일: 하단에서 위로 올라오는 그라데이션 */}
         <div
           className={`absolute inset-0 transition-opacity duration-300 ${
             isHovered ? 'opacity-100' : 'opacity-0'
           }`}
-          style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.9), transparent 60%)' }}
+          style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.6) 40%, transparent 70%)' }}
         />
 
         {/* Category Badge (top-left) */}
@@ -79,27 +79,25 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
           </div>
         </div>
 
-        {/* ✅ OPTIMIZED: CSS scale transition */}
+        {/* ✅ Suno 스타일: 중앙 대형 재생 버튼 (56px) */}
         <button
-          className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${
-            isHovered ? 'opacity-100 scale-100' : 'opacity-0 scale-0'
-          }`}
+          className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 ${
+            isHovered ? 'opacity-100 scale-100' : 'opacity-0 scale-75'
+          } active:scale-95 bg-white/90 backdrop-blur-sm`}
           onClick={(e) => {
             e.stopPropagation();
             // Music play logic
           }}
         >
-          <div className="w-20 h-20 rounded-full flex items-center justify-center shadow-2xl bg-gradient-accent">
-            <Play className="w-10 h-10 text-white ml-1" />
-          </div>
+          <Play className="w-7 h-7 text-gray-900 ml-0.5" />
         </button>
 
-        {/* ✅ OPTIMIZED: CSS transition */}
+        {/* ✅ Suno 스타일: 호버 시 하단 유저 정보 슬라이드 업 */}
         <div
           className={`absolute z-10 flex items-center transition-all duration-300 ${
-            isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+            isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'
           }`}
-          style={{ bottom: 'var(--spacing-md)', left: 'var(--spacing-md)', gap: 'var(--spacing-xs)' }}
+          style={{ bottom: 'var(--spacing-sm)', left: 'var(--spacing-sm)', gap: 'var(--spacing-xs)' }}
         >
           <UserAvatar user={post.user} size="sm" />
           <div>
@@ -110,63 +108,41 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
             >
               {post.user.nickname}
             </Link>
-            <p className="text-xs text-white/80">
-              {new Date(post.createdAt).toLocaleDateString('ko-KR')}
+            <p className="text-xs text-white/90">
+              {new Date(post.createdAt).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })}
             </p>
           </div>
         </div>
       </Link>
 
-      {/* Content Section */}
-      <div className="card-spacing-sm">
-        {/* Book Title & Author - Clickable */}
+      {/* Content Section - Suno 스타일: 최소한의 정보 */}
+      <div style={{ padding: 'var(--spacing-sm)' }}>
+        {/* Book Title - 1줄만 */}
         <Link 
           href={`/journey/${post.journey.id}`}
           className="block group/title hover:opacity-80 transition-opacity"
-          style={{ marginBottom: 'var(--spacing-sm)' }}
+          style={{ marginBottom: 'var(--spacing-xs)' }}
         >
-          <h3 className="font-bold text-lg line-clamp-2 group-hover/title:text-primary transition-colors" style={{ marginBottom: 'var(--spacing-xs)' }}>
+          <h3 className="font-bold text-base line-clamp-1 group-hover/title:text-primary transition-colors">
             {post.journey.bookTitle}
           </h3>
-          <p className="text-sm text-muted-foreground">{post.journey.bookAuthor}</p>
         </Link>
 
-        {/* Rating */}
-        {post.journey.rating && (
-          <div className="flex items-center" style={{ gap: 'var(--spacing-xs)', marginBottom: 'var(--spacing-sm)' }}>
-            <div className="flex" style={{ gap: 'var(--spacing-xs)' }}>
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className={`w-4 h-4 ${
-                  i < post.journey.rating!
-                  ? 'fill-amber-400 text-amber-400'
-                  : 'text-muted'
-                  }`}
-                />
-              ))}
-            </div>
-            <span className="text-sm font-bold text-amber-600">{post.journey.rating}.0</span>
-          </div>
-        )}
+        {/* 메타데이터 압축: 저자 · 별점 (한 줄) */}
+        <div className="flex items-center text-xs text-muted-foreground" style={{ gap: 'var(--spacing-xs)', marginBottom: 'var(--spacing-sm)' }}>
+          <span className="line-clamp-1 flex-shrink">{post.journey.bookAuthor}</span>
+          {post.journey.rating && (
+            <>
+              <span>·</span>
+              <span className="flex items-center" style={{ gap: '2px' }}>
+                <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                {post.journey.rating}.0
+              </span>
+            </>
+          )}
+        </div>
 
-        {/* One-liner */}
-        {post.journey.oneLiner && (
-          <div className="rounded-lg" style={{ marginBottom: 'var(--spacing-sm)', padding: 'var(--spacing-sm)', background: 'rgba(99, 102, 241, 0.05)' }}>
-            <p className="text-sm font-medium italic line-clamp-2" style={{ color: '#6366f1' }}>
-              "{post.journey.oneLiner}"
-            </p>
-          </div>
-        )}
-
-        {/* Review Preview */}
-        {post.journey.review && (
-          <p className="text-sm text-muted-foreground line-clamp-2" style={{ marginBottom: 'var(--spacing-md)' }}>
-            {post.journey.review}
-          </p>
-        )}
-
-        {/* Interaction Bar */}
+        {/* Interaction Bar - 간소화 */}
         <div onClick={(e) => e.stopPropagation()}>
           <InteractionBar
             postId={post.id}

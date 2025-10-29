@@ -89,8 +89,8 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* 책 표지 + 호버 오버레이 (Mureka 스타일) */}
-      <div className="relative aspect-[2/3] rounded-xl overflow-hidden" style={{ marginBottom: 'var(--spacing-md)' }}>
+      {/* 책 표지 + 호버 오버레이 (Suno 스타일) */}
+      <div className="relative aspect-[2/3] rounded-xl overflow-hidden" style={{ marginBottom: 'var(--spacing-sm)' }}>
         {journey.bookCoverUrl ? (
           <Image
             src={journey.bookCoverUrl}
@@ -98,7 +98,7 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
             fill
             quality={85}
             loading="lazy"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
             className="object-cover"
           />
         ) : (
@@ -109,13 +109,13 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
           </div>
         )}
 
-        {/* ✅ OPTIMIZED: CSS transition instead of Framer Motion */}
+        {/* ✅ Suno 스타일: 하단 그라데이션 */}
         <div
           className={`absolute inset-0 transition-opacity duration-200 ${
             isHovered ? 'opacity-100' : 'opacity-0'
           }`}
           style={{
-            background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
+            background: 'linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.6) 40%, transparent 70%)',
           }}
         />
 
@@ -162,14 +162,11 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
           </DropdownMenu>
         </div>
 
-        {/* ✅ OPTIMIZED: Simple CSS transition */}
+        {/* ✅ Suno 스타일: 진행률 표시 (하단) */}
         {!isCompleted && progress > 0 && (
           <div
-            className={`absolute bottom-0 left-0 right-0 h-1 transition-opacity duration-200 ${
-              isHovered ? 'opacity-100' : 'opacity-0'
-            }`}
+            className="absolute bottom-0 left-0 right-0 h-1 bg-white/20"
           >
-            <div className="absolute inset-0 bg-white/20" />
             <div
               className="absolute inset-y-0 left-0 transition-all duration-300 bg-gradient-accent"
               style={{
@@ -179,60 +176,48 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
           </div>
         )}
 
-        {/* ✅ OPTIMIZED: CSS scale with reduced animation complexity */}
+        {/* ✅ Suno 스타일: 중앙 재생 버튼 */}
         <button
-          className={`absolute w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all duration-200 bg-gradient-accent ${
-            isHovered ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
-          } active:scale-95`}
-          style={{ bottom: 'var(--spacing-md)', right: 'var(--spacing-md)' }}
+          className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-200 ${
+            isHovered ? 'scale-100 opacity-100' : 'scale-75 opacity-0'
+          } active:scale-95 bg-white/90 backdrop-blur-sm`}
           onClick={(e) => {
             e.stopPropagation();
             // 음악 재생 로직
           }}
         >
-          <Play className="w-6 h-6 text-white ml-0.5" />
+          <Play className="w-7 h-7 text-gray-900 ml-0.5" />
         </button>
       </div>
 
-      {/* ✅ OPTIMIZED: Removed unnecessary motion wrapper */}
-      {/* 책 정보 */}
-      <div style={{ paddingLeft: 'var(--spacing-xs)', paddingRight: 'var(--spacing-xs)' }}>
-        <h3 className="font-bold text-lg line-clamp-2" style={{ marginBottom: 'var(--spacing-xs)' }}>{journey.bookTitle}</h3>
-        <p className="text-sm text-muted-foreground" style={{ marginBottom: 'var(--spacing-sm)' }}>{journey.bookAuthor}</p>
-
-        {/* 별점 (완독 시) */}
-        {isCompleted && journey.rating && (
-          <div className="flex items-center" style={{ gap: 'var(--spacing-xs)', marginBottom: 'var(--spacing-sm)' }}>
-            {[...Array(5)].map((_, i) => (
-              <Star
-                key={i}
-                className={`w-4 h-4 ${
-                  i < journey.rating!
-                    ? 'fill-amber-400 text-amber-400'
-                    : 'text-muted'
-                }`}
-              />
-            ))}
-            <span className="text-sm font-bold text-amber-600 ml-1">
-              {journey.rating}.0
-            </span>
-          </div>
-        )}
-
-        {/* 메타데이터 (Mureka 스타일 - 간결하게) */}
-        <div className="flex items-center text-xs text-muted-foreground" style={{ gap: 'var(--spacing-md)' }}>
-          <span className="flex items-center" style={{ gap: 'var(--spacing-xs)' }}>
+      {/* 책 정보 - Suno 스타일: 최소한의 정보 */}
+      <div style={{ padding: 'var(--spacing-sm)' }}>
+        <h3 className="font-bold text-base line-clamp-1" style={{ marginBottom: 'var(--spacing-xs)' }}>{journey.bookTitle}</h3>
+        
+        {/* 메타데이터 압축: 저자 · 음악 · 별점/진행률 */}
+        <div className="flex items-center text-xs text-muted-foreground" style={{ gap: 'var(--spacing-xs)' }}>
+          <span className="line-clamp-1 flex-shrink">{journey.bookAuthor}</span>
+          <span>·</span>
+          <span className="flex items-center" style={{ gap: '2px' }}>
             <Music className="w-3 h-3" />
             {journey.musicTracksCount}곡
           </span>
-          <span className="flex items-center" style={{ gap: 'var(--spacing-xs)' }}>
-            <BookOpen className="w-3 h-3" />
-            {journey.logsCount}개 기록
-          </span>
+          {isCompleted && journey.rating && (
+            <>
+              <span>·</span>
+              <span className="flex items-center" style={{ gap: '2px' }}>
+                <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                {journey.rating}.0
+              </span>
+            </>
+          )}
           {!isCompleted && progress > 0 && (
-            <span className="font-semibold text-primary">
-              {progress}%
-            </span>
+            <>
+              <span>·</span>
+              <span className="font-semibold text-primary">
+                {progress}%
+              </span>
+            </>
           )}
         </div>
       </div>
