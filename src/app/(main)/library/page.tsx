@@ -13,9 +13,10 @@ import { Button } from '@/components/ui/button';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { AuthRequired } from '@/components/auth/AuthRequired';
 import { useAuth } from '@/hooks/useAuth';
-import { BookOpen, Plus, TrendingUp, Clock, Music } from 'lucide-react';
+import { useMusicGeneration } from '@/hooks/useMusicGeneration';
+import { BookSearchDialog } from '@/components/book/BookSearchDialog';
+import { BookOpen, Plus, TrendingUp, Clock, Music, Search } from 'lucide-react';
 import { m } from 'framer-motion';
-import Link from 'next/link';
 import { toast } from 'sonner';
 
 interface Journey {
@@ -40,6 +41,9 @@ export default function LibraryPage() {
   const [page, setPage] = useState(1);
   const [journeys, setJourneys] = useState<Journey[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchDialogOpen, setSearchDialogOpen] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
+  const { triggerGeneration } = useMusicGeneration();
 
   // Fetch journeys from API
   useEffect(() => {
@@ -120,6 +124,69 @@ export default function LibraryPage() {
   const handleJourneyDelete = useCallback((deletedJourneyId: string) => {
     setJourneys((prev) => prev.filter((j) => j.id !== deletedJourneyId));
   }, []);
+
+  // Handle book selection and journey creation
+  const handleBookSelect = useCallback(async (book: any) => {
+    setIsCreating(true);
+
+    const loadingToast = toast.loading('독서 여정을 생성하고 있습니다...');
+
+    try {
+      const authorString = Array.isArray(book.author)
+        ? book.author.join(', ')
+        : book.author || '';
+
+      const response = await fetch('/api/journeys/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          book_title: book.title,
+          book_author: authorString,
+          book_isbn: book.isbn,
+          book_description: book.description,
+          book_category: book.category,
+          book_cover_url: book.coverUrl,
+          book_publisher: book.publisher,
+          book_published_date: book.publishedDate,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success && data.journey) {
+        toast.dismiss(loadingToast);
+        toast.success('독서 여정이 시작되었습니다! v0 음악을 생성하고 있습니다.');
+
+        if (data.musicTrack?.id) {
+          triggerGeneration(data.musicTrack.id);
+        }
+
+        // Refresh journeys list
+        const updatedJourneysResponse = await fetch('/api/journeys');
+        if (updatedJourneysResponse.ok) {
+          const updatedJourneys = await updatedJourneysResponse.json();
+          setJourneys(updatedJourneys);
+        }
+
+        // Navigate to journey detail
+        router.push(`/journey/${data.journey.id}`);
+      } else {
+        toast.dismiss(loadingToast);
+        toast.error(data.error || '독서 여정 생성에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('Journey creation error:', error);
+      toast.dismiss(loadingToast);
+      toast.error('독서 여정 생성 중 오류가 발생했습니다. 다시 시도해주세요.');
+    } finally {
+      setIsCreating(false);
+      setSearchDialogOpen(false);
+    }
+  }, [router, triggerGeneration]);
 
   // Show loading state
   if (authLoading || loading) {
@@ -317,11 +384,22 @@ export default function LibraryPage() {
           {/* Main Content */}
           <main className="space-y-6">
             {/* Header */}
-            <div>
-              <h1 className="text-4xl font-bold mb-2">내 책장</h1>
-              <p className="text-muted-foreground text-lg">
-                나의 독서 여정을 관리하세요
-              </p>
+            <div className="flex items-start justify-between">
+              <div>
+                <h1 className="text-4xl font-bold mb-2">내 책장</h1>
+                <p className="text-muted-foreground text-lg">
+                  나의 독서 여정을 관리하세요
+                </p>
+              </div>
+              <Button
+                size="lg"
+                onClick={() => setSearchDialogOpen(true)}
+                disabled={isCreating}
+                className="hidden sm:flex bg-indigo-600 hover:bg-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+              >
+                <Plus className="mr-2 h-5 w-5" />
+                {isCreating ? '여정 생성 중...' : '여정 추가하기'}
+              </Button>
             </div>
 
             {/* Tabs */}
@@ -420,16 +498,23 @@ export default function LibraryPage() {
         </div>
       </div>
 
-      {/* Floating Action Button */}
-      <Link href="/journey/new">
-        <Button
-          size="lg"
-          className="fixed bottom-6 right-6 z-50 h-16 w-16 rounded-full shadow-lg"
-        >
-          <Plus className="h-8 w-8" />
-          <span className="sr-only">새 여정 시작</span>
-        </Button>
-      </Link>
+      {/* Floating Action Button (Mobile) */}
+      <Button
+        size="lg"
+        onClick={() => setSearchDialogOpen(true)}
+        disabled={isCreating}
+        className="fixed bottom-6 right-6 z-50 h-16 w-16 rounded-full shadow-lg sm:hidden"
+      >
+        <Plus className="h-8 w-8" />
+        <span className="sr-only">새 여정 시작</span>
+      </Button>
+
+      {/* Book Search Dialog */}
+      <BookSearchDialog
+        open={searchDialogOpen}
+        onOpenChange={setSearchDialogOpen}
+        onSelectBook={handleBookSelect}
+      />
     </AppLayout>
   );
 }
