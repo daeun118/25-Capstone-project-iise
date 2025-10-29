@@ -28,9 +28,9 @@ export async function POST(
     const { quote, memo, emotions, isPublic, generateMusic = true } = body;
 
     // Validate required fields
-    if (!memo || memo.trim().length === 0) {
+    if (!quote || quote.trim().length === 0) {
       return NextResponse.json(
-        { error: 'Memo is required' },
+        { error: 'Quote is required' },
         { status: 400 }
       );
     }
@@ -84,8 +84,8 @@ export async function POST(
         bookTitle: journey.book_title,
         previousLogs: recentLogs,
         userInput: {
-          quote: quote?.trim() || undefined,
-          memo: memo.trim(),
+          quote: quote.trim(),
+          memo: memo?.trim() || undefined,
           emotions: emotions || [],
         },
         isPublic: isPublic || false,
@@ -101,8 +101,8 @@ export async function POST(
         journey_id: journeyId,
         log_type: 'vN',
         version,
-        quote: quote?.trim() || null,
-        memo: memo.trim(),
+        quote: quote.trim(),
+        memo: memo?.trim() || null,
         music_prompt: null,
         music_track_id: null,
         is_public: isPublic || false,

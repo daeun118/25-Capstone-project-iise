@@ -30,7 +30,7 @@ export function LogForm({ onSubmit, onCancel }: LogFormProps) {
   const [loadingMode, setLoadingMode] = useState<'save' | 'generate' | null>(null);
 
   const handleSubmit = async (generateMusic: boolean) => {
-    if (!memo.trim()) return;
+    if (!quote.trim()) return;
 
     setIsLoading(true);
     setLoadingMode(generateMusic ? 'generate' : 'save');
@@ -62,7 +62,7 @@ export function LogForm({ onSubmit, onCancel }: LogFormProps) {
         <Label htmlFor="quote" className="text-sm font-medium flex items-center gap-2">
           <BookOpen className="w-4 h-4 text-primary" />
           인상 깊은 구절
-          <span className="text-xs font-normal text-muted-foreground">(선택)</span>
+          <span className="text-xs font-normal text-red-500">*</span>
         </Label>
         <div className="relative">
           <Textarea
@@ -72,6 +72,7 @@ export function LogForm({ onSubmit, onCancel }: LogFormProps) {
             placeholder="책에서 마음에 남는 문장이나 구절을 적어보세요..."
             rows={3}
             maxLength={500}
+            required
             disabled={isLoading}
             className="resize-none text-sm leading-relaxed bg-muted/30 border-muted-foreground/20 focus:border-primary/50 focus:bg-muted/40"
           />
@@ -86,7 +87,7 @@ export function LogForm({ onSubmit, onCancel }: LogFormProps) {
         <Label htmlFor="memo" className="text-sm font-medium flex items-center gap-2">
           <PenLine className="w-4 h-4 text-primary" />
           나의 생각과 느낌
-          <span className="text-xs font-normal text-red-500">*</span>
+          <span className="text-xs font-normal text-muted-foreground">(선택)</span>
         </Label>
         <div className="relative">
           <Textarea
@@ -96,7 +97,6 @@ export function LogForm({ onSubmit, onCancel }: LogFormProps) {
             placeholder="이 부분을 읽으면서 어떤 생각이 들었나요? 어떤 감정을 느꼈나요?&#10;자유롭게 당신의 생각을 기록해보세요..."
             rows={5}
             maxLength={1000}
-            required
             disabled={isLoading}
             className="resize-none text-sm leading-relaxed bg-muted/30 border-muted-foreground/20 focus:border-primary/50 focus:bg-muted/40"
           />
@@ -155,7 +155,7 @@ export function LogForm({ onSubmit, onCancel }: LogFormProps) {
           type="button"
           variant="outline"
           onClick={() => handleSubmit(false)}
-          disabled={!memo.trim() || isLoading}
+          disabled={!quote.trim() || isLoading}
           className="flex-1 h-11 font-medium"
         >
           {isLoading && loadingMode === 'save' ? (
@@ -176,7 +176,7 @@ export function LogForm({ onSubmit, onCancel }: LogFormProps) {
           type="button"
           variant="gradient"
           onClick={() => handleSubmit(true)}
-          disabled={!memo.trim() || isLoading}
+          disabled={!quote.trim() || isLoading}
           className="flex-1 h-11 font-semibold shadow-lg"
         >
           {isLoading && loadingMode === 'generate' ? (
