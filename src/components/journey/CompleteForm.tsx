@@ -4,11 +4,8 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Slider } from '@/components/ui/slider';
-import { Loader2, CheckCircle, Sparkles, Trophy, PartyPopper } from 'lucide-react';
-import { Star } from 'lucide-react';
-import { m } from 'framer-motion';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Loader2, Star, MessageSquare, Edit3, HelpCircle, CheckCircle2, Sparkles } from 'lucide-react';
 
 interface CompleteFormProps {
   onSubmit: (data: CompleteFormData) => Promise<void>;
@@ -21,11 +18,20 @@ export interface CompleteFormData {
   review: string;
 }
 
+const ratingLabels: Record<number, string> = {
+  1: '별로예요',
+  2: '그저 그래요',
+  3: '괜찮아요',
+  4: '좋아요!',
+  5: '최고예요!'
+};
+
 export function CompleteForm({ onSubmit, onCancel }: CompleteFormProps) {
   const [rating, setRating] = useState(5);
   const [oneLiner, setOneLiner] = useState('');
   const [review, setReview] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [hoveredStar, setHoveredStar] = useState<number | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,237 +46,209 @@ export function CompleteForm({ onSubmit, onCancel }: CompleteFormProps) {
     }
   };
 
+  const canSubmit = oneLiner.trim() && review.trim() && !isLoading;
+
   return (
-    <m.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="relative"
-    >
-      {/* Celebration Background */}
-      <div className="absolute inset-0 -z-10 rounded-2xl overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-5"
-          style={{
-            background: 'linear-gradient(135deg, #f59e0b, #d97706, #ea580c)',
-          }}
-        />
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Section Header */}
+      <div className="space-y-2">
+        <h2 className="text-2xl font-bold flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-gradient-accent flex items-center justify-center">
+            <Sparkles className="w-5 h-5 text-white" />
+          </div>
+          독서 감상을 남겨주세요
+        </h2>
+        <p className="text-muted-foreground">
+          입력하신 내용을 바탕으로 최종 음악(vFinal)이 생성됩니다
+        </p>
       </div>
 
-      <Card className="border-2 shadow-2xl overflow-hidden">
-        {/* Gold Gradient Top Border */}
-        <div
-          className="h-1.5"
-          style={{
-            background: 'linear-gradient(90deg, #f59e0b, #eab308, #f59e0b)',
-          }}
+      {/* Interactive Rating */}
+      <div className="card-elevated p-8 space-y-6">
+        <div className="text-center">
+          <h3 className="text-lg font-semibold mb-2">이 책은 몇 점인가요?</h3>
+          <p className="text-sm text-muted-foreground">별을 클릭해서 평가해주세요</p>
+        </div>
+
+        {/* Large Interactive Stars */}
+        <div className="flex items-center justify-center gap-3">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <button
+              key={star}
+              type="button"
+              onClick={() => setRating(star)}
+              onMouseEnter={() => setHoveredStar(star)}
+              onMouseLeave={() => setHoveredStar(null)}
+              disabled={isLoading}
+              className="group relative transition-transform hover:scale-125 active:scale-110 disabled:opacity-50"
+            >
+              <Star
+                className={`w-12 h-12 transition-all ${
+                  star <= rating
+                    ? 'fill-amber-500 text-amber-500 drop-shadow-lg'
+                    : 'text-gray-300 group-hover:text-amber-400'
+                }`}
+              />
+
+              {/* Tooltip on Hover */}
+              {hoveredStar === star && (
+                <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap z-10">
+                  {ratingLabels[star]}
+                </div>
+              )}
+            </button>
+          ))}
+        </div>
+
+        {/* Selected Rating Display */}
+        <div className="text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50">
+            <Star className="w-5 h-5 fill-amber-500 text-amber-500" />
+            <span className="text-2xl font-bold text-amber-600">{rating}.0</span>
+          </div>
+        </div>
+      </div>
+
+      {/* One-liner Input (Enhanced) */}
+      <div className="card-elevated p-6 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <MessageSquare className="w-5 h-5 text-primary" />
+            <Label className="text-base font-semibold">
+              한줄평 <span className="text-red-500">*</span>
+            </Label>
+          </div>
+          <span className="text-xs text-muted-foreground">
+            {oneLiner.length}/100
+          </span>
+        </div>
+
+        {/* Placeholder Examples */}
+        {!oneLiner && (
+          <div className="text-xs text-muted-foreground space-y-1">
+            <p className="italic">예: "인생책을 만났다", "다시 읽고 싶은 책"</p>
+          </div>
+        )}
+
+        <Textarea
+          value={oneLiner}
+          onChange={(e) => setOneLiner(e.target.value)}
+          placeholder="이 책을 한 문장으로 표현한다면?"
+          rows={2}
+          maxLength={100}
+          disabled={isLoading}
+          className="resize-none text-lg"
         />
 
-        <form onSubmit={handleSubmit}>
-          <CardHeader className="pb-4">
-            <div className="flex items-center gap-3">
-              {/* Celebration Icon */}
-              <m.div
-                initial={{ scale: 0, rotate: -180 }}
-                animate={{ scale: 1, rotate: 0 }}
-                transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
-                className="w-14 h-14 rounded-full flex items-center justify-center relative"
-              >
-                <div
-                  className="absolute inset-0 rounded-full opacity-20"
-                  style={{
-                    background: 'linear-gradient(135deg, #f59e0b, #ea580c)',
-                  }}
-                />
-                <Trophy className="w-7 h-7 text-amber-600 relative z-10" />
-              </m.div>
-              <div className="flex-1">
-                <CardTitle className="text-2xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent">
-                  독서 완료
-                </CardTitle>
-                <p className="text-sm text-muted-foreground mt-1">
-                  축하합니다! 여정을 완주하셨습니다
-                </p>
-              </div>
-              <m.div
-                animate={{ 
-                  rotate: [0, 10, -10, 10, 0],
-                  scale: [1, 1.2, 1, 1.2, 1]
-                }}
-                transition={{ 
-                  duration: 2,
-                  repeat: Infinity,
-                  repeatDelay: 3
-                }}
-              >
-                <Sparkles className="w-6 h-6 text-amber-500" />
-              </m.div>
+        {/* Character Count Progress */}
+        <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-gradient-accent transition-all"
+            style={{ width: `${(oneLiner.length / 100) * 100}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Review Input (Enhanced with Tabs) */}
+      <div className="card-elevated p-6 space-y-4">
+        <Tabs defaultValue="write" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="write">
+              <Edit3 className="w-4 h-4 mr-2" />
+              작성하기
+            </TabsTrigger>
+            <TabsTrigger value="guide">
+              <HelpCircle className="w-4 h-4 mr-2" />
+              작성 가이드
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Write Tab */}
+          <TabsContent value="write" className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Label className="text-base font-semibold">
+                감상평 <span className="text-red-500">*</span>
+              </Label>
+              <span className="text-xs text-muted-foreground">
+                {review.length}/2000
+              </span>
             </div>
-          </CardHeader>
 
-          <CardContent className="space-y-6">
-            {/* Rating Section with Enhanced Animation */}
-            <m.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-              className="space-y-3"
-            >
-              <Label className="text-base font-semibold flex items-center gap-2">
-                <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
-                별점
-              </Label>
-              <div className="flex items-center gap-4">
-                <div className="flex gap-2">
-                  {[1, 2, 3, 4, 5].map((star, index) => (
-                    <m.button
-                      key={star}
-                      type="button"
-                      onClick={() => setRating(star)}
-                      disabled={isLoading}
-                      className="focus:outline-none relative group"
-                      whileHover={{ scale: 1.2 }}
-                      whileTap={{ scale: 0.9 }}
-                      initial={{ opacity: 0, y: -20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.4 + index * 0.1 }}
-                    >
-                      {/* Glow effect for selected stars */}
-                      {star <= rating && (
-                        <m.div
-                          className="absolute inset-0 rounded-full blur-xl"
-                          style={{
-                            background: 'radial-gradient(circle, rgba(245, 158, 11, 0.6), transparent 70%)',
-                          }}
-                          animate={{ scale: [1, 1.2, 1] }}
-                          transition={{ duration: 1.5, repeat: Infinity }}
-                        />
-                      )}
-                      <Star
-                        className={`size-10 relative z-10 transition-all duration-300 ${
-                          star <= rating
-                            ? 'fill-amber-400 text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]'
-                            : 'text-gray-300 group-hover:text-amber-300 group-hover:scale-110'
-                        }`}
-                      />
-                    </m.button>
-                  ))}
-                </div>
-                <m.div
-                  className="text-3xl font-bold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent"
-                  key={rating}
-                  initial={{ scale: 1.5, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: 'spring', stiffness: 300 }}
-                >
-                  {rating}.0
-                </m.div>
+            <Textarea
+              value={review}
+              onChange={(e) => setReview(e.target.value)}
+              placeholder="책을 읽고 느낀 점을 자유롭게 작성하세요..."
+              rows={10}
+              maxLength={2000}
+              disabled={isLoading}
+              className="resize-none"
+            />
+
+            {/* Progress Bar */}
+            <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-accent transition-all"
+                style={{ width: `${(review.length / 2000) * 100}%` }}
+              />
+            </div>
+          </TabsContent>
+
+          {/* Guide Tab */}
+          <TabsContent value="guide" className="space-y-3">
+            <div className="bg-primary/5 p-4 rounded-lg space-y-2">
+              <p className="text-sm font-medium text-primary">💡 이런 내용을 담아보세요:</p>
+              <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
+                <li>가장 인상 깊었던 장면이나 구절</li>
+                <li>책을 읽으며 느낀 감정의 변화</li>
+                <li>책이 내게 준 영향이나 깨달음</li>
+                <li>추천하고 싶은 독자층</li>
+              </ul>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex flex-col-reverse md:flex-row gap-4">
+        {onCancel && (
+          <Button
+            type="button"
+            variant="outline"
+            size="lg"
+            onClick={onCancel}
+            disabled={isLoading}
+            className="flex-1 md:flex-none md:w-auto"
+          >
+            취소
+          </Button>
+        )}
+
+        <Button
+          type="submit"
+          variant="gradient"
+          size="lg"
+          disabled={!canSubmit}
+          className="flex-1 md:flex-auto relative overflow-hidden group"
+        >
+          {isLoading ? (
+            <>
+              <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+              처리 중...
+            </>
+          ) : (
+            <>
+              {/* Animated Background */}
+              <div className="absolute inset-0 bg-gradient-warm-shimmer opacity-0 group-hover:opacity-100 transition-opacity" />
+
+              {/* Content */}
+              <div className="relative flex items-center justify-center">
+                <CheckCircle2 className="w-5 h-5 mr-2" />
+                <span className="font-bold">독서 완료 🎉</span>
               </div>
-            </m.div>
-
-            {/* One-liner Section */}
-            <m.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.5 }}
-              className="space-y-2"
-            >
-              <Label htmlFor="oneLiner" className="text-base font-semibold flex items-center gap-2">
-                <PartyPopper className="w-4 h-4 text-amber-500" />
-                한줄평
-                <span className="text-sm font-normal text-red-500">*</span>
-              </Label>
-              <div className="relative">
-                <Textarea
-                  id="oneLiner"
-                  value={oneLiner}
-                  onChange={(e) => setOneLiner(e.target.value)}
-                  placeholder="이 책을 한 문장으로 표현한다면?"
-                  rows={2}
-                  maxLength={100}
-                  required
-                  disabled={isLoading}
-                  className="resize-none bg-gradient-to-br from-amber-50/50 to-orange-50/50 border-2 border-amber-200/50 focus:border-amber-400 focus:ring-4 focus:ring-amber-400/20 transition-all"
-                />
-                <span className="absolute bottom-2 right-3 text-xs text-muted-foreground font-medium">
-                  {oneLiner.length}/100
-                </span>
-              </div>
-            </m.div>
-
-            {/* Review Section */}
-            <m.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.6 }}
-              className="space-y-2"
-            >
-              <Label htmlFor="review" className="text-base font-semibold flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-amber-500" />
-                감상평
-                <span className="text-sm font-normal text-red-500">*</span>
-              </Label>
-              <div className="relative">
-                <Textarea
-                  id="review"
-                  value={review}
-                  onChange={(e) => setReview(e.target.value)}
-                  placeholder="책을 읽고 느낀 점을 자유롭게 작성하세요...&#10;&#10;• 가장 인상 깊었던 장면이나 문장&#10;• 이 책이 당신에게 준 영향&#10;• 추천하고 싶은 독자층"
-                  rows={8}
-                  maxLength={2000}
-                  required
-                  disabled={isLoading}
-                  className="resize-none bg-gradient-to-br from-amber-50/50 to-orange-50/50 border-2 border-amber-200/50 focus:border-amber-400 focus:ring-4 focus:ring-amber-400/20 transition-all leading-relaxed"
-                />
-                <span className="absolute bottom-2 right-3 text-xs text-muted-foreground font-medium">
-                  {review.length}/2000
-                </span>
-              </div>
-            </m.div>
-          </CardContent>
-
-          <CardFooter className="flex gap-3 justify-end pt-6">
-            {onCancel && (
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={onCancel} 
-                disabled={isLoading}
-                className="px-6 border-2 hover:border-amber-300 hover:bg-amber-50/50 transition-all"
-              >
-                취소
-              </Button>
-            )}
-            <m.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Button 
-                type="submit" 
-                disabled={!oneLiner.trim() || !review.trim() || isLoading}
-                className="px-8 h-12 text-base font-bold shadow-xl hover:shadow-2xl transition-all duration-300 border-0"
-                style={{
-                  background: isLoading 
-                    ? 'linear-gradient(135deg, #9ca3af, #6b7280)'
-                    : 'linear-gradient(135deg, #f59e0b, #ea580c, #d97706)',
-                }}
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 size-5 animate-spin" />
-                    완료 처리 중...
-                  </>
-                ) : (
-                  <>
-                    <Trophy className="mr-2 size-5" />
-                    독서 완료
-                  </>
-                )}
-              </Button>
-            </m.div>
-          </CardFooter>
-        </form>
-      </Card>
-    </m.div>
+            </>
+          )}
+        </Button>
+      </div>
+    </form>
   );
 }

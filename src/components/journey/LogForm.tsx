@@ -81,7 +81,7 @@ export function LogForm({ onSubmit, onCancel }: LogFormProps) {
             maxLength={500}
             required
             disabled={isLoading}
-            className="resize-none text-sm leading-relaxed bg-gradient-to-br from-purple-50/50 to-pink-50/50 border-2 border-purple-200/50 focus:border-purple-400 focus:ring-4 focus:ring-purple-400/20 transition-all"
+            className="resize-none text-sm"
           />
           <span className="absolute bottom-2 right-3 text-xs text-muted-foreground font-medium">
             {quote.length}/500
@@ -112,7 +112,7 @@ export function LogForm({ onSubmit, onCancel }: LogFormProps) {
             rows={5}
             maxLength={1000}
             disabled={isLoading}
-            className="resize-none text-sm leading-relaxed bg-gradient-to-br from-indigo-50/50 to-purple-50/50 border-2 border-indigo-200/50 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-400/20 transition-all"
+            className="resize-none text-sm"
           />
           <span className="absolute bottom-2 right-3 text-xs text-muted-foreground font-medium">
             {memo.length}/1000
