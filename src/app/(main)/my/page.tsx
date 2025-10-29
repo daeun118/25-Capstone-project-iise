@@ -3,16 +3,15 @@
 import { useEffect, useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { AuthRequired } from '@/components/auth/AuthRequired';
 import { useAuth } from '@/hooks/useAuth';
 import { ProfileEditDialog } from '@/components/user/ProfileEditDialog';
-import { StatsDashboard } from '@/components/user/StatsDashboard';
 import { DeleteAccountDialog } from '@/components/my/DeleteAccountDialog';
-import { User, Mail, Calendar, Edit, Bookmark, AlertTriangle } from 'lucide-react';
+import { BookOpen, Heart, TrendingUp, LogOut, User, Music } from 'lucide-react';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
-import { m } from 'framer-motion';
 
 interface UserProfile {
   id: string;
@@ -23,35 +22,68 @@ interface UserProfile {
   updated_at: string;
 }
 
+interface UserStats {
+  journeys: {
+    total: number;
+    reading: number;
+    completed: number;
+  };
+  content: {
+    totalReadingLogs: number;
+    totalMusicTracks: number;
+    postsPublished: number;
+  };
+  engagement: {
+    likesReceived: number;
+    commentsReceived: number;
+  };
+  insights: {
+    averageRating: number;
+    completionRate: number;
+    totalReadingDays: number;
+  };
+}
+
 export default function MyPage() {
-  const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [stats, setStats] = useState<UserStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!user) {
-      setIsLoading(false); // 비인증 시 로딩 상태 해제
+      setIsLoading(false);
       return;
     }
-    fetchProfile();
+    fetchData();
   }, [user]);
 
-  const fetchProfile = async () => {
+  const fetchData = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('/api/user/profile');
-      const data = await response.json();
+      const [profileRes, statsRes] = await Promise.all([
+        fetch('/api/user/profile'),
+        fetch('/api/user/stats'),
+      ]);
 
-      if (response.ok) {
-        setProfile(data.profile);
+      const profileData = await profileRes.json();
+      const statsData = await statsRes.json();
+
+      if (profileRes.ok) {
+        setProfile(profileData.profile);
       } else {
-        toast.error(data.error || '프로필을 불러오는데 실패했습니다');
+        toast.error('프로필을 불러오는데 실패했습니다');
+      }
+
+      if (statsRes.ok) {
+        setStats(statsData.stats);
+      } else {
+        toast.error('통계를 불러오는데 실패했습니다');
       }
     } catch (error) {
-      console.error('Failed to fetch profile:', error);
-      toast.error('프로필을 불러오는데 실패했습니다');
+      console.error('Failed to fetch data:', error);
+      toast.error('데이터를 불러오는데 실패했습니다');
     } finally {
       setIsLoading(false);
     }
@@ -63,29 +95,6 @@ export default function MyPage() {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
-
-  const getProviderName = (provider: string) => {
-    switch (provider) {
-      case 'google':
-        return 'Google';
-      case 'kakao':
-        return 'Kakao';
-      case 'email':
-        return '이메일';
-      default:
-        return provider;
-    }
-  };
-
-  // Show loading state
   if (authLoading || isLoading) {
     return (
       <AppLayout>
@@ -96,7 +105,6 @@ export default function MyPage() {
     );
   }
 
-  // Show auth required if not logged in
   if (!user) {
     return (
       <AppLayout>
@@ -110,245 +118,214 @@ export default function MyPage() {
 
   return (
     <AppLayout>
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto space-y-8">
-          {/* Header */}
-          <m.div
-            className="flex items-center justify-between"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <h1 className="text-4xl font-bold">마이페이지</h1>
-            <Button
-              variant="outline"
-              onClick={() => router.push('/my/bookmarks')}
-            >
-              <Bookmark className="mr-2 h-4 w-4" />
-              보관함
-            </Button>
-          </m.div>
-
-          {/* Profile Card - Gradient Hero */}
-          <m.div
-            className="relative rounded-2xl overflow-hidden"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-          >
-            {/* 그라데이션 배경 */}
-            <div
-              className="absolute inset-0"
-              style={{
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
-              }}
-            />
-
-            {/* 콘텐츠 */}
-            <div className="relative z-10 p-8">
-              {isLoading ? (
-                <div className="space-y-4">
-                  <div className="flex items-center gap-6">
-                    <div className="w-24 h-24 rounded-full bg-white/20 animate-pulse" />
-                    <div className="space-y-3 flex-1">
-                      <div className="h-8 w-48 bg-white/20 animate-pulse rounded" />
-                      <div className="h-5 w-64 bg-white/20 animate-pulse rounded" />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                    {[...Array(3)].map((_, i) => (
-                      <div
-                        key={i}
-                        className="h-20 bg-white/10 backdrop-blur-sm rounded-xl animate-pulse"
-                      />
-                    ))}
-                  </div>
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        {/* 헤더 */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            {profile && (
+              <>
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-2xl shadow-lg">
+                  {profile.nickname.charAt(0).toUpperCase()}
                 </div>
-              ) : profile ? (
-                <>
-                  {/* 상단: 아바타 + 기본 정보 */}
-                  <div className="flex items-start justify-between mb-8">
-                    <div className="flex items-center gap-6">
-                      {/* 아바타 */}
-                      <m.div
-                        className="w-24 h-24 rounded-full flex items-center justify-center text-4xl font-bold shadow-2xl"
-                        style={{
-                          background: 'linear-gradient(135deg, #ffffff, #f3f4f6)',
-                          color: '#6366f1',
-                        }}
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 0.3, type: 'spring', stiffness: 200 }}
-                        whileHover={{ scale: 1.05 }}
-                      >
-                        {profile.nickname.charAt(0).toUpperCase()}
-                      </m.div>
+                <div>
+                  <h1 className="text-3xl font-bold mb-1">{profile.nickname}</h1>
+                  <p className="text-sm text-muted-foreground">{profile.email}</p>
+                </div>
+              </>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <Button size="sm" variant="outline" className="gap-2" onClick={() => setEditDialogOpen(true)}>
+              <User className="w-4 h-4" />
+              프로필 수정
+            </Button>
+            <DeleteAccountDialog
+              variant="outline"
+              size="sm"
+              className="gap-2 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-300 border-red-200"
+            >
+              <LogOut className="w-4 h-4" />
+              회원 탈퇴
+            </DeleteAccountDialog>
+          </div>
+        </div>
 
-                      {/* 닉네임 + 이메일 */}
-                      <m.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.4 }}
-                      >
-                        <h2 className="text-3xl font-bold text-white mb-2">
-                          {profile.nickname}
-                        </h2>
-                        <p className="text-white/80 flex items-center gap-2">
-                          <Mail className="w-4 h-4" />
-                          {profile.email}
-                        </p>
-                      </m.div>
-                    </div>
-
-                    {/* 수정 버튼 */}
-                    <m.div
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: 0.5 }}
-                    >
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => setEditDialogOpen(true)}
-                        className="bg-white/20 backdrop-blur-sm border border-white/30 text-white hover:bg-white/30"
-                      >
-                        <Edit className="mr-2 h-4 w-4" />
-                        프로필 수정
-                      </Button>
-                    </m.div>
-                  </div>
-
-                  {/* 하단: 계정 정보 카드들 */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* 로그인 방식 */}
-                    <m.div
-                      className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.6 }}
-                      whileHover={{ scale: 1.02, backgroundColor: 'rgba(255, 255, 255, 0.15)' }}
-                    >
-                      <div className="flex items-center gap-3 mb-2">
-                        <div
-                          className="w-10 h-10 rounded-lg flex items-center justify-center"
-                          style={{ background: 'rgba(255, 255, 255, 0.2)' }}
-                        >
-                          <User className="w-5 h-5 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-white/70 text-sm">로그인 방식</p>
-                          <p className="text-white font-semibold text-lg">
-                            {getProviderName(profile.auth_provider)}
-                          </p>
-                        </div>
-                      </div>
-                    </m.div>
-
-                    {/* 가입일 */}
-                    <m.div
-                      className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.7 }}
-                      whileHover={{ scale: 1.02, backgroundColor: 'rgba(255, 255, 255, 0.15)' }}
-                    >
-                      <div className="flex items-center gap-3 mb-2">
-                        <div
-                          className="w-10 h-10 rounded-lg flex items-center justify-center"
-                          style={{ background: 'rgba(255, 255, 255, 0.2)' }}
-                        >
-                          <Calendar className="w-5 h-5 text-white" />
-                        </div>
-                        <div>
-                          <p className="text-white/70 text-sm">가입일</p>
-                          <p className="text-white font-semibold text-lg">
-                            {formatDate(profile.created_at)}
-                          </p>
-                        </div>
-                      </div>
-                    </m.div>
-                  </div>
-                </>
-              ) : (
-                <m.div
-                  className="text-center py-12"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                >
-                  <p className="text-white/80 text-lg">프로필 정보를 불러올 수 없습니다.</p>
-                </m.div>
-              )}
-            </div>
-          </m.div>
-
-          {/* Statistics Dashboard */}
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.6 }}
-          >
-            <h2 className="text-3xl font-bold mb-6">독서 통계</h2>
-            <StatsDashboard />
-          </m.div>
-
-          {/* Account Settings - Danger Zone */}
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9, duration: 0.6 }}
-          >
-            <h2 className="text-3xl font-bold mb-6">계정 설정</h2>
-
-            {/* Enhanced Danger Zone with Glass Morphism */}
-            <div className="relative rounded-2xl overflow-hidden">
-              {/* Subtle red gradient background */}
-              <div
-                className="absolute inset-0 opacity-10"
-                style={{
-                  background: 'linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f87171 100%)',
-                }}
-              />
-
-              {/* Glass morphism overlay */}
-              <div className="relative backdrop-blur-sm bg-white/80 border-2 border-destructive/30 rounded-2xl p-8">
-                <div className="flex items-start gap-6">
-                  {/* Enhanced icon with gradient background */}
-                  <m.div
-                    className="flex-shrink-0"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 1.0, type: 'spring', stiffness: 200 }}
-                  >
-                    <div className="w-16 h-16 rounded-full flex items-center justify-center relative">
-                      <div
-                        className="absolute inset-0 rounded-full opacity-20"
-                        style={{
-                          background: 'linear-gradient(135deg, #dc2626, #ef4444)',
-                        }}
-                      />
-                      <AlertTriangle className="w-8 h-8 text-destructive relative z-10" />
-                    </div>
-                  </m.div>
-
-                  <div className="flex-1">
-                    <h3 className="text-2xl font-bold mb-2 text-destructive">위험 영역</h3>
-                    <p className="text-muted-foreground mb-6 leading-relaxed">
-                      계정을 삭제하면 모든 데이터가 영구적으로 삭제되며 복구할 수 없습니다.
-                      <br />
-                      독서 여정, 음악, 게시물이 모두 사라집니다. 신중하게 결정해주세요.
-                    </p>
-
-                    {/* Enhanced delete button */}
-                    <DeleteAccountDialog
-                      variant="outline"
-                      className="border-2 border-destructive/50 text-destructive hover:bg-destructive hover:text-white hover:border-destructive transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 font-medium"
-                    />
-                  </div>
+        {/* 히어로 섹션 - Suno 스타일 */}
+        {stats && (
+          <div className="card-elevated mb-8 overflow-hidden">
+            <CardContent className="p-8 bg-gradient-to-br from-purple-500/10 via-blue-500/10 to-pink-500/10">
+              <h2 className="text-2xl font-bold mb-6 text-gray-900">
+                지금까지 {stats.journeys.total}권의 책과 함께 독서 여정을 떠났어요
+              </h2>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="card-elevated p-6 text-center hover-lift-sm">
+                  <div className="text-5xl font-bold text-orange-600 mb-2">{stats.journeys.reading}</div>
+                  <div className="text-sm font-medium text-muted-foreground">읽는 중</div>
+                </div>
+                <div className="card-elevated p-6 text-center hover-lift-sm">
+                  <div className="text-5xl font-bold text-green-600 mb-2">{stats.journeys.completed}</div>
+                  <div className="text-sm font-medium text-muted-foreground">완독</div>
+                </div>
+                <div className="card-elevated p-6 text-center hover-lift-sm">
+                  <div className="text-5xl font-bold text-purple-600 mb-2">{stats.content.totalMusicTracks}</div>
+                  <div className="text-sm font-medium text-muted-foreground">생성된 음악</div>
                 </div>
               </div>
-            </div>
-          </m.div>
-        </div>
+            </CardContent>
+          </div>
+        )}
+
+        {/* 탭 네비게이션 */}
+        {stats && (
+          <Tabs defaultValue="activity" className="mb-6">
+            <TabsList className="grid w-full grid-cols-3 h-12">
+              <TabsTrigger value="activity" className="text-base">활동 현황</TabsTrigger>
+              <TabsTrigger value="community" className="text-base">커뮤니티</TabsTrigger>
+              <TabsTrigger value="insights" className="text-base">인사이트</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="activity" className="space-y-6 mt-6">
+              {/* 독서/창작 활동 */}
+              <div className="grid grid-cols-2 gap-6">
+                <div className="card-elevated hover-lift-sm">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-2 mb-6">
+                      <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                        <BookOpen className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <h3 className="font-semibold text-lg">독서 활동</h3>
+                    </div>
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center p-4 bg-blue-50 rounded-lg">
+                        <span className="text-sm font-medium">읽는 중</span>
+                        <span className="text-2xl font-bold text-blue-600">{stats.journeys.reading}권</span>
+                      </div>
+                      <div className="flex justify-between items-center p-4 bg-green-50 rounded-lg">
+                        <span className="text-sm font-medium">완독</span>
+                        <span className="text-2xl font-bold text-green-600">{stats.journeys.completed}권</span>
+                      </div>
+                      <div className="flex justify-between items-center p-4 bg-purple-50 rounded-lg">
+                        <span className="text-sm font-medium">총 여정</span>
+                        <span className="text-2xl font-bold text-purple-600">{stats.journeys.total}권</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </div>
+
+                <div className="card-elevated hover-lift-sm">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-2 mb-6">
+                      <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center">
+                        <Music className="w-5 h-5 text-purple-600" />
+                      </div>
+                      <h3 className="font-semibold text-lg">창작 활동</h3>
+                    </div>
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center p-4 bg-purple-50 rounded-lg">
+                        <span className="text-sm font-medium">독서 기록</span>
+                        <span className="text-2xl font-bold text-purple-600">{stats.content.totalReadingLogs}</span>
+                      </div>
+                      <div className="flex justify-between items-center p-4 bg-pink-50 rounded-lg">
+                        <span className="text-sm font-medium">음악 트랙</span>
+                        <span className="text-2xl font-bold text-pink-600">{stats.content.totalMusicTracks}</span>
+                      </div>
+                      <div className="flex justify-between items-center p-4 bg-orange-50 rounded-lg">
+                        <span className="text-sm font-medium">게시물</span>
+                        <span className="text-2xl font-bold text-orange-600">{stats.content.postsPublished}</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="community" className="space-y-6 mt-6">
+              <div className="grid grid-cols-3 gap-6">
+                <div className="card-elevated hover-lift-sm">
+                  <CardContent className="p-8 text-center">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-pink-100 flex items-center justify-center">
+                      <Heart className="w-8 h-8 text-pink-500" />
+                    </div>
+                    <div className="text-4xl font-bold text-pink-600 mb-2">{stats.engagement.likesReceived}</div>
+                    <div className="text-sm font-medium text-gray-600">받은 좋아요</div>
+                  </CardContent>
+                </div>
+                <div className="card-elevated hover-lift-sm">
+                  <CardContent className="p-8 text-center">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-blue-100 flex items-center justify-center">
+                      <TrendingUp className="w-8 h-8 text-blue-500" />
+                    </div>
+                    <div className="text-4xl font-bold text-blue-600 mb-2">{stats.engagement.commentsReceived}</div>
+                    <div className="text-sm font-medium text-gray-600">받은 댓글</div>
+                  </CardContent>
+                </div>
+                <div className="card-elevated hover-lift-sm">
+                  <CardContent className="p-8 text-center">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-purple-100 flex items-center justify-center">
+                      <BookOpen className="w-8 h-8 text-purple-500" />
+                    </div>
+                    <div className="text-4xl font-bold text-purple-600 mb-2">{stats.content.postsPublished}</div>
+                    <div className="text-sm font-medium text-gray-600">게시물</div>
+                  </CardContent>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="insights" className="space-y-6 mt-6">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="card-elevated hover-lift-sm">
+                  <CardContent className="p-8">
+                    <div className="flex items-center gap-2 mb-6">
+                      <div className="w-10 h-10 rounded-lg bg-yellow-100 flex items-center justify-center">
+                        <TrendingUp className="w-5 h-5 text-yellow-600" />
+                      </div>
+                      <h3 className="font-semibold text-lg">평균 별점</h3>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-5xl font-bold text-yellow-600 mb-2">{stats.insights.averageRating}</div>
+                      <div className="text-sm text-muted-foreground">/ 5.0</div>
+                    </div>
+                  </CardContent>
+                </div>
+
+                <div className="card-elevated hover-lift-sm">
+                  <CardContent className="p-8">
+                    <div className="flex items-center gap-2 mb-6">
+                      <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center">
+                        <TrendingUp className="w-5 h-5 text-green-600" />
+                      </div>
+                      <h3 className="font-semibold text-lg">완독률</h3>
+                    </div>
+                    <div className="text-center mb-4">
+                      <div className="text-5xl font-bold text-green-600 mb-2">{stats.insights.completionRate}%</div>
+                    </div>
+                    <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full transition-all"
+                        style={{width: `${stats.insights.completionRate}%`}}
+                      />
+                    </div>
+                  </CardContent>
+                </div>
+              </div>
+
+              <div className="card-elevated hover-lift-sm">
+                <CardContent className="p-8">
+                  <div className="flex items-center gap-2 mb-6">
+                    <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                      <BookOpen className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <h3 className="font-semibold text-lg">총 독서 일수</h3>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-5xl font-bold text-blue-600 mb-2">{stats.insights.totalReadingDays}</div>
+                    <div className="text-sm text-muted-foreground">일</div>
+                  </div>
+                </CardContent>
+              </div>
+            </TabsContent>
+          </Tabs>
+        )}
 
         {/* Profile Edit Dialog */}
         {profile && (

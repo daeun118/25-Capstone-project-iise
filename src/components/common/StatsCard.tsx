@@ -62,8 +62,8 @@ export const StatsCard = memo(function StatsCard({
       transition={{ delay, duration: 0.5 }}
       whileHover={{ y: -4, scale: 1.02 }}
     >
-      <Card className={cn('card-elevated group cursor-pointer', className)}>
-        <CardContent className="p-6">
+      <Card className={cn('card-elevated group cursor-pointer aspect-square', className)}>
+        <CardContent className="p-6 h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm font-medium text-gray-600">{label}</span>
             {Icon && (
@@ -79,17 +79,19 @@ export const StatsCard = memo(function StatsCard({
               </m.div>
             )}
           </div>
-          <m.div
-            className="text-4xl font-bold mb-2"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: delay + 0.2, type: 'spring', stiffness: 200 }}
-          >
-            {value}
-          </m.div>
-          {description && (
-            <p className="text-sm text-gray-500">{description}</p>
-          )}
+          <div className="flex-1 flex flex-col justify-center">
+            <m.div
+              className="text-4xl font-bold mb-2"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: delay + 0.2, type: 'spring', stiffness: 200 }}
+            >
+              {value}
+            </m.div>
+            {description && (
+              <p className="text-sm text-gray-500 line-clamp-2">{description}</p>
+            )}
+          </div>
           {trendValue && (
             <div className={cn('flex items-center gap-1 mt-2 text-sm', getTrendColor())}>
               {getTrendIcon()}

@@ -54,43 +54,10 @@ export function StatsDashboard() {
 
   if (isLoading) {
     return (
-      <div className="space-y-8">
-        {/* Journey Stats Skeleton */}
-        <div>
-          <div className="h-8 w-32 bg-gray-200 animate-pulse rounded mb-4" />
-          <div className="grid gap-6 md:grid-cols-3">
-            {[...Array(3)].map((_, i) => (
-              <StatsCardSkeleton key={`journey-${i}`} delay={i * 0.05} />
-            ))}
-          </div>
-        </div>
-        {/* Content Stats Skeleton */}
-        <div>
-          <div className="h-8 w-32 bg-gray-200 animate-pulse rounded mb-4" />
-          <div className="grid gap-6 md:grid-cols-3">
-            {[...Array(3)].map((_, i) => (
-              <StatsCardSkeleton key={`content-${i}`} delay={i * 0.05} />
-            ))}
-          </div>
-        </div>
-        {/* Engagement Stats Skeleton */}
-        <div>
-          <div className="h-8 w-32 bg-gray-200 animate-pulse rounded mb-4" />
-          <div className="grid gap-6 md:grid-cols-3">
-            {[...Array(3)].map((_, i) => (
-              <StatsCardSkeleton key={`engagement-${i}`} delay={i * 0.05} />
-            ))}
-          </div>
-        </div>
-        {/* Insights Skeleton */}
-        <div>
-          <div className="h-8 w-32 bg-gray-200 animate-pulse rounded mb-4" />
-          <div className="grid gap-6 md:grid-cols-2">
-            {[...Array(2)].map((_, i) => (
-              <StatsCardSkeleton key={`insights-${i}`} delay={i * 0.05} />
-            ))}
-          </div>
-        </div>
+      <div className="grid gap-4 md:grid-cols-4 lg:grid-cols-5">
+        {[...Array(10)].map((_, i) => (
+          <StatsCardSkeleton key={`stats-${i}`} delay={i * 0.05} />
+        ))}
       </div>
     );
   }
@@ -100,20 +67,14 @@ export function StatsDashboard() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4">
       {/* Journey Stats */}
       <m.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-accent">
-            <Book className="w-4 h-4 text-white" />
-          </div>
-          독서 여정
-        </h3>
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-4 lg:grid-cols-5">
           <StatsCard
             label="전체 여정"
             value={stats.journeys.total}
@@ -138,22 +99,7 @@ export function StatsDashboard() {
             gradient="linear-gradient(135deg, #10b981, #059669)"
             delay={0.2}
           />
-        </div>
-      </m.div>
-
-      {/* Content Stats */}
-      <m.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2, duration: 0.6 }}
-      >
-        <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-amber-500">
-            <FileText className="w-4 h-4 text-white" />
-          </div>
-          생성한 콘텐츠
-        </h3>
-        <div className="grid gap-6 md:grid-cols-3">
+          {/* Content Stats - 제목 제거, 통합 */}
           <StatsCard
             label="음악 트랙"
             value={stats.content.totalMusicTracks}
@@ -178,22 +124,7 @@ export function StatsDashboard() {
             gradient="linear-gradient(135deg, #8b5cf6, #7c3aed)"
             delay={0.4}
           />
-        </div>
-      </m.div>
-
-      {/* Engagement Stats */}
-      <m.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4, duration: 0.6 }}
-      >
-        <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-pink-500">
-            <Heart className="w-4 h-4 text-white" />
-          </div>
-          커뮤니티 활동
-        </h3>
-        <div className="grid gap-6 md:grid-cols-3">
+          {/* Engagement Stats - 제목 제거, 통합 */}
           <StatsCard
             label="받은 좋아요"
             value={stats.engagement.likesReceived}
@@ -218,22 +149,7 @@ export function StatsDashboard() {
             gradient="linear-gradient(135deg, #f59e0b, #d97706)"
             delay={0.6}
           />
-        </div>
-      </m.div>
-
-      {/* Insights */}
-      <m.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6, duration: 0.6 }}
-      >
-        <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-amber-500">
-            <Star className="w-4 h-4 text-white" />
-          </div>
-          독서 인사이트
-        </h3>
-        <div className="grid gap-6 md:grid-cols-2">
+          {/* Insights - 제목 제거, 통합 */}
           <StatsCard
             label="평균 별점"
             value={stats.insights.averageRating > 0 ? stats.insights.averageRating.toFixed(1) : '-'}
@@ -241,14 +157,6 @@ export function StatsDashboard() {
             icon={Star}
             gradient="linear-gradient(135deg, #f59e0b, #d97706)"
             delay={0.7}
-          />
-          <StatsCard
-            label="선호 카테고리"
-            value={stats.insights.favoriteCategory || '-'}
-            description="가장 많이 읽은 장르"
-            icon={Tag}
-            gradient="linear-gradient(135deg, #8b5cf6, #7c3aed)"
-            delay={0.75}
           />
         </div>
       </m.div>
