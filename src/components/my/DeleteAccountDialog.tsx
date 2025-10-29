@@ -184,7 +184,7 @@ export function DeleteAccountDialog({
                 background: 'linear-gradient(135deg, #dc2626, #ef4444)',
               }}
             />
-            <div className="relative backdrop-blur-sm bg-white/90 dark:bg-gray-900/90 border-2 border-destructive/20 rounded-xl p-4">
+            <div className="relative backdrop-blur-sm bg-white/90 border-2 border-destructive/20 rounded-xl p-4">
               <div className="flex items-start gap-3 mb-4">
                 <div className="w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center flex-shrink-0">
                   <AlertCircle className="w-5 h-5 text-destructive" />
@@ -210,7 +210,7 @@ export function DeleteAccountDialog({
                     <m.div
                       whileHover={{ scale: 1.1, rotate: 5 }}
                       transition={{ type: 'spring', stiffness: 300 }}
-                      className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center shadow-sm"
+                      className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center shadow-sm"
                     >
                       <item.icon className={`w-4 h-4 ${item.color}`} />
                     </m.div>
@@ -294,7 +294,7 @@ export function DeleteAccountDialog({
                 background: 'linear-gradient(135deg, #dc2626, #ef4444)',
               }}
             />
-            <div className="relative flex items-start space-x-3 space-y-0 rounded-lg border-2 border-destructive/30 p-4 bg-white/50 dark:bg-gray-900/50">
+            <div className="relative flex items-start space-x-3 space-y-0 rounded-lg border-2 border-destructive/30 p-4 bg-white/50">
               <Checkbox
                 id="confirm"
                 checked={confirmed}

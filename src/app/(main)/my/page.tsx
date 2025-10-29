@@ -310,7 +310,7 @@ export default function MyPage() {
               />
 
               {/* Glass morphism overlay */}
-              <div className="relative backdrop-blur-sm bg-white/80 dark:bg-gray-900/80 border-2 border-destructive/30 rounded-2xl p-8">
+              <div className="relative backdrop-blur-sm bg-white/80 border-2 border-destructive/30 rounded-2xl p-8">
                 <div className="flex items-start gap-6">
                   {/* Enhanced icon with gradient background */}
                   <m.div

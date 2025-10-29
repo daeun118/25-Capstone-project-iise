@@ -57,8 +57,8 @@ export function Playlist({
                 transition-all duration-300
                 ${
                   isCurrent
-                    ? 'bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 ring-2 ring-green-500/50 shadow-lg shadow-green-500/10'
-                    : 'bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-gray-800/80 dark:to-gray-800/40 backdrop-blur-sm border border-purple-200/30 dark:border-gray-700/50 hover:shadow-xl hover:shadow-purple-500/10 hover:scale-[1.02] hover:border-purple-300/50'
+                    ? 'bg-gradient-to-br from-green-50 to-emerald-50 ring-2 ring-green-500/50 shadow-lg shadow-green-500/10'
+                    : 'bg-gradient-to-br from-purple-50/50 to-pink-50/50 backdrop-blur-sm border border-purple-200/30 hover:shadow-xl hover:shadow-purple-500/10 hover:scale-[1.02] hover:border-purple-300/50'
                 }
               `}
               onClick={() => !isCurrent && onTrackSelect(track.id)}
@@ -121,7 +121,7 @@ export function Playlist({
                       <m.div
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
-                        className="flex items-center gap-1 px-2 py-1 rounded-full bg-green-500/20 text-green-700 dark:text-green-400 text-xs font-medium"
+                        className="flex items-center gap-1 px-2 py-1 rounded-full bg-green-500/20 text-green-700 text-xs font-medium"
                       >
                         <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
                         재생 중
@@ -131,7 +131,7 @@ export function Playlist({
 
                   {/* Title */}
                   <p className={`font-bold text-base truncate ${
-                    isCurrent ? 'text-green-700 dark:text-green-400' : 'text-gray-900 dark:text-gray-100'
+                    isCurrent ? 'text-green-700' : 'text-gray-900'
                   }`}>
                     {track.title}
                   </p>
@@ -139,11 +139,11 @@ export function Playlist({
                   {/* Genre & Mood */}
                   {track.genre && track.mood && (
                     <div className="flex items-center gap-4 text-sm">
-                      <span className="flex items-center gap-1.5 text-gray-600 dark:text-gray-400">
+                      <span className="flex items-center gap-1.5 text-gray-600">
                         <Disc3 className="w-4 h-4 text-primary" />
                         <span className="font-medium">{track.genre}</span>
                       </span>
-                      <span className="flex items-center gap-1.5 text-gray-600 dark:text-gray-400">
+                      <span className="flex items-center gap-1.5 text-gray-600">
                         <Sparkles className="w-4 h-4 text-amber-500" />
                         <span className="font-medium">{track.mood}</span>
                       </span>
@@ -152,7 +152,7 @@ export function Playlist({
                 </div>
 
                 {/* Duration */}
-                <div className="shrink-0 flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                <div className="shrink-0 flex items-center gap-2 text-gray-500">
                   <Clock className="w-4 h-4" />
                   <span className="text-sm font-medium tabular-nums">
                     {formatDuration(track.duration)}

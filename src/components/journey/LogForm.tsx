@@ -141,8 +141,8 @@ export function LogForm({ onSubmit, onCancel }: LogFormProps) {
       </m.div>
 
       {/* Public Option - Enhanced */}
-      <m.div 
-        className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 border-2 border-gray-200/50 dark:border-gray-700/50"
+      <m.div
+        className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-200/50"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}

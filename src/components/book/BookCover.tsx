@@ -20,7 +20,7 @@ export function BookCover({ src, alt, size = 'md', className }: BookCoverProps) 
   return (
     <div
       className={cn(
-        'relative overflow-hidden rounded-lg shadow-md bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800',
+        'relative overflow-hidden rounded-lg shadow-md bg-gradient-to-br from-slate-200 to-slate-300',
         sizeClasses[size],
         className
       )}

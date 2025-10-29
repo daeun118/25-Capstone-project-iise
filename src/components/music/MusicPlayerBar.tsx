@@ -324,7 +324,7 @@ export function MusicPlayerBar({
                     onPointerUp={handleSeekEnd}
                     className={`
                       flex-1 cursor-pointer
-                      [&>span:first-child]:bg-slate-300/30 dark:[&>span:first-child]:bg-slate-700/40
+                      [&>span:first-child]:bg-slate-300/30
                       [&>span:first-child]:transition-[height] [&>span:first-child]:duration-200
                       ${isHoveringProgress || isDragging ? '[&>span:first-child]:h-1.5' : '[&>span:first-child]:h-1'}
                       [&>span:last-child]:bg-gradient-to-r [&>span:last-child]:from-primary [&>span:last-child]:to-purple-600
@@ -367,7 +367,7 @@ export function MusicPlayerBar({
                   max={100}
                   step={1}
                   onValueChange={handleVolumeChange}
-                  className="w-20 md:w-24 lg:w-28 [&>span:first-child]:bg-slate-300/30 dark:[&>span:first-child]:bg-slate-700/40 [&>span:last-child]:bg-gradient-to-r [&>span:last-child]:from-primary [&>span:last-child]:to-purple-600 [&_[role=slider]]:bg-white [&_[role=slider]]:border-2 [&_[role=slider]]:border-primary [&_[role=slider]]:shadow-md [&_[role=slider]]:w-2.5 [&_[role=slider]]:h-2.5 [&_[role=slider]]:transition-all [&_[role=slider]]:hover:w-3 [&_[role=slider]]:hover:h-3"
+                  className="w-20 md:w-24 lg:w-28 [&>span:first-child]:bg-slate-300/30 [&>span:last-child]:bg-gradient-to-r [&>span:last-child]:from-primary [&>span:last-child]:to-purple-600 [&_[role=slider]]:bg-white [&_[role=slider]]:border-2 [&_[role=slider]]:border-primary [&_[role=slider]]:shadow-md [&_[role=slider]]:w-2.5 [&_[role=slider]]:h-2.5 [&_[role=slider]]:transition-all [&_[role=slider]]:hover:w-3 [&_[role=slider]]:hover:h-3"
                 />
               </div>
 
@@ -394,7 +394,7 @@ export function MusicPlayerBar({
               onPointerUp={handleSeekEnd}
               className={`
                 w-full cursor-pointer
-                [&>span:first-child]:bg-slate-300/30 dark:[&>span:first-child]:bg-slate-700/40
+                [&>span:first-child]:bg-slate-300/30
                 [&>span:first-child]:h-2
                 [&>span:last-child]:bg-gradient-to-r [&>span:last-child]:from-primary [&>span:last-child]:to-purple-600
                 [&>span:last-child]:transition-all
