@@ -579,6 +579,7 @@ export default function JourneyDetailPage() {
                       const event = new CustomEvent('togglePlayPause');
                       window.dispatchEvent(event);
                     }}
+                    showHeader={false}
                   />
                 </div>
               </m.div>

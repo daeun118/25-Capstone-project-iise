@@ -6,7 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { EmotionTagSelector } from './EmotionTagSelector';
-import { Loader2, Save, Music2, X, BookOpen, PenLine, Heart, Info } from 'lucide-react';
+import { Loader2, Save, Music2, X, BookOpen, PenLine, Heart, Info, Sparkles } from 'lucide-react';
 import { m } from 'framer-motion';
 
 interface LogFormProps {
@@ -52,17 +52,24 @@ export function LogForm({ onSubmit, onCancel }: LogFormProps) {
 
   return (
     <m.div 
-      className="space-y-5"
+      className="space-y-6"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      {/* Quote Section */}
-      <div className="space-y-2">
-        <Label htmlFor="quote" className="text-sm font-medium flex items-center gap-2">
-          <BookOpen className="w-4 h-4 text-primary" />
+      {/* Quote Section - Enhanced */}
+      <m.div 
+        className="space-y-3"
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.1 }}
+      >
+        <Label htmlFor="quote" className="text-base font-semibold flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+            <BookOpen className="w-4 h-4 text-white" />
+          </div>
           인상 깊은 구절
-          <span className="text-xs font-normal text-red-500">*</span>
+          <span className="text-sm font-normal text-red-500">*</span>
         </Label>
         <div className="relative">
           <Textarea
@@ -74,20 +81,27 @@ export function LogForm({ onSubmit, onCancel }: LogFormProps) {
             maxLength={500}
             required
             disabled={isLoading}
-            className="resize-none text-sm leading-relaxed bg-muted/30 border-muted-foreground/20 focus:border-primary/50 focus:bg-muted/40"
+            className="resize-none text-sm leading-relaxed bg-gradient-to-br from-purple-50/50 to-pink-50/50 border-2 border-purple-200/50 focus:border-purple-400 focus:ring-4 focus:ring-purple-400/20 transition-all"
           />
-          <span className="absolute bottom-2 right-3 text-xs text-muted-foreground">
+          <span className="absolute bottom-2 right-3 text-xs text-muted-foreground font-medium">
             {quote.length}/500
           </span>
         </div>
-      </div>
+      </m.div>
 
-      {/* Memo Section */}
-      <div className="space-y-2">
-        <Label htmlFor="memo" className="text-sm font-medium flex items-center gap-2">
-          <PenLine className="w-4 h-4 text-primary" />
+      {/* Memo Section - Enhanced */}
+      <m.div 
+        className="space-y-3"
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.2 }}
+      >
+        <Label htmlFor="memo" className="text-base font-semibold flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
+            <PenLine className="w-4 h-4 text-white" />
+          </div>
           나의 생각과 느낌
-          <span className="text-xs font-normal text-muted-foreground">(선택)</span>
+          <span className="text-sm font-normal text-muted-foreground">(선택)</span>
         </Label>
         <div className="relative">
           <Textarea
@@ -98,33 +112,46 @@ export function LogForm({ onSubmit, onCancel }: LogFormProps) {
             rows={5}
             maxLength={1000}
             disabled={isLoading}
-            className="resize-none text-sm leading-relaxed bg-muted/30 border-muted-foreground/20 focus:border-primary/50 focus:bg-muted/40"
+            className="resize-none text-sm leading-relaxed bg-gradient-to-br from-indigo-50/50 to-purple-50/50 border-2 border-indigo-200/50 focus:border-indigo-400 focus:ring-4 focus:ring-indigo-400/20 transition-all"
           />
-          <span className="absolute bottom-2 right-3 text-xs text-muted-foreground">
+          <span className="absolute bottom-2 right-3 text-xs text-muted-foreground font-medium">
             {memo.length}/1000
           </span>
         </div>
-      </div>
+      </m.div>
 
-      {/* Emotion Tags */}
-      <div className="space-y-2">
-        <Label className="text-sm font-medium flex items-center gap-2">
-          <Heart className="w-4 h-4 text-primary" />
+      {/* Emotion Tags - Enhanced */}
+      <m.div 
+        className="space-y-3"
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.3 }}
+      >
+        <Label className="text-base font-semibold flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center">
+            <Heart className="w-4 h-4 text-white" />
+          </div>
           감정 태그
-          <span className="text-xs font-normal text-muted-foreground">(선택)</span>
+          <span className="text-sm font-normal text-muted-foreground">(선택)</span>
         </Label>
         <EmotionTagSelector
           selectedTags={emotions}
           onTagsChange={setEmotions}
         />
-      </div>
+      </m.div>
 
-      {/* Public Option */}
-      <div className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-muted-foreground/10">
+      {/* Public Option - Enhanced */}
+      <m.div 
+        className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 border-2 border-gray-200/50 dark:border-gray-700/50"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+      >
         <Label
           htmlFor="isPublic"
-          className="text-sm font-medium cursor-pointer flex-1"
+          className="text-sm font-medium cursor-pointer flex-1 flex items-center gap-2"
         >
+          <Sparkles className="w-4 h-4 text-purple-500" />
           완독 후 게시물에 포함
         </Label>
         <Checkbox
@@ -133,17 +160,22 @@ export function LogForm({ onSubmit, onCancel }: LogFormProps) {
           onCheckedChange={(checked) => setIsPublic(checked === true)}
           disabled={isLoading}
         />
-      </div>
+      </m.div>
 
-      {/* Action Buttons */}
-      <div className="flex gap-3 pt-4">
+      {/* Action Buttons - Enhanced */}
+      <m.div 
+        className="flex gap-3 pt-6"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }}
+      >
         {onCancel && (
           <Button 
             type="button" 
             variant="outline" 
             onClick={onCancel} 
             disabled={isLoading}
-            className="px-6"
+            className="px-6 border-2 hover:border-purple-300 hover:bg-purple-50/50 transition-all"
           >
             <X className="mr-2 size-4" />
             취소
@@ -156,42 +188,57 @@ export function LogForm({ onSubmit, onCancel }: LogFormProps) {
           variant="outline"
           onClick={() => handleSubmit(false)}
           disabled={!quote.trim() || isLoading}
-          className="flex-1 h-11 font-medium"
+          className="flex-1 h-12 font-medium border-2 hover:border-gray-400 hover:bg-gray-50 transition-all"
         >
           {isLoading && loadingMode === 'save' ? (
             <>
-              <Loader2 className="mr-2 size-4 animate-spin" />
+              <Loader2 className="mr-2 size-5 animate-spin" />
               저장 중
             </>
           ) : (
             <>
-              <Save className="mr-2 size-4" />
+              <Save className="mr-2 size-5" />
               저장만
             </>
           )}
         </Button>
 
-        {/* Generate Music Button */}
-        <Button
-          type="button"
-          variant="gradient"
-          onClick={() => handleSubmit(true)}
-          disabled={!quote.trim() || isLoading}
-          className="flex-1 h-11 font-semibold shadow-lg"
+        {/* Generate Music Button - Premium Style */}
+        <m.div
+          className="flex-1"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
         >
-          {isLoading && loadingMode === 'generate' ? (
-            <>
-              <Loader2 className="mr-2 size-4 animate-spin" />
-              생성 중
-            </>
-          ) : (
-            <>
-              <Music2 className="mr-2 size-4" />
-              음악 생성
-            </>
-          )}
-        </Button>
-      </div>
+          <Button
+            type="button"
+            onClick={() => handleSubmit(true)}
+            disabled={!quote.trim() || isLoading}
+            className="w-full h-12 font-bold text-base shadow-xl hover:shadow-2xl transition-all duration-300 border-0"
+            style={{
+              background: isLoading && loadingMode === 'generate'
+                ? 'linear-gradient(135deg, #9ca3af, #6b7280)'
+                : 'linear-gradient(135deg, #a855f7, #ec4899, #f472b6)',
+            }}
+          >
+            {isLoading && loadingMode === 'generate' ? (
+              <>
+                <Loader2 className="mr-2 size-5 animate-spin" />
+                생성 중
+              </>
+            ) : (
+              <>
+                <m.div
+                  animate={{ rotate: [0, 10, -10, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                >
+                  <Music2 className="mr-2 size-5" />
+                </m.div>
+                음악 생성
+              </>
+            )}
+          </Button>
+        </m.div>
+      </m.div>
     </m.div>
   );
 }

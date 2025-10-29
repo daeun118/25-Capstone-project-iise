@@ -13,7 +13,8 @@ import { Button } from '@/components/ui/button';
 import { BookCard } from './BookCard';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { EmptyState } from '@/components/common/EmptyState';
-import { Search, X } from 'lucide-react';
+import { Search, X, Sparkles, BookOpen } from 'lucide-react';
+import { m } from 'framer-motion';
 
 interface Book {
   isbn: string;
@@ -102,68 +103,181 @@ export function BookSearchDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col">
-        <DialogHeader>
-          <DialogTitle>도서 검색</DialogTitle>
-          <DialogDescription>
-            독서를 시작할 책을 검색하세요
-          </DialogDescription>
+      <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col border-2 shadow-2xl">
+        {/* Gradient Top Border */}
+        <div
+          className="absolute inset-x-0 top-0 h-1"
+          style={{
+            background: 'linear-gradient(90deg, #a855f7, #ec4899, #f472b6)',
+          }}
+        />
+
+        <DialogHeader className="space-y-3">
+          <div className="flex items-center gap-3">
+            <m.div
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: 'spring', stiffness: 200, delay: 0.1 }}
+              className="w-12 h-12 rounded-full flex items-center justify-center"
+              style={{
+                background: 'linear-gradient(135deg, #a855f7, #ec4899)',
+              }}
+            >
+              <Search className="w-6 h-6 text-white" />
+            </m.div>
+            <div className="flex-1">
+              <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                도서 검색
+              </DialogTitle>
+              <DialogDescription className="text-base">
+                독서를 시작할 책을 검색하세요
+              </DialogDescription>
+            </div>
+            <m.div
+              animate={{ rotate: [0, 10, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+            >
+              <Sparkles className="w-5 h-5 text-pink-500" />
+            </m.div>
+          </div>
         </DialogHeader>
 
-        <form onSubmit={handleSearch} className="flex gap-2">
+        <form onSubmit={handleSearch} className="flex gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 z-10">
+              <m.div
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <Search className="size-5 text-purple-500" />
+              </m.div>
+            </div>
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="책 제목, 저자, ISBN으로 검색"
-              className="pl-10 pr-10"
+              className="pl-11 pr-10 h-12 text-base border-2 border-purple-200/50 focus:border-purple-400 focus:ring-4 focus:ring-purple-400/20 bg-gradient-to-br from-purple-50/30 to-pink-50/30 transition-all"
             />
             {query && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={handleClearSearch}
-                className="absolute right-1 top-1/2 -translate-y-1/2 size-7"
+              <m.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="absolute right-2 top-1/2 -translate-y-1/2"
               >
-                <X className="size-4" />
-              </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleClearSearch}
+                  className="size-8 hover:bg-red-100 hover:text-red-600 transition-colors"
+                >
+                  <X className="size-4" />
+                </Button>
+              </m.div>
             )}
           </div>
-          <Button type="submit" disabled={isLoading || !query.trim()}>
-            검색
-          </Button>
+          <m.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button 
+              type="submit" 
+              disabled={isLoading || !query.trim()}
+              className="h-12 px-6 font-bold border-0 shadow-lg hover:shadow-xl transition-all"
+              style={{
+                background: 'linear-gradient(135deg, #a855f7, #ec4899)',
+              }}
+            >
+              <Search className="mr-2 size-5" />
+              검색
+            </Button>
+          </m.div>
         </form>
 
         <div className="flex-1 overflow-y-auto mt-4">
           {isLoading ? (
-            <div className="flex items-center justify-center py-12">
-              <LoadingSpinner size="lg" text="도서 검색 중..." />
+            <div className="space-y-3">
+              {/* Skeleton Cards */}
+              {[1, 2, 3].map((i) => (
+                <m.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  className="flex gap-4 p-4 rounded-xl border-2 border-purple-200/30 bg-gradient-to-br from-purple-50/30 to-pink-50/30"
+                >
+                  {/* Book Cover Skeleton */}
+                  <div className="w-20 h-28 rounded-lg bg-gradient-to-br from-purple-200 to-pink-200 animate-pulse" />
+                  <div className="flex-1 space-y-3">
+                    {/* Title Skeleton */}
+                    <div className="h-5 w-3/4 rounded bg-gradient-to-r from-purple-200 to-pink-200 animate-pulse" />
+                    {/* Author Skeleton */}
+                    <div className="h-4 w-1/2 rounded bg-gradient-to-r from-purple-100 to-pink-100 animate-pulse" />
+                    {/* Details Skeleton */}
+                    <div className="h-3 w-2/3 rounded bg-gradient-to-r from-purple-100 to-pink-100 animate-pulse" />
+                  </div>
+                </m.div>
+              ))}
             </div>
           ) : hasSearched && results.length === 0 ? (
-            <EmptyState
-              icon={Search}
-              title="검색 결과가 없습니다"
-              description="다른 키워드로 검색해보세요"
-            />
+            <m.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+              className="flex flex-col items-center justify-center py-16 space-y-4"
+            >
+              <m.div
+                animate={{ 
+                  rotate: [0, -10, 10, -10, 0],
+                  scale: [1, 1.1, 1, 1.1, 1]
+                }}
+                transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                className="w-20 h-20 rounded-full flex items-center justify-center bg-gradient-to-br from-purple-100 to-pink-100"
+              >
+                <Search className="w-10 h-10 text-purple-500" />
+              </m.div>
+              <div className="text-center space-y-2">
+                <h3 className="text-lg font-semibold text-gray-700">검색 결과가 없습니다</h3>
+                <p className="text-sm text-muted-foreground">다른 키워드로 검색해보세요</p>
+              </div>
+            </m.div>
           ) : results.length > 0 ? (
             <div className="space-y-3">
-              {results.map((book) => (
-                <BookCard
+              {results.map((book, index) => (
+                <m.div
                   key={book.isbn}
-                  book={book}
-                  variant="search"
-                  onAction={handleSelectBook}
-                  actionLabel="선택"
-                />
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  whileHover={{ scale: 1.02, y: -4 }}
+                  className="transition-shadow"
+                >
+                  <BookCard
+                    book={book}
+                    variant="search"
+                    onAction={handleSelectBook}
+                    actionLabel="선택"
+                  />
+                </m.div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 text-muted-foreground">
-              <Search className="size-12 mx-auto mb-4 opacity-50" />
-              <p>책 제목이나 저자로 검색해보세요</p>
-            </div>
+            <m.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex flex-col items-center justify-center py-16 space-y-4"
+            >
+              <m.div
+                animate={{ 
+                  y: [0, -10, 0],
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="w-24 h-24 rounded-full flex items-center justify-center bg-gradient-to-br from-purple-100 to-pink-100"
+              >
+                <BookOpen className="w-12 h-12 text-purple-500" />
+              </m.div>
+              <div className="text-center space-y-2">
+                <h3 className="text-lg font-semibold text-gray-700">책을 찾아보세요</h3>
+                <p className="text-sm text-muted-foreground">책 제목, 저자, ISBN으로 검색해보세요</p>
+              </div>
+            </m.div>
           )}
         </div>
       </DialogContent>

@@ -276,7 +276,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4">
               <Button
                 size="lg"
-                className="w-full sm:w-auto bg-white text-primary hover:bg-white/90 font-semibold px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-xl min-h-[44px]"
+                className="w-full sm:w-auto bg-primary text-white hover:bg-primary/90 font-semibold px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-xl min-h-[44px]"
                 onClick={() => setSignupOpen(true)}
               >
                 회원가입하기

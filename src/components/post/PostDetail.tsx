@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { UserAvatar } from '@/components/user/UserAvatar';
 import { InteractionBar } from './InteractionBar';
@@ -12,6 +13,7 @@ import { Playlist } from '@/components/music/Playlist';
 import { MusicPlayerBar } from '@/components/music/MusicPlayerBar';
 import { Star, Calendar, Music } from 'lucide-react';
 import { useState } from 'react';
+import { m } from 'framer-motion';
 import { PostDetailDto, CommentDto } from '@/types/dto/post.dto';
 
 interface PostDetailProps {
@@ -164,14 +166,47 @@ export function PostDetail({
 
       {/* Playlist */}
       {post.playlist.length > 0 && (
-        <Card>
-          <CardHeader>
-            <h3 className="font-semibold flex items-center gap-2">
-              <Music className="w-5 h-5" />
-              독서 플레이리스트
-            </h3>
-          </CardHeader>
-          <CardContent>
+        <m.div
+          className="card-elevated rounded-2xl overflow-hidden"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <div
+                  className="w-10 h-10 rounded-lg flex items-center justify-center"
+                  style={{
+                    background: 'linear-gradient(135deg, #ff6b6b, #f06595)',
+                  }}
+                >
+                  <Music className="w-5 h-5 text-white" />
+                </div>
+                <h2 className="text-2xl font-bold">독서 플레이리스트</h2>
+              </div>
+              <Button
+                size="sm"
+                variant="gradient"
+                onClick={() => {
+                  if (post.playlist.length > 0) {
+                    const firstTrack = post.playlist[0];
+                    handlePlayMusic({
+                      id: firstTrack.id,
+                      version: firstTrack.version.toString(),
+                      title: firstTrack.title,
+                      fileUrl: firstTrack.fileUrl,
+                      genre: firstTrack.genre ?? null,
+                      mood: firstTrack.mood ?? null,
+                      duration: firstTrack.duration ?? null,
+                    });
+                  }
+                }}
+              >
+                <Music className="size-4 mr-1" />
+                전체 재생
+              </Button>
+            </div>
             <Playlist
               tracks={post.playlist.map(track => ({
                 id: track.id,
@@ -204,9 +239,10 @@ export function PostDetail({
                   window.dispatchEvent(new CustomEvent('togglePlayPause'));
                 }
               }}
+              showHeader={false}
             />
-          </CardContent>
-        </Card>
+          </div>
+        </m.div>
       )}
 
       {/* Comments */}
