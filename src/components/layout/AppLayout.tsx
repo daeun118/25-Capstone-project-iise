@@ -1,5 +1,4 @@
 import { Header } from './Header';
-import { Footer } from './Footer';
 import { cn } from '@/lib/utils';
 
 interface AppLayoutProps {
@@ -14,7 +13,6 @@ export function AppLayout({ children, className }: AppLayoutProps) {
       <main className={cn('flex-1', className)}>
         {children}
       </main>
-      <Footer />
     </div>
   );
 }

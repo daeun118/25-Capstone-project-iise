@@ -10,7 +10,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **핵심 플로우**: 책 선택(v0) → 독서 기록(v1~vN) → 완독(vFinal) → 플레이리스트 완성
 
-**현재 상태**: Phase 12 배포 완료 + 플레이리스트 크로스페이드 기능 추가 ✅ | Production: https://25-capstone-project-iise.vercel.app
+**현재 상태**: Phase 12 배포 완료 + 플레이리스트 크로스페이드 기능 추가 ✅
+**Production**: https://25-capstone-project-iise.vercel.app
+**마지막 업데이트**: 2025-10-29
 
 ---
 
@@ -42,6 +44,8 @@ supabase gen types typescript --project-id oelgskajaisratnbffip > src/types/data
 - 포트 충돌: `npm run server:kill` → `npm run dev`
 - 빌드 에러: `rm -rf .next` → `npm run build`
 - DB 타입 에러: DB 타입 재생성 후 빌드
+- Playwright 테스트 실패: `npx playwright install` (브라우저 설치)
+- Background processes: 개발 서버 종료 전 반드시 `npm run server:kill` 실행
 
 ---
 
@@ -108,6 +112,8 @@ src/
 
 ## 핵심 아키텍처 패턴
 
+**중요**: 모든 코드 변경은 아래 패턴을 준수해야 함
+
 ### 1. 레이어드 아키텍처 (필수)
 
 ```typescript
@@ -157,7 +163,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
 ### 3. 3단계 음악 생성 플로우 (핵심 비즈니스 로직)
 
-**파일**: `src/lib/openai/client.ts` → `generateMusicPrompt()`
+**파일**: `src/lib/openai/client.ts:178` → `generateMusicPrompt()`
 
 ```typescript
 // v0: 책 정보만 → 첫 음악 (anticipatory mood)
@@ -172,7 +178,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 - Context Window: 최근 2개 로그만 (`previousLogs.slice(-2)`)
 - Output: `{ prompt, genre, mood, tempo, description }`
 
-**⚠️ 주의**: 현재는 프롬프트만 생성 (Mureka MCP 음악 생성 미구현)
+**⚠️ 주의**: 
+- 현재는 프롬프트만 생성 (Mureka MCP 음악 생성 미구현)
+- 이 로직 변경 시 반드시 기존 프롬프트 검증 필요
 
 ### 4. Supabase 클라이언트 분리
 
@@ -299,9 +307,9 @@ import Image from 'next/image';
 />
 ```
 
-### 보안
+### 보안 (중요!)
 - 환경 변수: `NEXT_PUBLIC_*` (클라이언트 노출), 나머지 (서버 전용)
-- **중요**: API 토큰은 절대 클라이언트 코드에 하드코딩 금지 → 환경 변수 사용
+- **절대 금지**: API 토큰을 클라이언트 코드에 하드코딩
 - RLS: 모든 테이블 활성화 (사용자는 자신의 데이터만 접근)
 - 공개 데이터: RLS 정책에 `USING (true)` 또는 `USING (is_published = true)` 추가
 - 인증: Supabase Auth (세션 기반)
@@ -310,7 +318,8 @@ import Image from 'next/image';
 **환경 변수 체크리스트**:
 - `.env.local` 파일 생성 (`.env.example` 참고)
 - `.env.local`은 `.gitignore`에 포함 (절대 커밋 금지)
-- Vercel 배포 시 Environment Variables 설정
+- Vercel 배포: Environment Variables에서 설정
+- Production/Preview 환경 별도 관리
 
 ### Git 워크플로우 (중요!)
 
@@ -375,6 +384,11 @@ git push origin main
 **현재**: ✅ Phase 12 완료 (Vercel 배포) + 플레이리스트 크로스페이드 기능 완료
 **Production**: https://25-capstone-project-iise.vercel.app
 **다음**: Phase 13 - 앨범커버 생성 (DALL-E 3)
+
+**배포 프로세스**:
+- main 브랜치 push → Vercel 자동 배포
+- PR 생성 → Preview 배포 (테스트용)
+- 배포 로그: Vercel 대시보드에서 확인
 
 **최근 개선사항** (2025-01):
 - ✅ **이미지 최적화 구현** (2025-01-23)
@@ -444,10 +458,12 @@ git push origin main
 - CSS Transitions: 메모리 90% 감소, 60fps 유지
 - 적응형 폴링: API 호출 40% 감소
 
-**미완료 기능**:
+**미완료 기능** (Phase 13+):
 - Mureka MCP 실제 음악 생성 (현재 프롬프트만)
 - 실시간 업데이트 (Supabase Realtime)
 - 앨범커버 생성 (DALL-E 3)
+- 다크모드 완전 지원
+- 고급 통계 대시보드
 
 ---
 

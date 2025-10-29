@@ -386,7 +386,7 @@ font-family: ui-monospace, "JetBrains Mono", "Fira Code", Consolas, monospace;
 - Skip to main content 링크
 
 ### 스크린 리더
-- Semantic HTML 사용 (header, main, nav, footer)
+- Semantic HTML 사용 (header, main, nav)
 - ARIA labels 적절히 사용
 - Alt text for images
 - Live regions for dynamic content
@@ -443,7 +443,7 @@ font-family: ui-monospace, "JetBrains Mono", "Fira Code", Consolas, monospace;
 3. 기본 컴포넌트 스타일링 (Button, Card, Input)
 
 ### Phase 2: 레이아웃
-1. Header/Footer 디자인
+1. Header 디자인 (Footer 없음 - 미니멀 디자인)
 2. Grid 시스템 구축
 3. 반응형 레이아웃
 

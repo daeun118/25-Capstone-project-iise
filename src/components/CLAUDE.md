@@ -47,7 +47,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 ### ✅ 레이아웃 컴포넌트
 
 #### AppLayout
-전체 앱 레이아웃 래퍼. Header + Content + Footer 구조.
+전체 앱 레이아웃 래퍼. Header + Content 구조 (Footer 없음).
 
 ```typescript
 import { AppLayout } from '@/components/layout/AppLayout';
@@ -64,14 +64,6 @@ import { AppLayout } from '@/components/layout/AppLayout';
 
 ```typescript
 import { Header } from '@/components/layout/Header';
-// AppLayout 내부에서 자동 사용됨
-```
-
-#### Footer
-하단 푸터. 서비스 링크, 법적 고지, 소셜 링크 포함.
-
-```typescript
-import { Footer } from '@/components/layout/Footer';
 // AppLayout 내부에서 자동 사용됨
 ```
 
