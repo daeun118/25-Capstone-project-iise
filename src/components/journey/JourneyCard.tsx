@@ -84,13 +84,13 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
 
   return (
     <div
-      className="card-elevated group cursor-pointer overflow-hidden transition-transform hover:-translate-y-1"
+      className="card-elevated group cursor-pointer overflow-hidden hover-lift-sm"
       onClick={handleClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* 책 표지 + 호버 오버레이 (Mureka 스타일) */}
-      <div className="relative aspect-[2/3] rounded-xl overflow-hidden mb-4">
+      <div className="relative aspect-[2/3] rounded-xl overflow-hidden" style={{ marginBottom: 'var(--spacing-md)' }}>
         {journey.bookCoverUrl ? (
           <Image
             src={journey.bookCoverUrl}
@@ -103,10 +103,7 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
           />
         ) : (
           <div
-            className="absolute inset-0 flex items-center justify-center"
-            style={{
-              background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-            }}
+            className="absolute inset-0 flex items-center justify-center bg-gradient-accent"
           >
             <BookOpen className="w-16 h-16 text-white/60" />
           </div>
@@ -123,7 +120,7 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
         />
 
         {/* 상태 배지 (상단 좌측) */}
-        <div className="absolute top-3 left-3 z-10">
+        <div className="absolute z-10" style={{ top: 'var(--spacing-sm)', left: 'var(--spacing-sm)' }}>
           <Badge
             className={
               isCompleted
@@ -136,7 +133,7 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
         </div>
 
         {/* 더보기 메뉴 (상단 우측) */}
-        <div className="absolute top-3 right-3 z-10">
+        <div className="absolute z-10" style={{ top: 'var(--spacing-sm)', right: 'var(--spacing-sm)' }}>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -174,9 +171,8 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
           >
             <div className="absolute inset-0 bg-white/20" />
             <div
-              className="absolute inset-y-0 left-0 transition-all duration-300"
+              className="absolute inset-y-0 left-0 transition-all duration-300 bg-gradient-accent"
               style={{
-                background: 'linear-gradient(90deg, #6366f1, #8b5cf6)',
                 width: `${progress}%`,
               }}
             />
@@ -185,12 +181,10 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
 
         {/* ✅ OPTIMIZED: CSS scale with reduced animation complexity */}
         <button
-          className={`absolute bottom-4 right-4 w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all duration-200 ${
+          className={`absolute w-14 h-14 rounded-full flex items-center justify-center shadow-xl transition-all duration-200 bg-gradient-accent ${
             isHovered ? 'scale-100 opacity-100' : 'scale-0 opacity-0'
           } active:scale-95`}
-          style={{
-            background: 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-          }}
+          style={{ bottom: 'var(--spacing-md)', right: 'var(--spacing-md)' }}
           onClick={(e) => {
             e.stopPropagation();
             // 음악 재생 로직
@@ -202,20 +196,20 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
 
       {/* ✅ OPTIMIZED: Removed unnecessary motion wrapper */}
       {/* 책 정보 */}
-      <div className="px-1">
-        <h3 className="font-bold text-lg mb-1 line-clamp-2">{journey.bookTitle}</h3>
-        <p className="text-sm text-gray-500 mb-3">{journey.bookAuthor}</p>
+      <div style={{ paddingLeft: 'var(--spacing-xs)', paddingRight: 'var(--spacing-xs)' }}>
+        <h3 className="font-bold text-lg line-clamp-2" style={{ marginBottom: 'var(--spacing-xs)' }}>{journey.bookTitle}</h3>
+        <p className="text-sm text-muted-foreground" style={{ marginBottom: 'var(--spacing-sm)' }}>{journey.bookAuthor}</p>
 
         {/* 별점 (완독 시) */}
         {isCompleted && journey.rating && (
-          <div className="flex items-center gap-1 mb-3">
+          <div className="flex items-center" style={{ gap: 'var(--spacing-xs)', marginBottom: 'var(--spacing-sm)' }}>
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
                 className={`w-4 h-4 ${
                   i < journey.rating!
                     ? 'fill-amber-400 text-amber-400'
-                    : 'text-gray-300'
+                    : 'text-muted'
                 }`}
               />
             ))}
@@ -226,12 +220,12 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
         )}
 
         {/* 메타데이터 (Mureka 스타일 - 간결하게) */}
-        <div className="flex items-center gap-4 text-xs text-gray-400">
-          <span className="flex items-center gap-1">
+        <div className="flex items-center text-xs text-muted-foreground" style={{ gap: 'var(--spacing-md)' }}>
+          <span className="flex items-center" style={{ gap: 'var(--spacing-xs)' }}>
             <Music className="w-3 h-3" />
             {journey.musicTracksCount}곡
           </span>
-          <span className="flex items-center gap-1">
+          <span className="flex items-center" style={{ gap: 'var(--spacing-xs)' }}>
             <BookOpen className="w-3 h-3" />
             {journey.logsCount}개 기록
           </span>

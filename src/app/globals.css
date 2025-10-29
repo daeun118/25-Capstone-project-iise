@@ -15,7 +15,9 @@
     --gradient-hero: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
     --gradient-card: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
     --gradient-accent: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    --gradient-warm: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --gradient-warm: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    --gradient-warm-shimmer: linear-gradient(90deg, #f59e0b 0%, #eab308 50%, #f59e0b 100%);
+    --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
     --gradient-cool: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
 
     /* 메인 테마 색상 (보라/바이올렛) */
@@ -407,6 +409,14 @@
     background: var(--gradient-warm);
   }
 
+  .bg-gradient-warm-shimmer {
+    background: var(--gradient-warm-shimmer);
+  }
+
+  .bg-gradient-success {
+    background: var(--gradient-success);
+  }
+
   .bg-gradient-cool {
     background: var(--gradient-cool);
   }
@@ -466,5 +476,87 @@
 
   .animate-pulse {
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* ========================================
+     Hover Effect Utilities - Spotify Style
+     ======================================== */
+
+  .hover-lift-sm {
+    transition: transform var(--transition-base);
+  }
+
+  .hover-lift-sm:hover {
+    transform: translateY(-4px);
+  }
+
+  .hover-lift-md {
+    transition: transform var(--transition-base);
+  }
+
+  .hover-lift-md:hover {
+    transform: translateY(-8px);
+  }
+
+  .hover-scale {
+    transition: transform var(--transition-base);
+  }
+
+  .hover-scale:hover {
+    transform: scale(1.05);
+  }
+
+  .hover-scale-sm {
+    transition: transform var(--transition-base);
+  }
+
+  .hover-scale-sm:hover {
+    transform: scale(1.02);
+  }
+
+  /* ========================================
+     Spacing Utilities - Design System
+     ======================================== */
+
+  /* Section Spacing */
+  .section-spacing {
+    padding-top: var(--spacing-xl);
+    padding-bottom: var(--spacing-xl);
+  }
+
+  .section-spacing-lg {
+    padding-top: var(--spacing-2xl);
+    padding-bottom: var(--spacing-2xl);
+  }
+
+  /* Card Spacing */
+  .card-spacing {
+    padding: var(--spacing-lg);
+  }
+
+  .card-spacing-sm {
+    padding: var(--spacing-md);
+  }
+
+  /* Stack Spacing (vertical) */
+  .stack-spacing {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+
+  .stack-spacing-sm {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  /* Grid Spacing */
+  .grid-spacing {
+    gap: var(--spacing-lg);
+  }
+
+  .grid-spacing-sm {
+    gap: var(--spacing-md);
   }
 }

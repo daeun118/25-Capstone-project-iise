@@ -24,7 +24,7 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
 
   return (
     <div
-      className="card-elevated group overflow-hidden transition-transform hover:-translate-y-2"
+      className="card-elevated group overflow-hidden hover-lift-sm"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -59,7 +59,7 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
 
         {/* Category Badge (top-left) */}
         {post.journey.bookCategory && (
-          <div className="absolute top-3 left-3 z-10">
+          <div className="absolute z-10" style={{ top: 'var(--spacing-sm)', left: 'var(--spacing-sm)' }}>
             <Badge
               className="bg-gradient-to-r from-primary to-primary-dark text-white border-0 shadow-lg"
             >
@@ -69,10 +69,10 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
         )}
 
         {/* Music Badge (top-right) */}
-        <div className="absolute top-3 right-3 z-10">
+        <div className="absolute z-10" style={{ top: 'var(--spacing-sm)', right: 'var(--spacing-sm)' }}>
           <div
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-white text-xs font-medium shadow-lg"
-            style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}
+            className="flex items-center rounded-full text-white text-xs font-medium shadow-lg bg-gradient-warm"
+            style={{ gap: 'var(--spacing-xs)', paddingLeft: 'var(--spacing-sm)', paddingRight: 'var(--spacing-sm)', paddingTop: 'var(--spacing-xs)', paddingBottom: 'var(--spacing-xs)' }}
           >
             <Music className="w-3 h-3" />
             <span>플레이리스트</span>
@@ -96,9 +96,10 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
 
         {/* ✅ OPTIMIZED: CSS transition */}
         <div
-          className={`absolute bottom-4 left-4 z-10 flex items-center gap-2 transition-all duration-300 ${
+          className={`absolute z-10 flex items-center transition-all duration-300 ${
             isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
           }`}
+          style={{ bottom: 'var(--spacing-md)', left: 'var(--spacing-md)', gap: 'var(--spacing-xs)' }}
         >
           <UserAvatar user={post.user} size="sm" />
           <div>
@@ -117,29 +118,30 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
       </Link>
 
       {/* Content Section */}
-      <div className="p-5">
+      <div className="card-spacing-sm">
         {/* Book Title & Author - Clickable */}
         <Link 
           href={`/journey/${post.journey.id}`}
-          className="block mb-3 group/title hover:opacity-80 transition-opacity"
+          className="block group/title hover:opacity-80 transition-opacity"
+          style={{ marginBottom: 'var(--spacing-sm)' }}
         >
-          <h3 className="font-bold text-lg mb-1 line-clamp-2 group-hover/title:text-primary transition-colors">
+          <h3 className="font-bold text-lg line-clamp-2 group-hover/title:text-primary transition-colors" style={{ marginBottom: 'var(--spacing-xs)' }}>
             {post.journey.bookTitle}
           </h3>
-          <p className="text-sm text-gray-500">{post.journey.bookAuthor}</p>
+          <p className="text-sm text-muted-foreground">{post.journey.bookAuthor}</p>
         </Link>
 
         {/* Rating */}
         {post.journey.rating && (
-          <div className="flex items-center gap-2 mb-3">
-            <div className="flex gap-0.5">
+          <div className="flex items-center" style={{ gap: 'var(--spacing-xs)', marginBottom: 'var(--spacing-sm)' }}>
+            <div className="flex" style={{ gap: 'var(--spacing-xs)' }}>
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
                   className={`w-4 h-4 ${
-                    i < post.journey.rating!
-                      ? 'fill-amber-400 text-amber-400'
-                      : 'text-gray-300'
+                  i < post.journey.rating!
+                  ? 'fill-amber-400 text-amber-400'
+                  : 'text-muted'
                   }`}
                 />
               ))}
@@ -150,7 +152,7 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
 
         {/* One-liner */}
         {post.journey.oneLiner && (
-          <div className="mb-3 p-3 rounded-lg" style={{ background: 'rgba(99, 102, 241, 0.05)' }}>
+          <div className="rounded-lg" style={{ marginBottom: 'var(--spacing-sm)', padding: 'var(--spacing-sm)', background: 'rgba(99, 102, 241, 0.05)' }}>
             <p className="text-sm font-medium italic line-clamp-2" style={{ color: '#6366f1' }}>
               "{post.journey.oneLiner}"
             </p>
@@ -159,7 +161,7 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
 
         {/* Review Preview */}
         {post.journey.review && (
-          <p className="text-sm text-gray-600 line-clamp-2 mb-4">
+          <p className="text-sm text-muted-foreground line-clamp-2" style={{ marginBottom: 'var(--spacing-md)' }}>
             {post.journey.review}
           </p>
         )}

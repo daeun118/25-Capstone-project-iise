@@ -30,12 +30,12 @@ export function Header() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white border-b border-slate-200">
+    <header className="sticky top-0 z-50 w-full bg-background border-b border-border">
       <div className="container flex h-16 items-center justify-between px-6">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
-          <BookOpen className="w-5 h-5 text-indigo-600" />
-          <span className="font-semibold text-lg text-slate-900 hidden sm:inline">
+          <BookOpen className="w-5 h-5 text-primary" />
+          <span className="font-semibold text-lg text-foreground hidden sm:inline">
             ReadTune
           </span>
         </Link>
@@ -52,8 +52,8 @@ export function Header() {
                 className={cn(
                   'flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors',
                   isActive 
-                    ? 'bg-indigo-600 text-white' 
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    ? 'bg-primary text-primary-foreground' 
+                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                 )}
               >
                 <Icon className="w-4 h-4" />
@@ -83,7 +83,7 @@ export function Header() {
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    className="text-slate-600 hover:text-slate-900"
+                    className="text-muted-foreground hover:text-foreground"
                     onClick={() => setLoginOpen(true)}
                   >
                     로그인
@@ -114,7 +114,7 @@ export function Header() {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden border-t border-slate-200 p-4 bg-white space-y-4">
+        <div className="md:hidden border-t border-border p-4 bg-background space-y-4">
           <nav className="flex flex-col space-y-1">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
@@ -126,8 +126,8 @@ export function Header() {
                   className={cn(
                     'flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors',
                     isActive 
-                      ? 'bg-indigo-600 text-white' 
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                      ? 'bg-primary text-primary-foreground' 
+                      : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                   )}
                   onClick={() => setIsMenuOpen(false)}
                 >
@@ -139,7 +139,7 @@ export function Header() {
           </nav>
 
           {!loading && !isLoggedIn && (
-            <div className="flex flex-col gap-2 pt-4 border-t border-slate-200">
+            <div className="flex flex-col gap-2 pt-4 border-t border-border">
               <Button 
                 variant="outline" 
                 size="sm" 

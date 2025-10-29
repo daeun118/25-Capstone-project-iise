@@ -277,10 +277,7 @@ export function MusicPlayerBar({
                 <m.button
                   onClick={togglePlayPause}
                   disabled={isLoading}
-                  className="relative w-11 h-11 md:w-12 md:h-12 rounded-full flex items-center justify-center shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150"
-                  style={{
-                    background: 'linear-gradient(135deg, #6366f1, #8b5cf6)'
-                  }}
+                  className="relative w-11 h-11 md:w-12 md:h-12 rounded-full flex items-center justify-center shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150 bg-gradient-accent"
                   whileHover={{ scale: isLoading ? 1 : 1.06 }}
                   whileTap={{ scale: isLoading ? 1 : 0.98 }}
                 >

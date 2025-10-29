@@ -213,19 +213,19 @@ export default function LibraryPage() {
 
   return (
     <AppLayout>
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid md:grid-cols-[280px_1fr] gap-8">
+      <div className="container mx-auto px-4 section-spacing">
+        <div className="grid md:grid-cols-[280px_1fr]" style={{ gap: 'var(--spacing-xl)' }}>
           {/* Sidebar */}
           <aside className="hidden md:block">
             <m.div
-              className="sticky top-20 space-y-6"
+              className="sticky top-20 stack-spacing"
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
             >
               {/* Gradient Header Card */}
               <m.div
-                className="relative rounded-2xl overflow-hidden p-6"
+                className="relative rounded-2xl overflow-hidden card-spacing"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.1, duration: 0.5 }}
@@ -261,7 +261,7 @@ export default function LibraryPage() {
 
               {/* Stats Card */}
               <m.div
-                className="card-elevated p-6 space-y-6 rounded-2xl"
+                className="card-elevated card-spacing stack-spacing rounded-2xl"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
@@ -273,8 +273,8 @@ export default function LibraryPage() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 }}
                 >
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-between" style={{ marginBottom: 'var(--spacing-sm)' }}>
+                    <div className="flex items-center" style={{ gap: 'var(--spacing-xs)' }}>
                       <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-accent">
                         <BookOpen className="w-4 h-4 text-white" />
                       </div>
@@ -282,7 +282,7 @@ export default function LibraryPage() {
                     </div>
                     <span className="text-2xl font-bold">{readingCount}</span>
                   </div>
-                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-2 bg-accent rounded-full overflow-hidden">
                     <m.div
                       className="h-full rounded-full bg-gradient-accent"
                       initial={{ width: '0%' }}
@@ -298,11 +298,10 @@ export default function LibraryPage() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.4 }}
                 >
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-between" style={{ marginBottom: 'var(--spacing-sm)' }}>
+                    <div className="flex items-center" style={{ gap: 'var(--spacing-xs)' }}>
                       <div
-                        className="w-8 h-8 rounded-lg flex items-center justify-center"
-                        style={{ background: 'linear-gradient(135deg, #10b981, #059669)' }}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-success"
                       >
                         <TrendingUp className="w-4 h-4 text-white" />
                       </div>
@@ -310,9 +309,9 @@ export default function LibraryPage() {
                     </div>
                     <span className="text-2xl font-bold">{completedCount}</span>
                   </div>
-                  <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-2 bg-accent rounded-full overflow-hidden">
                     <m.div
-                      className="h-full bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full"
+                      className="h-full rounded-full bg-gradient-success"
                       initial={{ width: '0%' }}
                       animate={{ width: `${(completedCount / Math.max(readingCount + completedCount, 1)) * 100}%` }}
                       transition={{ delay: 0.7, duration: 0.8 }}
@@ -328,10 +327,9 @@ export default function LibraryPage() {
                   transition={{ delay: 0.5 }}
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center" style={{ gap: 'var(--spacing-xs)' }}>
                       <div
-                        className="w-8 h-8 rounded-lg flex items-center justify-center"
-                        style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center bg-gradient-warm"
                       >
                         <Music className="w-4 h-4 text-white" />
                       </div>
@@ -343,7 +341,7 @@ export default function LibraryPage() {
               </m.div>
 
               {/* Quick Stats Grid */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 grid-spacing-sm">
                 <m.div
                   className="card-elevated p-5 rounded-xl group cursor-pointer"
                   initial={{ opacity: 0, y: 20 }}
@@ -382,7 +380,7 @@ export default function LibraryPage() {
           </aside>
 
           {/* Main Content */}
-          <main className="space-y-6">
+          <main className="stack-spacing">
             {/* Header */}
             <div className="flex items-start justify-between">
               <div>
@@ -429,7 +427,7 @@ export default function LibraryPage() {
               <TabsContent value="reading" className="mt-6">
                 {paginatedJourneys.length > 0 ? (
                   <>
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-spacing">
                       {paginatedJourneys.map((journey) => (
                         <JourneyCard 
                           key={journey.id} 
@@ -440,7 +438,7 @@ export default function LibraryPage() {
                       ))}
                     </div>
                     {totalPages > 1 && (
-                      <div className="mt-8">
+                      <div style={{ marginTop: 'var(--spacing-xl)' }}>
                         <Pagination
                           currentPage={page}
                           totalPages={totalPages}
@@ -465,7 +463,7 @@ export default function LibraryPage() {
               <TabsContent value="completed" className="mt-6">
                 {paginatedJourneys.length > 0 ? (
                   <>
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 grid-spacing">
                       {paginatedJourneys.map((journey) => (
                         <JourneyCard 
                           key={journey.id} 

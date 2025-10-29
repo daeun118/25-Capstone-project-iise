@@ -142,7 +142,7 @@ export default function Home() {
                 {/* 음악 정보 */}
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-sm sm:text-base md:text-lg mb-1 truncate">독서 여정의 시작</h3>
-                  <p className="text-xs sm:text-sm text-gray-500 mb-2 sm:mb-3 truncate">노인과 바다 • 헤밍웨이</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3 truncate">노인과 바다 • 헤밍웨이</p>
 
                   {/* 프로그레스 바 */}
                   <div className="relative h-1.5 sm:h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -154,7 +154,7 @@ export default function Home() {
                     />
                   </div>
 
-                  <div className="flex items-center justify-between mt-1.5 sm:mt-2 text-xs text-gray-400">
+                  <div className="flex items-center justify-between mt-1.5 sm:mt-2 text-xs text-muted-foreground">
                     <span>1:23</span>
                     <span>3:45</span>
                   </div>
@@ -188,7 +188,7 @@ export default function Home() {
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold">
               ReadTune의 특별한 경험
             </h2>
-            <p className="text-base sm:text-lg text-gray-600">
+            <p className="text-base sm:text-lg text-muted-foreground">
               독서와 음악이 만나는 새로운 방식
             </p>
           </m.div>
@@ -210,7 +210,7 @@ export default function Home() {
                 </div>
 
                 <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3">{feature.title}</h3>
-                <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{feature.description}</p>
+                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">{feature.description}</p>
               </m.div>
             ))}
           </div>
@@ -248,7 +248,7 @@ export default function Home() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-base sm:text-lg mb-1 sm:mb-2">{item.title}</h3>
-                  <p className="text-xs sm:text-sm text-gray-600">{item.desc}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">{item.desc}</p>
                 </div>
               </m.div>
             ))}

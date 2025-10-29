@@ -118,9 +118,9 @@ export default function FeedPage() {
 
   return (
     <AppLayout>
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 section-spacing">
         {/* Header */}
-        <div className="mb-8">
+        <div style={{ marginBottom: 'var(--spacing-xl)' }}>
           <h1 className="text-3xl font-bold mb-2">독서 여정 피드</h1>
           <p className="text-muted-foreground">
             다른 사람들의 독서 여정을 둘러보고 음악을 감상해보세요.
@@ -128,7 +128,7 @@ export default function FeedPage() {
         </div>
 
         {/* Filters */}
-        <div className="mb-6">
+        <div style={{ marginBottom: 'var(--spacing-lg)' }}>
           <FilterBar
             categories={CATEGORIES}
             selectedCategory={category}
@@ -157,7 +157,7 @@ export default function FeedPage() {
         ) : (
           <>
             {/* Posts Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-spacing" style={{ marginBottom: 'var(--spacing-xl)' }}>
               {posts.map((post) => (
                 <PostCard
                   key={post.id}
