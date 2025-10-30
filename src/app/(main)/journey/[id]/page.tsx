@@ -108,7 +108,10 @@ export default function JourneyDetailPage() {
       if (!response.ok) return;
 
       const { musicTracks } = await response.json();
-      
+
+      // Track completed tracks for toast notification (outside state update)
+      const completedTracks: Array<{ log_type: string; version: number }> = [];
+
       // Update logs with new music track status only
       setLogs((prevLogs) => {
         return prevLogs.map((log) => {
@@ -116,6 +119,12 @@ export default function JourneyDetailPage() {
           if (updatedTrack?.track && log.music_track) {
             // Only update if status actually changed
             if (log.music_track.status !== updatedTrack.track.status) {
+              // Track completed tracks for toast notification
+              if (updatedTrack.track.status === 'completed' &&
+                  (log.music_track.status === 'pending' || log.music_track.status === 'generating')) {
+                completedTracks.push({ log_type: log.log_type, version: log.version });
+              }
+
               return {
                 ...log,
                 music_track: {
@@ -127,6 +136,17 @@ export default function JourneyDetailPage() {
             }
           }
           return log;
+        });
+      });
+
+      // ✅ Show toast notifications for completed tracks (only once per completion)
+      completedTracks.forEach((track) => {
+        const versionLabel = track.log_type === 'v0' ? 'v0' :
+                           track.log_type === 'vFinal' ? 'vFinal' :
+                           `v${track.version}`;
+        toast.success(`${versionLabel} 음악이 생성되었습니다!`, {
+          description: '이제 재생할 수 있습니다.',
+          duration: 3000,
         });
       });
 

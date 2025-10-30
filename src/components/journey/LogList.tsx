@@ -163,19 +163,13 @@ export function LogList({ logs, onPlayMusic, currentTrackId }: LogListProps) {
                     </div>
                   </div>
 
-                  {/* 음악 생성 상태 */}
-                  {log.music_track && (
+                  {/* 음악 생성 상태 - 생성 중이거나 실패한 경우만 표시 */}
+                  {log.music_track && (isGenerating || isFailed) && (
                     <div className="mb-4">
                       {isGenerating && (
-                        <div className="flex items-center gap-2 p-3 rounded-lg bg-gradient-accent" style={{ opacity: 0.1 }}>
-                          <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                          <span className="text-sm font-medium text-primary">음악 생성 중...</span>
-                        </div>
-                      )}
-                      {isCompleted && (
-                        <div className="flex items-center gap-2 p-3 rounded-lg" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)' }}>
-                          <Music className="w-4 h-4 text-emerald-600" />
-                          <span className="text-sm font-medium text-emerald-600">음악 준비 완료</span>
+                        <div className="flex items-center gap-2 p-3 rounded-lg bg-indigo-50 border border-indigo-200">
+                          <Loader2 className="w-4 h-4 animate-spin text-indigo-600" />
+                          <span className="text-sm font-semibold text-indigo-700">음악 생성 중...</span>
                         </div>
                       )}
                       {isFailed && (
