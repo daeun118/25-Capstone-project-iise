@@ -97,7 +97,7 @@ export function useMusicGeneration(): UseMusicGenerationReturn {
       const response = await fetch(`/api/music/${trackId}`);
 
       if (!response.ok) {
-        throw new Error('Failed to fetch music status');
+        throw new Error('음악 상태를 불러오는데 실패했습니다.');
       }
 
       const track: MusicTrack = await response.json();
@@ -115,7 +115,7 @@ export function useMusicGeneration(): UseMusicGenerationReturn {
         });
       } else if (track.status === 'error') {
         // Generation failed
-        setError(track.error_message || 'Music generation failed');
+        setError(track.error_message || '음악 생성에 실패했습니다.');
         setProgress(0);
         stopPolling();
 
@@ -171,7 +171,7 @@ export function useMusicGeneration(): UseMusicGenerationReturn {
 
     } catch (err) {
       console.error('[useMusicGeneration] Generation trigger failed:', err);
-      setError(err instanceof Error ? err.message : 'Failed to start generation');
+      setError(err instanceof Error ? err.message : '음악 생성을 시작하는데 실패했습니다.');
       setStatus('error');
       stopPolling();
 

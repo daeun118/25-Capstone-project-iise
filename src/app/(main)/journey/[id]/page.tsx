@@ -296,7 +296,18 @@ export default function JourneyDetailPage() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Failed to share to feed');
+        // API 에러를 한국어로 변환
+        let errorMessage = '피드 공유에 실패했습니다.';
+        if (error.error) {
+          if (error.error.includes('already exists')) {
+            errorMessage = '이미 피드에 공유된 여정입니다.';
+          } else if (error.error.includes('Unauthorized')) {
+            errorMessage = '로그인이 필요합니다.';
+          } else if (error.error.includes('Journey not found')) {
+            errorMessage = '독서 여정을 찾을 수 없습니다.';
+          }
+        }
+        throw new Error(errorMessage);
       }
 
       const result = await response.json();
@@ -309,12 +320,7 @@ export default function JourneyDetailPage() {
       }, 1000);
     } catch (error) {
       console.error('Failed to share to feed:', error);
-      if (error instanceof Error && error.message.includes('already exists')) {
-        toast.error('이미 피드에 공유된 여정입니다.');
-        setHasShared(true);
-      } else {
-        toast.error('피드 공유에 실패했습니다.');
-      }
+      toast.error(error instanceof Error ? error.message : '피드 공유에 실패했습니다.');
     } finally {
       setIsSharingToFeed(false);
     }
@@ -331,7 +337,18 @@ export default function JourneyDetailPage() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Failed to create log');
+        // API 에러를 한국어로 변환
+        let errorMessage = '독서 기록 추가에 실패했습니다.';
+        if (error.error) {
+          if (error.error.includes('Unauthorized')) {
+            errorMessage = '로그인이 필요합니다.';
+          } else if (error.error.includes('Journey not found')) {
+            errorMessage = '독서 여정을 찾을 수 없습니다.';
+          } else if (error.error.includes('completed')) {
+            errorMessage = '완독된 여정에는 기록을 추가할 수 없습니다.';
+          }
+        }
+        throw new Error(errorMessage);
       }
 
       const result = await response.json();
@@ -352,7 +369,7 @@ export default function JourneyDetailPage() {
         // Only refresh if not generating music
         await fetchJourney(true); // Skip loading state
       }
-      
+
       setShowLogForm(false);
     } catch (error) {
       console.error('Failed to submit log:', error);

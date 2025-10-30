@@ -20,12 +20,12 @@ export function useEmotionTags() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to fetch emotion tags');
+        throw new Error(data.error || '감정 태그를 불러오는데 실패했습니다.');
       }
 
       setTags(data.tags || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.');
       console.error('Error fetching emotion tags:', err);
     } finally {
       setLoading(false);
@@ -46,7 +46,7 @@ export function useEmotionTags() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to create emotion tag');
+        throw new Error(data.error || '감정 태그 생성에 실패했습니다.');
       }
 
       // Add new tag to local state if it doesn't exist
@@ -58,7 +58,7 @@ export function useEmotionTags() {
       return data.tag;
     } catch (err) {
       console.error('Error creating emotion tag:', err);
-      setError(err instanceof Error ? err.message : 'Unknown error');
+      setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.');
       return null;
     }
   };
