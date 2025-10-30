@@ -310,7 +310,7 @@ export function DeleteAccountDialog({
             variant="destructive"
             onClick={handleDelete}
             disabled={loading || !password.trim() || !confirmed}
-            className="shadow-lg hover:shadow-xl transition-all duration-200 font-semibold"
+            className="bg-red-600 hover:bg-red-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 font-semibold"
           >
             {loading ? (
               <>

@@ -69,7 +69,8 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
 
       toast.success('독서 여정이 삭제되었습니다.');
       onDelete?.(journey.id);
-      router.refresh();
+      // ✅ onDelete 콜백이 로컬 상태를 업데이트하므로 router.refresh() 불필요
+      // 삭제 후 다른 페이지로 이동하지 않음
     } catch (error) {
       console.error('Error deleting journey:', error);
       toast.error('삭제 중 오류가 발생했습니다.');
@@ -134,7 +135,7 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 bg-black/50 hover:bg-black/70 text-white"
+                className="h-9 w-9 bg-white hover:bg-gray-100 text-gray-900 shadow-xl backdrop-blur-md border border-gray-300 hover:border-gray-400 transition-all duration-200 hover:scale-105 active:scale-95"
                 onClick={(e) => {
                   e.stopPropagation();
                 }}
@@ -142,9 +143,9 @@ export const JourneyCard = memo(function JourneyCard({ journey, onClick, onDelet
                 <MoreVertical className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="w-48 bg-white border-gray-300 shadow-xl">
               <DropdownMenuItem
-                className="text-destructive focus:text-destructive cursor-pointer"
+                className="text-destructive focus:text-destructive focus:bg-destructive/10 hover:bg-destructive/10 cursor-pointer"
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowDeleteDialog(true);
