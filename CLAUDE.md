@@ -58,6 +58,7 @@ supabase gen types typescript --project-id oelgskajaisratnbffip > src/types/data
 **Icons**: Lucide React (**이모지 절대 금지**)
 **Testing**: Playwright
 **Deployment**: Vercel (자동 배포: main 브랜치 push)
+**Design**: 라이트 모드 전용 (다크모드 제거됨), 미니멀 디자인 (Footer 없음)
 
 ---
 
@@ -240,6 +241,8 @@ select(`
 - 파일명: kebab-case
 - Import: `@/` 별칭
 - **절대 금지**: 이모지 사용 (Lucide React 아이콘만)
+- **스타일링**: Tailwind CSS 클래스 사용 (인라인 스타일 금지)
+- **디자인**: 라이트 모드 전용 (다크모드 관련 코드 제거됨)
 
 ### 컴포넌트 개발 워크플로우
 1. **`src/components/CLAUDE.md` 먼저 확인** (재사용 가이드)
@@ -390,7 +393,19 @@ git push origin main
 - PR 생성 → Preview 배포 (테스트용)
 - 배포 로그: Vercel 대시보드에서 확인
 
-**최근 개선사항** (2025-01):
+**최근 개선사항** (2025-01-30):
+- ✅ **디자인 시스템 통합** (2025-01-30)
+  - 전체 인라인 스타일 제거 → Tailwind CSS 표준화
+  - 일관된 디자인 시스템 적용 (간격, 색상, 타이포그래피)
+  - 다크모드 완전 제거 (라이트 모드 전용으로 단순화)
+  - Footer 컴포넌트 제거 (미니멀 디자인 적용)
+  - 마이페이지 디자인 통일
+
+- ✅ **Suno 스타일 피드 레이아웃** (2025-01-30)
+  - 카드 기반 그리드 레이아웃 개선
+  - 더 나은 시각적 계층 구조
+
+**이전 개선사항** (2025-01-23~28):
 - ✅ **이미지 최적화 구현** (2025-01-23)
   - Next.js Image 최적화 설정: AVIF/WebP 포맷 자동 변환
   - 모든 Image 컴포넌트에 quality=85, lazy loading 적용
@@ -462,8 +477,11 @@ git push origin main
 - Mureka MCP 실제 음악 생성 (현재 프롬프트만)
 - 실시간 업데이트 (Supabase Realtime)
 - 앨범커버 생성 (DALL-E 3)
-- 다크모드 완전 지원
 - 고급 통계 대시보드
+
+**제거된 기능**:
+- ❌ 다크모드 (라이트 모드 전용으로 변경됨)
+- ❌ Footer 컴포넌트 (미니멀 디자인 적용)
 
 ---
 
@@ -471,6 +489,8 @@ git push origin main
 
 **금지**:
 - ❌ 이모지 사용 (Lucide React 아이콘만)
+- ❌ 인라인 스타일 (Tailwind CSS 클래스 사용)
+- ❌ 다크모드 관련 코드 추가 (제거됨)
 - ❌ bash sed/awk (MCP filesystem 도구 사용)
 - ❌ Next.js 15에서 params await 생략
 - ❌ emotion_tags 직접 조회 (log_emotions 조인 필요)

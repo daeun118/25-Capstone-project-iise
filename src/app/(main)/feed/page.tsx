@@ -32,6 +32,19 @@ const CATEGORIES = [
   { value: '기타', label: '기타' },
 ];
 
+// 한글 카테고리 → Google Books API 카테고리 매핑
+const CATEGORY_MAPPING: Record<string, string[]> = {
+  '소설': ['Fiction', 'Literary Collections'],
+  '시/에세이': ['Poetry', 'Literary Collections'],
+  '인문': ['Philosophy', 'Religion', 'Psychology'],
+  '자기계발': ['Self-Help', 'Business & Economics'],
+  '비즈니스': ['Business & Economics'],
+  '과학': ['Science', 'Technology & Engineering'],
+  '역사': ['History'],
+  '예술': ['Art', 'Music', 'Performing Arts'],
+  '기타': ['General'],
+};
+
 const SORT_OPTIONS = [
   { value: 'latest', label: '최신순' },
   { value: 'popular', label: '인기순' },
@@ -54,12 +67,21 @@ export default function FeedPage() {
   const fetchPosts = async () => {
     try {
       setLoading(true);
+
+      // 한글 카테고리를 영어 카테고리 배열로 변환
       const params = new URLSearchParams({
-        category,
         sort,
         page: pagination.page.toString(),
         limit: pagination.limit.toString(),
       });
+
+      // 카테고리 매핑 적용
+      if (category !== 'all') {
+        const mappedCategories = CATEGORY_MAPPING[category] || [category];
+        params.set('categories', JSON.stringify(mappedCategories));
+      } else {
+        params.set('categories', JSON.stringify([])); // 전체
+      }
 
       const response = await fetch(`/api/posts?${params}`);
       if (!response.ok) {

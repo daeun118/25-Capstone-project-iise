@@ -99,7 +99,8 @@ export async function GET(request: NextRequest) {
 
     // Parse query parameters
     const { searchParams } = new URL(request.url);
-    const category = searchParams.get('category') || 'all';
+    const categoriesParam = searchParams.get('categories');
+    const categories: string[] = categoriesParam ? JSON.parse(categoriesParam) : [];
     const sort = searchParams.get('sort') || 'latest'; // latest | popular
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '12');
@@ -135,9 +136,17 @@ export async function GET(request: NextRequest) {
       `)
       .eq('is_published', true);
 
-    // Filter by category
-    if (category !== 'all') {
-      query = query.eq('reading_journeys.book_category', category);
+    // Filter by categories
+    // ✅ UPDATED: Support multiple categories via IN query + null handling for '기타'
+    if (categories.length > 0) {
+      // '기타' 카테고리는 'General'과 null 모두 포함
+      if (categories.includes('General')) {
+        // Build OR condition for General category and null
+        query = query.or(`book_category.in.(${categories.join(',')}),book_category.is.null`, { foreignTable: 'reading_journeys' });
+      } else {
+        // Use IN query for filtering multiple Google Books API categories
+        query = query.in('reading_journeys.book_category', categories);
+      }
     }
 
     // Sort
@@ -219,11 +228,23 @@ export async function GET(request: NextRequest) {
       createdAt: post.created_at,
     }));
 
-    // Get total count for pagination
-    const { count: totalCount } = await supabase
+    // Get total count for pagination with same filters
+    let countQuery = supabase
       .from('posts')
-      .select('*', { count: 'exact', head: true })
+      .select('*, reading_journeys!inner(*)', { count: 'exact', head: true })
       .eq('is_published', true);
+
+    // Apply same category filter (including null for '기타')
+    if (categories.length > 0) {
+      if (categories.includes('General')) {
+        // Build OR condition for General category and null
+        countQuery = countQuery.or(`book_category.in.(${categories.join(',')}),book_category.is.null`, { foreignTable: 'reading_journeys' });
+      } else {
+        countQuery = countQuery.in('reading_journeys.book_category', categories);
+      }
+    }
+
+    const { count: totalCount } = await countQuery;
 
     return NextResponse.json({
       posts: transformedPosts,

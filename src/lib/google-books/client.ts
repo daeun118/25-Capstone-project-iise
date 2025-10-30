@@ -99,8 +99,8 @@ function transformGoogleBookToBook(volume: GoogleBooksVolume): Book | null {
   const coverUrl =
     volumeInfo.imageLinks?.thumbnail || volumeInfo.imageLinks?.smallThumbnail;
 
-  // 카테고리 (첫 번째 카테고리만 사용)
-  const category = volumeInfo.categories?.[0];
+  // 카테고리 (첫 번째 카테고리만 사용, 없으면 'General'로 기본값 설정)
+  const category = volumeInfo.categories?.[0] || 'General';
 
   return {
     isbn,
