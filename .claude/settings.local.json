@@ -1,7 +1,32 @@
 {
   "permissions": {
     "allow": [
-      "mcp__playwright__browser_hover"
+      "mcp__playwright__browser_hover",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(npm run dev:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_click",
+      "Bash(npx supabase db execute:*)",
+      "mcp__playwright__browser_close",
+      "mcp__sequential-thinking__sequentialthinking",
+      "Bash(curl:*)",
+      "Bash(python3:*)",
+      "Bash(node temp_check_book.js:*)",
+      "Bash(node temp_update_category.js:*)",
+      "Bash(node temp_check_db.js:*)",
+      "Bash(npm run build:*)",
+      "mcp__filesystem__edit_file",
+      "Bash(npx playwright test:*)",
+      "Bash(Get-Process -Name \"node\" -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object Id, ProcessName, StartTime)",
+      "Bash(Format-Table)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Read(//c/Users/USER/.config/**)",
+      "Bash(npm run server:kill:*)"
     ],
     "deny": [],
     "ask": []

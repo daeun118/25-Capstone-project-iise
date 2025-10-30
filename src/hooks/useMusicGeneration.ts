@@ -47,6 +47,10 @@ interface UseMusicGenerationReturn {
   stopPolling: () => void;
 }
 
+// ✅ Critical Issue #7: Mureka API 타임아웃 설정
+const MAX_POLL_DURATION = 10 * 60 * 1000;  // 10분
+const POLL_INTERVAL = 2000;  // 2초
+
 export function useMusicGeneration(): UseMusicGenerationReturn {
   const [status, setStatus] = useState<MusicStatus | null>(null);
   const [fileUrl, setFileUrl] = useState<string | null>(null);
@@ -56,6 +60,7 @@ export function useMusicGeneration(): UseMusicGenerationReturn {
   const pollingInterval = useRef<NodeJS.Timeout | null>(null);
   const progressInterval = useRef<NodeJS.Timeout | null>(null);
   const currentTrackId = useRef<string | null>(null);
+  const pollStartTime = useRef<number | null>(null);  // ✅ 폴링 시작 시간
 
   /**
    * Stop all polling and progress timers
@@ -132,6 +137,7 @@ export function useMusicGeneration(): UseMusicGenerationReturn {
 
   /**
    * Trigger music generation for a track
+   * ✅ Critical Issue #7: 타임아웃 처리 추가
    */
   const triggerGeneration = useCallback(async (trackId: string) => {
     try {
@@ -141,6 +147,7 @@ export function useMusicGeneration(): UseMusicGenerationReturn {
       setError(null);
       setProgress(0);
       currentTrackId.current = trackId;
+      pollStartTime.current = Date.now();  // ✅ 시작 시간 기록
 
       console.log(`[useMusicGeneration] Triggering generation for track ${trackId}`);
 
@@ -162,12 +169,35 @@ export function useMusicGeneration(): UseMusicGenerationReturn {
       // Initial poll after 2 seconds
       setTimeout(() => {
         pollTrackStatus(trackId);
-      }, 2000);
+      }, POLL_INTERVAL);
 
-      // Then poll every 2 seconds
+      // Then poll every 2 seconds with timeout check
       pollingInterval.current = setInterval(() => {
+        // ✅ 타임아웃 체크
+        if (pollStartTime.current) {
+          const elapsed = Date.now() - pollStartTime.current;
+
+          if (elapsed > MAX_POLL_DURATION) {
+            stopPolling();
+            setStatus('error');
+            setError('음악 생성 시간이 초과되었습니다. 나중에 다시 시도해주세요.');
+            setProgress(0);
+
+            toast.error('음악 생성 시간 초과', {
+              description: '서버가 응답하지 않습니다. 새로고침 후 다시 시도해주세요.',
+              action: {
+                label: '새로고침',
+                onClick: () => window.location.reload()
+              }
+            });
+
+            console.warn(`[useMusicGeneration] Polling timed out after ${elapsed}ms`);
+            return;
+          }
+        }
+
         pollTrackStatus(trackId);
-      }, 2000);
+      }, POLL_INTERVAL);
 
     } catch (err) {
       console.error('[useMusicGeneration] Generation trigger failed:', err);

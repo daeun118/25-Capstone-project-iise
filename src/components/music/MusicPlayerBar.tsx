@@ -25,6 +25,11 @@ interface MusicPlayerBarProps {
   onNext?: () => void;
   hasNext?: boolean;
   hasPrevious?: boolean;
+  // Controlled playback state (for playlist mode)
+  externalIsPlaying?: boolean;
+  externalCurrentTime?: number;
+  externalDuration?: number;
+  onTogglePlayPause?: () => void;
 }
 
 export function MusicPlayerBar({
@@ -42,6 +47,10 @@ export function MusicPlayerBar({
   onNext,
   hasNext = false,
   hasPrevious = false,
+  externalIsPlaying,
+  externalCurrentTime,
+  externalDuration,
+  onTogglePlayPause,
 }: MusicPlayerBarProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -53,110 +62,29 @@ export function MusicPlayerBar({
   const [isDragging, setIsDragging] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // ✅ UNIFIED: 항상 외부 상태를 사용 (useMusicPlayer가 모든 재생 관리)
   useEffect(() => {
-    if (!trackUrl) {
-      setIsLoading(false);
-      return;
-    }
-
-    setIsLoading(true);
-
-    const audio = new Audio(trackUrl);
-    audioRef.current = audio;
-
-    // Event handlers
-    const handleLoadedMetadata = () => {
-      setDuration(audio.duration);
-      setIsLoading(false);
-
-      // 자동 재생 시작
-      audio.play()
-        .then(() => {
-          setIsPlaying(true);
-          console.log('✅ Auto-play started');
-        })
-        .catch((error) => {
-          console.warn('❌ Auto-play blocked by browser:', error);
-          setIsPlaying(false);
-          toast.info('재생 버튼을 눌러 음악을 시작하세요.');
-        });
-    };
-
-    const handleTimeUpdate = () => {
-      setCurrentTime(audio.currentTime);
-    };
-
-    const handleEnded = () => {
-      setIsPlaying(false);
-      setCurrentTime(0);
-    };
-
-    const handleError = () => {
-      setIsLoading(false);
-      setIsPlaying(false);
-      toast.error('음악 파일을 불러올 수 없습니다.');
-    };
-
-    // Add event listeners
-    audio.addEventListener('loadedmetadata', handleLoadedMetadata);
-    audio.addEventListener('timeupdate', handleTimeUpdate);
-    audio.addEventListener('ended', handleEnded);
-    audio.addEventListener('error', handleError);
-
-    // Set initial volume
-    audio.volume = volume / 100;
-
-    // Cleanup
-    return () => {
-      audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
-      audio.removeEventListener('timeupdate', handleTimeUpdate);
-      audio.removeEventListener('ended', handleEnded);
-      audio.removeEventListener('error', handleError);
-      audio.pause();
-      audio.src = '';  // Release memory
-    };
-  }, [trackUrl]);  // ✅ volume 제거
-
-  // ✅ CustomEvent 수신 (타임라인 버튼에서 토글 요청 시)
-  useEffect(() => {
-    const handleToggleEvent = () => {
-      console.log('🔔 Received togglePlayPause event');
-      togglePlayPause();
-    };
-
-    window.addEventListener('togglePlayPause', handleToggleEvent);
-
-    return () => {
-      window.removeEventListener('togglePlayPause', handleToggleEvent);
-    };
-  }, []);
+    setIsLoading(false);
+    // AudioCrossfadeManager 또는 useMusicPlayer가 모든 Audio 관리를 담당
+    // MusicPlayerBar는 순수한 UI 컴포넌트로 동작
+  }, [trackUrl]);
 
   const togglePlayPause = () => {
-    if (!audioRef.current) return;
-
-    // ✅ 실제 재생 상태 확인 (isPlaying 상태 대신)
-    if (audioRef.current.paused) {
-      audioRef.current.play()
-        .then(() => {
-          setIsPlaying(true);
-          console.log('▶️ Playback started');
-        })
-        .catch((error) => {
-          console.error('❌ Playback failed:', error);
-          setIsPlaying(false);
-          toast.error('재생에 실패했습니다.');
-        });
-    } else {
-      audioRef.current.pause();
-      setIsPlaying(false);
-      console.log('⏸️ Playback paused');
+    // ✅ UNIFIED: 항상 외부 핸들러 호출 (useMusicPlayer가 모든 재생 제어)
+    if (onTogglePlayPause) {
+      onTogglePlayPause();
     }
   };
 
   const handleSeek = (value: number[]) => {
-    if (!audioRef.current) return;
-    audioRef.current.currentTime = value[0];
-    setCurrentTime(value[0]);
+    // ✅ seek는 단일 트랙 모드에서만 허용 (플레이리스트에서는 크로스페이드 간섭 방지)
+    if (playlistMode) {
+      toast.warning('플레이리스트 모드에서는 탐색이 제한됩니다.');
+      return;
+    }
+
+    // 단일 트랙 모드에서도 외부 상태 기반이므로 seek는 제한
+    toast.info('현재 재생 중인 트랙은 탐색을 지원하지 않습니다.');
   };
 
   const handleSeekStart = () => {
@@ -168,20 +96,17 @@ export function MusicPlayerBar({
   };
 
   const handleVolumeChange = (value: number[]) => {
-    if (!audioRef.current) return;
+    // ✅ Volume은 UI 상태만 관리 (실제 적용은 향후 구현 가능)
     const newVolume = value[0];
     setVolume(newVolume);
-    audioRef.current.volume = newVolume / 100;
     setIsMuted(newVolume === 0);
   };
 
   const toggleMute = () => {
-    if (!audioRef.current) return;
+    // ✅ Mute는 UI 상태만 토글
     if (isMuted) {
-      audioRef.current.volume = volume / 100;
       setIsMuted(false);
     } else {
-      audioRef.current.volume = 0;
       setIsMuted(true);
     }
   };
@@ -191,6 +116,11 @@ export function MusicPlayerBar({
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
+
+  // ✅ UNIFIED: 항상 외부 상태 사용 (useMusicPlayer가 모든 상태 관리)
+  const displayIsPlaying = externalIsPlaying ?? false;
+  const displayCurrentTime = externalCurrentTime ?? 0;
+  const displayDuration = externalDuration ?? 0;
 
   return (
     <AnimatePresence>
@@ -208,7 +138,7 @@ export function MusicPlayerBar({
               {/* Book Cover - 56x56px on desktop, 48x48px on mobile */}
               <m.div
                 className="relative w-12 h-12 md:w-14 md:h-14 rounded-lg overflow-hidden flex-shrink-0 bg-gradient-accent shadow-md"
-                animate={isPlaying ? {
+                animate={displayIsPlaying ? {
                   boxShadow: [
                     '0 4px 6px -1px rgba(99, 102, 241, 0.1), 0 2px 4px -1px rgba(99, 102, 241, 0.06)',
                     '0 4px 6px -1px rgba(99, 102, 241, 0.3), 0 2px 4px -1px rgba(99, 102, 241, 0.2)',
@@ -281,7 +211,7 @@ export function MusicPlayerBar({
                   whileHover={{ scale: isLoading ? 1 : 1.06 }}
                   whileTap={{ scale: isLoading ? 1 : 0.98 }}
                 >
-                  {isPlaying ? (
+                  {displayIsPlaying ? (
                     <Pause className="size-5 md:size-6 text-white" fill="white" />
                   ) : (
                     <Play className="size-5 md:size-6 text-white ml-0.5" fill="white" />
@@ -305,7 +235,7 @@ export function MusicPlayerBar({
               {/* Progress Bar + Time - Spotify style with hover effects */}
               <div className="hidden md:flex items-center gap-3 min-w-[300px] lg:min-w-[400px]">
                 <span className="text-xs text-muted-foreground/70 tabular-nums font-medium">
-                  {formatTime(currentTime)}
+                  {formatTime(displayCurrentTime)}
                 </span>
                 <div
                   className="flex-1 relative group"
@@ -313,8 +243,8 @@ export function MusicPlayerBar({
                   onMouseLeave={() => setIsHoveringProgress(false)}
                 >
                   <Slider
-                    value={[currentTime]}
-                    max={duration || 100}
+                    value={[displayCurrentTime]}
+                    max={displayDuration || 100}
                     step={0.1}
                     onValueChange={handleSeek}
                     onPointerDown={handleSeekStart}
@@ -338,7 +268,7 @@ export function MusicPlayerBar({
                   />
                 </div>
                 <span className="text-xs text-muted-foreground/70 tabular-nums font-medium">
-                  {formatTime(duration)}
+                  {formatTime(displayDuration)}
                 </span>
               </div>
             </div>
@@ -383,8 +313,8 @@ export function MusicPlayerBar({
           {/* Mobile Progress Bar - Enhanced touch area */}
           <div className="md:hidden pb-3 pt-2">
             <Slider
-              value={[currentTime]}
-              max={duration || 100}
+              value={[displayCurrentTime]}
+              max={displayDuration || 100}
               step={0.1}
               onValueChange={handleSeek}
               onPointerDown={handleSeekStart}
@@ -405,8 +335,8 @@ export function MusicPlayerBar({
               `}
             />
             <div className="flex justify-between text-xs text-muted-foreground/70 mt-1.5 font-medium tabular-nums">
-              <span>{formatTime(currentTime)}</span>
-              <span>{formatTime(duration)}</span>
+              <span>{formatTime(displayCurrentTime)}</span>
+              <span>{formatTime(displayDuration)}</span>
             </div>
           </div>
         </div>

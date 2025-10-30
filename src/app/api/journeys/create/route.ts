@@ -79,6 +79,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. v0 음악 프롬프트 생성
+    // ✅ Critical Issue #12: 프롬프트 생성 실패 시 여정 롤백
     let musicPromptData;
     try {
       musicPromptData = await generateMusicPrompt({
@@ -90,13 +91,22 @@ export async function POST(request: NextRequest) {
     } catch (promptError) {
       console.error('Music prompt generation error:', promptError);
 
-      // 프롬프트 생성 실패 시 여정은 유지하되 에러 반환
-      return NextResponse.json({
-        success: true,
-        journey,
-        warning: '음악 프롬프트 생성에 실패했습니다. 나중에 다시 시도할 수 있습니다.',
-        error: promptError instanceof Error ? promptError.message : 'Unknown error'
-      });
+      // ✅ 여정 롤백 (삭제)
+      await supabase
+        .from('reading_journeys')
+        .delete()
+        .eq('id', journey.id);
+
+      console.log(`✅ Journey ${journey.id} rolled back due to prompt generation failure`);
+
+      return NextResponse.json(
+        {
+          success: false,
+          error: '음악 프롬프트 생성에 실패했습니다. 다시 시도해주세요.',
+          details: promptError instanceof Error ? promptError.message : 'Unknown error'
+        },
+        { status: 500 }
+      );
     }
 
     // 3. music_tracks 테이블에 placeholder 생성 (pending 상태)
@@ -117,12 +127,22 @@ export async function POST(request: NextRequest) {
     if (trackError) {
       console.error('Music track creation error:', trackError);
 
-      return NextResponse.json({
-        success: true,
-        journey,
-        warning: '음악 트랙 생성에 실패했습니다.',
-        error: trackError.message
-      });
+      // ✅ Critical Issue #12: 여정 롤백
+      await supabase
+        .from('reading_journeys')
+        .delete()
+        .eq('id', journey.id);
+
+      console.log(`✅ Journey ${journey.id} rolled back due to track creation failure`);
+
+      return NextResponse.json(
+        {
+          success: false,
+          error: '음악 트랙 생성에 실패했습니다. 다시 시도해주세요.',
+          details: trackError.message
+        },
+        { status: 500 }
+      );
     }
 
     // 4. reading_logs 테이블에 v0 로그 생성
@@ -142,13 +162,27 @@ export async function POST(request: NextRequest) {
     if (logError) {
       console.error('Reading log creation error:', logError);
 
-      return NextResponse.json({
-        success: true,
-        journey,
-        musicTrack,
-        warning: '독서 기록 생성에 실패했습니다.',
-        error: logError.message
-      });
+      // ✅ Critical Issue #12: 여정 및 트랙 롤백
+      await supabase
+        .from('music_tracks')
+        .delete()
+        .eq('id', musicTrack.id);
+
+      await supabase
+        .from('reading_journeys')
+        .delete()
+        .eq('id', journey.id);
+
+      console.log(`✅ Journey ${journey.id} and track ${musicTrack.id} rolled back due to log creation failure`);
+
+      return NextResponse.json(
+        {
+          success: false,
+          error: '독서 기록 생성에 실패했습니다. 다시 시도해주세요.',
+          details: logError.message
+        },
+        { status: 500 }
+      );
     }
 
     // 5. 성공 응답

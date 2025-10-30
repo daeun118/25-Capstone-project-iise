@@ -15,6 +15,7 @@ import { Separator } from '@/components/ui/separator';
 import { Plus, CheckCircle2, Clock, Music2, BookOpen, Loader2, Share2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useMusicGeneration } from '@/hooks/useMusicGeneration';
+import { useMusicPlayer } from '@/hooks/useMusicPlayer';
 import { m } from 'framer-motion';
 
 interface Journey {
@@ -77,8 +78,9 @@ export default function JourneyDetailPage() {
   const [journey, setJourney] = useState<Journey | null>(null);
   const [logs, setLogs] = useState<ReadingLog[]>([]);
   const [playlist, setPlaylist] = useState<PlaylistTrack[]>([]);
-  const [currentTrack, setCurrentTrack] = useState<MusicTrack | null>(null);
-  const [currentTrackId, setCurrentTrackId] = useState<string | null>(null);
+  // ❌ REMOVED: 이중 상태 관리 제거
+  // const [currentTrack, setCurrentTrack] = useState<MusicTrack | null>(null);
+  // const [currentTrackId, setCurrentTrackId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmittingLog, setIsSubmittingLog] = useState(false);
   const [showLogForm, setShowLogForm] = useState(false);
@@ -86,9 +88,10 @@ export default function JourneyDetailPage() {
   const [isSharingToFeed, setIsSharingToFeed] = useState(false);
   const [hasShared, setHasShared] = useState(false);
   const [isPolling, setIsPolling] = useState(false);
-  const [isPlayingPlaylist, setIsPlayingPlaylist] = useState(false);
 
   const { triggerGeneration } = useMusicGeneration();
+  // ✅ SINGLE SOURCE OF TRUTH: 모든 음악 재생을 useMusicPlayer로 통합
+  const musicPlayer = useMusicPlayer();
 
   // Fetch journey and logs
   useEffect(() => {
@@ -145,14 +148,7 @@ export default function JourneyDetailPage() {
       
       setGeneratingTracks(newGeneratingTracks);
 
-      // Update current track if needed
-      const completedTracks = musicTracks
-        .filter((mt: any) => mt.track?.status === 'completed')
-        .sort((a: any, b: any) => b.version - a.version);
-      
-      if (completedTracks.length > 0 && completedTracks[0].track) {
-        setCurrentTrack(completedTracks[0].track);
-      }
+      // ✅ REMOVED: currentTrack 상태 제거됨 (useMusicPlayer가 관리)
     } catch (error) {
       console.error('Failed to update music status:', error);
     } finally {
@@ -259,13 +255,7 @@ export default function JourneyDetailPage() {
           return prev; // No change, return previous to avoid re-render
         });
 
-        // Set current track to the latest completed one
-        const completedLogs = (logsData.logs || []).filter(
-          (log: ReadingLog) => log.music_track?.status === 'completed'
-        );
-        if (completedLogs.length > 0) {
-          setCurrentTrack(completedLogs[completedLogs.length - 1].music_track);
-        }
+        // ✅ REMOVED: currentTrack 상태 제거됨 (useMusicPlayer가 관리)
       }
     } catch (error) {
       console.error('Failed to fetch journey:', error);
@@ -379,10 +369,10 @@ export default function JourneyDetailPage() {
     }
   }, [journeyId, triggerGeneration, fetchJourney]);
 
-  const handlePlayMusic = useCallback((track: MusicTrack) => {
+  const handlePlayMusic = useCallback(async (track: MusicTrack) => {
     console.log('🎵 handlePlayMusic called:', {
       trackId: track.id,
-      currentTrackId,
+      currentTrackId: musicPlayer.currentTrack?.id,
       status: track.status,
       fileUrl: track.file_url,
       genre: track.genre
@@ -405,29 +395,39 @@ export default function JourneyDetailPage() {
       return;
     }
 
-    // ✅ 같은 트랙 클릭 시 - 하단 바의 togglePlayPause 호출
-    if (currentTrackId === track.id && currentTrack) {
+    // ✅ 같은 트랙 클릭 시 - 재생/일시정지 토글
+    if (musicPlayer.currentTrack?.id === track.id) {
       console.log('🔄 Same track clicked - toggling playback');
-      // 하단 바에서 처리하도록 이벤트 발생 (CustomEvent 사용)
-      const event = new CustomEvent('togglePlayPause');
-      window.dispatchEvent(event);
+      await musicPlayer.togglePlayPause();
       return;
     }
 
-    // 다른 트랙 클릭 시 - 새 트랙으로 교체
-    console.log('✅ Starting new track');
-    setCurrentTrack(track);
-    setCurrentTrackId(track.id);
-    toast.success(`${track.genre || '음악'} 재생을 시작합니다.`, {
-      description: track.mood ? `분위기: ${track.mood}` : undefined,
+    // ✅ 다른 트랙 클릭 시 - useMusicPlayer.playTrack() 사용
+    console.log('✅ Starting new track via musicPlayer');
+
+    // Find log info for version display
+    const log = logs.find((l) => l.music_track?.id === track.id);
+
+    await musicPlayer.playTrack({
+      id: track.id,
+      title: journey?.book_title || 'Unknown',
+      fileUrl: track.file_url,
+      duration: 180, // Default duration (실제 재생 시 자동 감지됨)
+      genre: track.genre || undefined,
+      mood: track.mood || undefined,
+      tempo: track.tempo ? parseInt(track.tempo) : undefined,
+      artist: journey?.book_author,
+      albumCover: journey?.book_cover_url,
+      version: log?.version,
+      logType: log?.log_type
     });
-  }, [currentTrackId, currentTrack]);
+  }, [musicPlayer, logs, journey]);
 
   const handleClosePlayer = useCallback(() => {
     console.log('⏸️ Closing player');
-    setCurrentTrack(null);
-    setCurrentTrackId(null);
-  }, []);
+    // ✅ useMusicPlayer의 clearPlaylist 사용
+    musicPlayer.clearPlaylist();
+  }, [musicPlayer]);
 
   if (isLoading) {
     return (
@@ -540,22 +540,29 @@ export default function JourneyDetailPage() {
                     <Button
                       size="sm"
                       variant="gradient"
-                      onClick={() => {
-                        if (playlist.length > 0 && playlist[0].fileUrl) {
-                          // Play first track to start playlist
-                          const firstTrack: MusicTrack = {
-                            id: playlist[0].id,
-                            prompt: playlist[0].prompt,
-                            genre: playlist[0].genre,
-                            mood: playlist[0].mood,
-                            tempo: playlist[0].tempo.toString(),
-                            file_url: playlist[0].fileUrl,
-                            description: playlist[0].description,
-                            status: 'completed',
-                            created_at: playlist[0].createdAt
-                          };
-                          handlePlayMusic(firstTrack);
-                          setIsPlayingPlaylist(true);
+                      onClick={async () => {
+                        if (playlist.length > 0) {
+                          // ✅ Convert playlist to MusicTrack format
+                          const tracks = playlist.map(track => ({
+                            id: track.id,
+                            title: journey.book_title,
+                            fileUrl: track.fileUrl,
+                            duration: track.duration,
+                            genre: track.genre,
+                            mood: track.mood,
+                            tempo: track.tempo,
+                            artist: journey.book_author,
+                            albumCover: journey.book_cover_url,
+                            version: track.version,
+                            logType: track.logType
+                          }));
+
+                          // ✅ Play playlist with crossfade
+                          await musicPlayer.playPlaylist(tracks, 0, {
+                            crossfadeDuration: 5000,
+                            preloadOffset: 15
+                          });
+                          // ✅ playlistMode는 useMusicPlayer가 자동 관리
                         }
                       }}
                     >
@@ -573,29 +580,35 @@ export default function JourneyDetailPage() {
                       mood: track.mood,
                       duration: track.duration
                     }))}
-                    currentTrackId={currentTrackId ?? undefined}
-                    isPlaying={!!currentTrack}
-                    onTrackSelect={(trackId) => {
-                      const track = playlist.find(t => t.id === trackId);
-                      if (track) {
-                        const musicTrack: MusicTrack = {
+                    currentTrackId={musicPlayer.currentTrack?.id}
+                    isPlaying={musicPlayer.isPlaying}
+                    onTrackSelect={async (trackId) => {
+                      // ✅ 개별 트랙 클릭: 플레이리스트 로드 후 해당 인덱스에서 재생
+                      const trackIndex = playlist.findIndex(t => t.id === trackId);
+                      if (trackIndex !== -1) {
+                        // Convert playlist to MusicTrack format
+                        const tracks = playlist.map(track => ({
                           id: track.id,
-                          prompt: track.prompt,
+                          title: journey.book_title,
+                          fileUrl: track.fileUrl,
+                          duration: track.duration,
                           genre: track.genre,
                           mood: track.mood,
-                          tempo: track.tempo.toString(),
-                          file_url: track.fileUrl,
-                          description: track.description,
-                          status: 'completed',
-                          created_at: track.createdAt
-                        };
-                        handlePlayMusic(musicTrack);
+                          tempo: track.tempo,
+                          artist: journey.book_author,
+                          albumCover: journey.book_cover_url,
+                          version: track.version,
+                          logType: track.logType
+                        }));
+
+                        // 플레이리스트 재생 (선택한 트랙부터 시작)
+                        await musicPlayer.playPlaylist(tracks, trackIndex, {
+                          crossfadeDuration: 5000,
+                          preloadOffset: 15
+                        });
                       }
                     }}
-                    onPlayPause={() => {
-                      const event = new CustomEvent('togglePlayPause');
-                      window.dispatchEvent(event);
-                    }}
+                    onPlayPause={musicPlayer.togglePlayPause}
                     showHeader={false}
                   />
                 </div>
@@ -618,7 +631,11 @@ export default function JourneyDetailPage() {
                   </div>
                   <h2 className="text-2xl font-bold">독서 여정 타임라인</h2>
                 </div>
-                <LogList logs={logs} onPlayMusic={handlePlayMusic} currentTrackId={currentTrackId} />
+                <LogList
+                  logs={logs}
+                  onPlayMusic={handlePlayMusic}
+                  currentTrackId={musicPlayer.currentTrack?.id}
+                />
               </div>
             </m.div>
           </div>
@@ -757,21 +774,34 @@ export default function JourneyDetailPage() {
         </div>
 
         {/* Bottom Music Player Bar */}
-        {currentTrack && currentTrack.status === 'completed' && (
+        {/* ✅ SINGLE SOURCE OF TRUTH: useMusicPlayer만 사용 */}
+        {musicPlayer.currentTrack && (
           <MusicPlayerBar
-            trackUrl={currentTrack.file_url}
+            trackUrl={musicPlayer.currentTrack.fileUrl}
             trackTitle={journey.book_title}
             trackVersion={
-              logs.find((log) => log.music_track?.id === currentTrack.id)?.log_type === 'v0'
+              musicPlayer.currentTrack.logType === 'v0'
                 ? 'v0 - 여정 시작'
-                : logs.find((log) => log.music_track?.id === currentTrack.id)?.log_type === 'vFinal'
+                : musicPlayer.currentTrack.logType === 'vFinal'
                 ? 'vFinal - 완독'
-                : `v${logs.find((log) => log.music_track?.id === currentTrack.id)?.version || ''}`
+                : musicPlayer.currentTrack.logType || `v${musicPlayer.currentTrack.version}`
             }
             bookCoverUrl={journey.book_cover_url}
-            genre={currentTrack.genre}
-            mood={currentTrack.mood}
+            genre={musicPlayer.currentTrack.genre}
+            mood={musicPlayer.currentTrack.mood}
             onClose={handleClosePlayer}
+            // Playlist mode props (항상 전달, playlistMode로 제어)
+            playlistMode={musicPlayer.playlistMode}
+            currentTrackIndex={musicPlayer.currentTrackIndex}
+            totalTracks={musicPlayer.playlistLength}
+            onPrevious={musicPlayer.skipToPrevious}
+            onNext={musicPlayer.skipToNext}
+            hasNext={musicPlayer.hasNext}
+            hasPrevious={musicPlayer.hasPrevious}
+            externalIsPlaying={musicPlayer.isPlaying}
+            externalCurrentTime={musicPlayer.currentTime}
+            externalDuration={musicPlayer.duration}
+            onTogglePlayPause={musicPlayer.togglePlayPause}
           />
         )}
       </div>
