@@ -452,7 +452,10 @@ export default function JourneyDetailPage() {
     );
   }
 
-  const completedLogs = logs.filter((log) => log.music_track?.status === 'completed');
+  // ✅ Count logs that have completed music tracks
+  const completedLogs = logs.filter((log) =>
+    log.music_track && log.music_track.status === 'completed'
+  );
   const totalReadingDays = Math.floor(
     (new Date().getTime() - new Date(journey.started_at).getTime()) / (1000 * 60 * 60 * 24)
   );
@@ -469,6 +472,7 @@ export default function JourneyDetailPage() {
           startedAt={journey.started_at}
           completedAt={journey.completed_at}
           logsCount={logs.length}
+          musicTracksCount={completedLogs.length}
         />
 
         <Separator className="my-8" />
