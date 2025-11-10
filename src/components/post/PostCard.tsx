@@ -29,8 +29,8 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Album Cover / Book Cover - Suno Style (2:3 세로형) */}
-      <Link 
-        href={`/journey/${post.journey.id}`}
+      <Link
+        href={`/feed/${post.id}`}
         className="relative aspect-[2/3] rounded-xl overflow-hidden block"
       >
         {post.journey.bookCoverUrl ? (
@@ -112,7 +112,7 @@ export const PostCard = memo(function PostCard({ post, onClick }: PostCardProps)
       <div className="p-3">
         {/* Book Title - 1줄만 */}
         <Link
-          href={`/journey/${post.journey.id}`}
+          href={`/feed/${post.id}`}
           className="block group/title hover:opacity-80 transition-opacity mb-1"
         >
           <h3 className="font-bold text-base line-clamp-1 group-hover/title:text-primary transition-colors">
