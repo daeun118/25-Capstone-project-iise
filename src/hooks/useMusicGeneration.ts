@@ -48,7 +48,7 @@ interface UseMusicGenerationReturn {
 }
 
 // ✅ Critical Issue #7: Mureka API 타임아웃 설정
-const MAX_POLL_DURATION = 10 * 60 * 1000;  // 10분
+const MAX_POLL_DURATION = 6 * 60 * 1000;  // 6분 (서버 타임아웃보다 짧게 설정)
 const POLL_INTERVAL = 2000;  // 2초
 
 export function useMusicGeneration(): UseMusicGenerationReturn {
@@ -61,6 +61,7 @@ export function useMusicGeneration(): UseMusicGenerationReturn {
   const progressInterval = useRef<NodeJS.Timeout | null>(null);
   const currentTrackId = useRef<string | null>(null);
   const pollStartTime = useRef<number | null>(null);  // ✅ 폴링 시작 시간
+  const hasShownLongWaitMessage = useRef<boolean>(false);  // 3분 경과 메시지 표시 여부
 
   /**
    * Stop all polling and progress timers
@@ -148,6 +149,7 @@ export function useMusicGeneration(): UseMusicGenerationReturn {
       setProgress(0);
       currentTrackId.current = trackId;
       pollStartTime.current = Date.now();  // ✅ 시작 시간 기록
+      hasShownLongWaitMessage.current = false;  // 메시지 플래그 초기화
 
       console.log(`[useMusicGeneration] Triggering generation for track ${trackId}`);
 
@@ -176,6 +178,17 @@ export function useMusicGeneration(): UseMusicGenerationReturn {
         // ✅ 타임아웃 체크
         if (pollStartTime.current) {
           const elapsed = Date.now() - pollStartTime.current;
+          const THREE_MINUTES = 3 * 60 * 1000;
+
+          // 3분 경과 시 안내 메시지 (한 번만 표시)
+          if (elapsed > THREE_MINUTES && !hasShownLongWaitMessage.current) {
+            hasShownLongWaitMessage.current = true;
+            toast.info('음악 생성이 평소보다 오래 걸리고 있습니다', {
+              description: '잠시만 기다려주세요. 고품질 음악을 생성하고 있습니다.',
+              duration: 5000,
+            });
+            console.log(`[useMusicGeneration] 3분 경과 - 안내 메시지 표시`);
+          }
 
           if (elapsed > MAX_POLL_DURATION) {
             stopPolling();

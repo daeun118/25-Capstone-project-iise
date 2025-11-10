@@ -162,13 +162,19 @@ export async function POST(
 
     // Update track status to error
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    await supabase
+    const { error: updateError } = await supabase
       .from('music_tracks')
       .update({
         status: 'error',
         error_message: errorMessage,
       })
       .eq('id', trackId);
+
+    if (updateError) {
+      console.error(`[Music Generate API] ⚠️ Failed to update error status for track ${trackId}:`, updateError);
+    } else {
+      console.log(`[Music Generate API] ✅ Track ${trackId} status updated to 'error'`);
+    }
 
     return NextResponse.json(
       { error: errorMessage },

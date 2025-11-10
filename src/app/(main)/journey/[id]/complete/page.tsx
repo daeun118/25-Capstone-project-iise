@@ -12,6 +12,7 @@ import { ArrowLeft, PartyPopper, BookOpen, Music, CheckCircle2, Calendar, Clock,
 import { toast } from 'sonner';
 import { m } from 'framer-motion';
 import Image from 'next/image';
+import { useMusicGeneration } from '@/hooks/useMusicGeneration';
 
 interface Journey {
   id: string;
@@ -31,6 +32,9 @@ export default function CompleteJourneyPage() {
 
   const [journey, setJourney] = useState<Journey | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // ✅ vFinal 음악 자동 생성을 위한 훅
+  const { triggerGeneration } = useMusicGeneration();
 
   useEffect(() => {
     fetchJourney();
@@ -78,8 +82,18 @@ export default function CompleteJourneyPage() {
         throw new Error(error.error || 'Failed to complete journey');
       }
 
+      const result = await response.json();
+
       toast.success('독서 여정을 완료했습니다! 🎉');
       toast.info('최종 음악이 생성되고 있습니다.');
+
+      // ✅ vFinal 음악 자동 생성 트리거 (v0/vN과 동일한 패턴)
+      if (result.vFinalTrack?.id) {
+        console.log(`🎵 [Complete] vFinal 음악 생성 시작: ${result.vFinalTrack.id}`);
+        triggerGeneration(result.vFinalTrack.id);
+      } else {
+        console.warn('[Complete] vFinalTrack not found in API response');
+      }
 
       setTimeout(() => {
         router.push(`/journey/${journeyId}`);

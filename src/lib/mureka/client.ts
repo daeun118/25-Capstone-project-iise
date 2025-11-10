@@ -170,8 +170,9 @@ async function generateViaAPI(
     const taskId = result.id;
     console.log(`[Mureka] Task started: ${taskId}`);
 
-    // Poll for completion (max 60 attempts = 5 minutes with 5s intervals)
-    const maxAttempts = 60;
+    // Poll for completion (max 96 attempts = 8 minutes with 5s intervals)
+    // Aligned with MUREKA_TIMEOUT_SECONDS=500 (8m 20s)
+    const maxAttempts = 96;
     const pollInterval = 5000; // 5 seconds
 
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
@@ -188,7 +189,12 @@ async function generateViaAPI(
       }
 
       const status = await queryResponse.json();
-      console.log(`[Mureka] Attempt ${attempt + 1}/${maxAttempts} - Status: ${status.status}`);
+      console.log(`[Mureka] Attempt ${attempt + 1}/${maxAttempts} - Status: ${status.status}`, {
+        taskId,
+        elapsed: `${(attempt + 1) * pollInterval / 1000}s`,
+        choices: status.choices?.length || 0,
+        statusDetail: status.status,
+      });
 
       if (status.status === 'succeeded' && status.choices && status.choices.length > 0) {
         // Success! Extract first music URL
