@@ -8,6 +8,7 @@ import { Play, Pause, Volume2, VolumeX, X, Music, SkipBack, SkipForward } from '
 import { m, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { toast } from 'sonner';
+import { useMusicPlayer } from '@/hooks/useMusicPlayer';
 
 interface MusicPlayerBarProps {
   trackUrl: string;
@@ -52,11 +53,12 @@ export function MusicPlayerBar({
   externalDuration,
   onTogglePlayPause,
 }: MusicPlayerBarProps) {
+  // ✅ Critical Issue #12: useMusicPlayer에서 볼륨 상태 가져오기
+  const { volume, isMuted, setVolume, toggleMute } = useMusicPlayer();
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [volume, setVolume] = useState(70);
-  const [isMuted, setIsMuted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isHoveringProgress, setIsHoveringProgress] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -96,19 +98,14 @@ export function MusicPlayerBar({
   };
 
   const handleVolumeChange = (value: number[]) => {
-    // ✅ Volume은 UI 상태만 관리 (실제 적용은 향후 구현 가능)
+    // ✅ Critical Issue #12 해결: 실제 볼륨 변경
     const newVolume = value[0];
     setVolume(newVolume);
-    setIsMuted(newVolume === 0);
   };
 
-  const toggleMute = () => {
-    // ✅ Mute는 UI 상태만 토글
-    if (isMuted) {
-      setIsMuted(false);
-    } else {
-      setIsMuted(true);
-    }
+  const handleToggleMute = () => {
+    // ✅ Critical Issue #12 해결: 실제 음소거 토글
+    toggleMute();
   };
 
   const formatTime = (seconds: number) => {
@@ -280,7 +277,7 @@ export function MusicPlayerBar({
                 <Button
                   size="icon"
                   variant="ghost"
-                  onClick={toggleMute}
+                  onClick={handleToggleMute}
                   className="size-9 hover:bg-accent transition-colors"
                 >
                   {isMuted ? (

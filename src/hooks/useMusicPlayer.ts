@@ -45,6 +45,9 @@ export function useMusicPlayer() {
   const [crossfadeDuration, setCrossfadeDuration] = useState(5000); // 5초 기본값
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  // ✅ Critical Issue #12: 볼륨 상태 추가
+  const [volume, setVolumeState] = useState(70);  // 기본 70%
+  const [isMuted, setIsMutedState] = useState(false);
 
   // Subscribe to AudioStateManager events
   useEffect(() => {
@@ -57,6 +60,9 @@ export function useMusicPlayer() {
       setDuration(state.duration);
       setCurrentTrackIndex(state.currentTrackIndex);
       setPlaylistMode(state.mode === 'playlist');
+      // ✅ Critical Issue #12: 볼륨 상태 구독
+      setVolumeState(state.volume);
+      setIsMutedState(state.isMuted);
 
       // ✅ 항상 최신 playlist 참조
       if (playlistRef.current.length > 0 && playlistRef.current[state.currentTrackIndex]) {
@@ -313,6 +319,28 @@ export function useMusicPlayer() {
     setDuration(0);
   }, []);
 
+  /**
+   * 볼륨 설정 (0-100)
+   * ✅ Critical Issue #12 해결: 볼륨 제어
+   */
+  const setVolume = useCallback((volume: number) => {
+    audioManager.current.setVolume(volume);
+  }, []);
+
+  /**
+   * 음소거 설정
+   */
+  const setMuted = useCallback((muted: boolean) => {
+    audioManager.current.setMuted(muted);
+  }, []);
+
+  /**
+   * 음소거 토글
+   */
+  const toggleMute = useCallback(() => {
+    audioManager.current.toggleMute();
+  }, []);
+
   return {
     // State
     playlist,
@@ -325,6 +353,8 @@ export function useMusicPlayer() {
     crossfadeDuration,
     currentTime,
     duration,
+    volume,  // ✅ 볼륨 상태
+    isMuted,  // ✅ 음소거 상태
 
     // Actions
     loadPlaylist,
@@ -338,6 +368,9 @@ export function useMusicPlayer() {
     skipToTrack,
     configureCrossfade,
     clearPlaylist,
+    setVolume,  // ✅ 볼륨 설정
+    setMuted,  // ✅ 음소거 설정
+    toggleMute,  // ✅ 음소거 토글
 
     // Computed
     playlistLength: playlist.length,

@@ -12,27 +12,47 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **현재 상태**: Phase 12 배포 완료 + 플레이리스트 크로스페이드 기능 추가 ✅
 **Production**: https://25-capstone-project-iise.vercel.app
-**마지막 업데이트**: 2025-10-29
+**마지막 업데이트**: 2025-01-30
 
 ---
 
 ## 필수 명령어
 
-### 개발
+### 개발 서버
 ```bash
 npm run dev              # 개발 서버 (포트 3000, 자동 정리)
+npm run dev:raw          # Raw Next.js 개발 서버 (Turbopack)
 npm run build            # Production 빌드 (Turbopack)
-npm test                 # E2E 테스트 (Playwright, headless)
-npm run test:ui          # 테스트 UI 모드 (권장)
+npm start                # Production 서버 시작
 ```
 
-### 단일 테스트 실행
+**서버 관리** (포트 충돌 발생 시):
 ```bash
-npx playwright test tests/auth.spec.ts           # 특정 파일
-npx playwright test -g "독서 여정 시작"            # 특정 테스트
-npx playwright test --headed --debug             # 디버그 모드
-npx playwright test --trace on                   # Trace 기록 (디버깅용)
-npx playwright show-report                       # 테스트 리포트 보기
+npm run server:status    # 서버 상태 확인
+npm run server:kill      # 포트 3000 프로세스 강제 종료
+# 그 후: npm run dev
+```
+
+### 테스트
+```bash
+# E2E 테스트 (Playwright)
+npm test                 # Headless 모드
+npm run test:ui          # UI 모드 (권장 - 시각적 디버깅)
+npm run test:headed      # Headed 모드 (브라우저 표시)
+npm run test:debug       # 디버그 모드
+
+# 단일 테스트 실행
+npx playwright test tests/e2e/auth.spec.ts              # 특정 파일
+npx playwright test -g "독서 여정 시작"                   # 특정 테스트
+npx playwright test --headed --debug                    # 디버그 모드
+npx playwright test --trace on                          # Trace 기록
+npx playwright show-report                              # 테스트 리포트
+
+# 유틸리티 테스트 스크립트
+npm run test:music-flow      # 음악 생성 플로우 테스트
+npm run test:complete-flow   # 완독 플로우 테스트
+npm run test:library         # 라이브러리 테스트
+npm run test:performance     # 성능 측정
 ```
 
 ### DB 타입 생성 (스키마 변경 시 필수)
@@ -41,11 +61,11 @@ supabase gen types typescript --project-id oelgskajaisratnbffip > src/types/data
 ```
 
 ### 트러블슈팅
-- 포트 충돌: `npm run server:kill` → `npm run dev`
-- 빌드 에러: `rm -rf .next` → `npm run build`
-- DB 타입 에러: DB 타입 재생성 후 빌드
-- Playwright 테스트 실패: `npx playwright install` (브라우저 설치)
-- Background processes: 개발 서버 종료 전 반드시 `npm run server:kill` 실행
+- **포트 충돌**: `npm run server:kill` → `npm run dev`
+- **빌드 에러**: `rm -rf .next` → `npm run build`
+- **DB 타입 에러**: DB 타입 재생성 후 빌드
+- **Playwright 실패**: `npx playwright install` (브라우저 설치)
+- **Background processes**: 개발 서버 종료 전 `npm run server:kill` 실행 권장
 
 ---
 
@@ -53,12 +73,12 @@ supabase gen types typescript --project-id oelgskajaisratnbffip > src/types/data
 
 **Frontend**: Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS v4, shadcn/ui, Framer Motion
 **Backend**: Supabase (PostgreSQL, Auth, Storage)
-**AI**: GPT-4o-mini (음악 프롬프트 생성), Mureka MCP (음악 생성)
+**AI**: GPT-4o-mini (음악 프롬프트), Mureka MCP (음악 생성)
 **State**: Zustand, React Hook Form + Zod
 **Icons**: Lucide React (**이모지 절대 금지**)
 **Testing**: Playwright
 **Deployment**: Vercel (자동 배포: main 브랜치 push)
-**Design**: 라이트 모드 전용 (다크모드 제거됨), 미니멀 디자인 (Footer 없음)
+**Design**: 라이트 모드 전용 (다크모드 제거됨), 미니멀 디자인
 
 ---
 
@@ -79,9 +99,6 @@ src/
 │   ├── ui/                  # shadcn/ui 기본 컴포넌트
 │   ├── journey/             # 독서 여정 UI
 │   ├── music/               # 음악 플레이어
-│   │   ├── MusicPlayerBar.tsx   # 하단 재생 바 (Spotify 스타일) ⭐
-│   │   ├── MusicPlayer.tsx      # 기본 플레이어
-│   │   └── Waveform.tsx         # 웨이브폼 시각화
 │   ├── post/                # 게시물 UI
 │   └── CLAUDE.md            # 컴포넌트 재사용 가이드 ⭐ 필독
 │
@@ -91,21 +108,34 @@ src/
 │   ├── mureka/              # Mureka API 클라이언트
 │   └── google-books/        # Google Books API
 │
-├── services/                # 비즈니스 로직 (의존성 주입) ⭐
+├── services/                # 비즈니스 로직 레이어 (의존성 주입) ⭐
+│   ├── journey.service.ts
+│   ├── music.service.ts
+│   ├── user.service.ts
 │   └── audio-crossfade-manager.ts  # Web Audio API 크로스페이드 ⭐
-├── repositories/            # 데이터 접근 (Repository 패턴) ⭐
+│
+├── repositories/            # 데이터 접근 레이어 (Repository 패턴) ⭐
+│   ├── base.repository.ts
+│   ├── journey.repository.ts
+│   ├── music.repository.ts
+│   └── log.repository.ts
+│
 ├── hooks/                   # Custom React Hooks
 │   └── useMusicPlayer.ts    # 플레이리스트 + 크로스페이드 통합 ⭐
+│
 └── types/                   # TypeScript 타입 정의
+    └── database.ts          # Supabase 생성 타입
+
+scripts/                     # 개발/테스트 유틸리티 스크립트
 ```
 
 **⭐ 핵심 파일**:
-- `src/lib/openai/client.ts` - 3단계 음악 프롬프트 생성 로직 (v0/vN/vFinal, 크로스페이드 최적화)
+- `src/lib/openai/client.ts` - 3단계 음악 프롬프트 생성 로직 (v0/vN/vFinal)
 - `src/services/audio-crossfade-manager.ts` - Web Audio API 기반 Equal Power Crossfade
 - `src/hooks/useMusicPlayer.ts` - 플레이리스트 관리 + 크로스페이드 통합
-- `src/components/music/MusicPlayerBar.tsx` - 하단 재생 바 (Spotify 스타일, 플레이리스트 모드)
-- `src/components/auth/AuthRequired.tsx` - 로그인 필요 안내 컴포넌트 (비로그인 UX 개선)
-- `src/components/CLAUDE.md` - **컴포넌트 생성 전 필수 확인** (재사용 가이드)
+- `src/components/music/MusicPlayerBar.tsx` - 하단 재생 바 (Spotify 스타일)
+- `src/components/auth/AuthRequired.tsx` - 로그인 필요 안내 (비로그인 UX)
+- `src/components/CLAUDE.md` - **컴포넌트 생성 전 필수 확인**
 - `src/services/` - 비즈니스 로직 레이어
 - `src/repositories/` - 데이터 접근 레이어
 
@@ -117,17 +147,19 @@ src/
 
 ### 1. 레이어드 아키텍처 (필수)
 
-```typescript
-// API Route → Service → Repository → Database
+**플로우**: `API Route → Service → Repository → Database`
 
-// Repository: DB 쿼리만
+```typescript
+// Repository: DB 쿼리만 (데이터 접근 레이어)
 export class JourneyRepository extends BaseRepository {
   async findByUserId(userId: string) {
-    return this.db.from('reading_journeys').select('*').eq('user_id', userId);
+    return this.db.from('reading_journeys')
+      .select('*')
+      .eq('user_id', userId);
   }
 }
 
-// Service: 비즈니스 로직 + 의존성 주입
+// Service: 비즈니스 로직 + 의존성 주입 (비즈니스 레이어)
 export class JourneyService {
   constructor(
     private journeyRepo: IJourneyRepository,
@@ -141,12 +173,18 @@ export class JourneyService {
   }
 }
 
-// API Route: HTTP 요청/응답만
+// API Route: HTTP 요청/응답만 (프레젠테이션 레이어)
 export async function POST(req: Request) {
   const service = new JourneyService(journeyRepo, musicService);
   return Response.json(await service.create(userId, dto));
 }
 ```
+
+**왜 이 패턴인가?**:
+- **관심사의 분리**: 각 레이어는 하나의 책임만
+- **테스트 용이성**: 각 레이어를 독립적으로 테스트 가능
+- **유지보수성**: 비즈니스 로직 변경 시 Service만 수정
+- **재사용성**: Service는 다른 API Route에서도 재사용 가능
 
 ### 2. Next.js 15 - Dynamic Route Params (중요!)
 
@@ -157,14 +195,17 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 }
 
 // ✅ Next.js 15 방식 (await 필수)
-export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   const { id } = await params;  // 올바름
 }
 ```
 
 ### 3. 3단계 음악 생성 플로우 (핵심 비즈니스 로직)
 
-**파일**: `src/lib/openai/client.ts:178` → `generateMusicPrompt()`
+**파일**: `src/lib/openai/client.ts:12` → `generateMusicPrompt()`
 
 ```typescript
 // v0: 책 정보만 → 첫 음악 (anticipatory mood)
@@ -178,8 +219,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 - Response Format: `{ type: 'json_object' }`
 - Context Window: 최근 2개 로그만 (`previousLogs.slice(-2)`)
 - Output: `{ prompt, genre, mood, tempo, description }`
+- **크로스페이드 최적화**: 템포 일관성(±10-15 BPM), 페이드 인/아웃
 
-**⚠️ 주의**: 
+**⚠️ 주의**:
 - 현재는 프롬프트만 생성 (Mureka MCP 음악 생성 미구현)
 - 이 로직 변경 시 반드시 기존 프롬프트 검증 필요
 
@@ -227,9 +269,8 @@ select(`
 
 **성능 최적화** (중요!):
 - **인덱스**: 29개 전략적 인덱스 추가 (복합 인덱스, 부분 인덱스)
-- **복합 인덱스 예시**: `idx_reading_journeys_user_status_started (user_id, status, started_at DESC)`
-- **부분 인덱스 예시**: `idx_posts_published_created_at (created_at DESC) WHERE is_published = true`
-- **쿼리 패턴**: WHERE 조건, ORDER BY, JOIN에 사용되는 컬럼 조합에 인덱스 생성
+- **복합 인덱스**: `idx_reading_journeys_user_status_started (user_id, status, started_at DESC)`
+- **부분 인덱스**: `idx_posts_published_created_at (created_at DESC) WHERE is_published = true`
 - **측정 결과**: 피드 72% 개선, 책장 71% 개선 (Production 환경)
 
 ---
@@ -237,9 +278,9 @@ select(`
 ## 개발 가이드
 
 ### 코드 스타일
-- Naming: camelCase (변수/함수), PascalCase (컴포넌트/타입)
-- 파일명: kebab-case
-- Import: `@/` 별칭
+- **Naming**: camelCase (변수/함수), PascalCase (컴포넌트/타입)
+- **파일명**: kebab-case
+- **Import**: `@/` 별칭
 - **절대 금지**: 이모지 사용 (Lucide React 아이콘만)
 - **스타일링**: Tailwind CSS 클래스 사용 (인라인 스타일 금지)
 - **디자인**: 라이트 모드 전용 (다크모드 관련 코드 제거됨)
@@ -265,11 +306,11 @@ bash("sed -i 's/old/new/g' file.tsx")
 **활성화된 MCP 서버**: filesystem, supabase, playwright, github, context7
 
 ### 에러 처리
-- API: try-catch + HTTP 상태 코드
-- UI: `sonner` toast
-- 비동기: 로딩 상태 표시 (음악 생성 30초~2분)
+- **API**: try-catch + HTTP 상태 코드
+- **UI**: `sonner` toast
+- **비동기**: 로딩 상태 표시 (음악 생성 30초~2분)
 
-### 성능 최적화 패턴 (중요!)
+### 성능 최적화 패턴
 
 **N+1 쿼리 방지** - JOIN을 사용한 단일 쿼리로 해결:
 
@@ -311,12 +352,12 @@ import Image from 'next/image';
 ```
 
 ### 보안 (중요!)
-- 환경 변수: `NEXT_PUBLIC_*` (클라이언트 노출), 나머지 (서버 전용)
+- **환경 변수**: `NEXT_PUBLIC_*` (클라이언트 노출), 나머지 (서버 전용)
 - **절대 금지**: API 토큰을 클라이언트 코드에 하드코딩
-- RLS: 모든 테이블 활성화 (사용자는 자신의 데이터만 접근)
-- 공개 데이터: RLS 정책에 `USING (true)` 또는 `USING (is_published = true)` 추가
-- 인증: Supabase Auth (세션 기반)
-- 검증: Zod 스키마 (API 요청/응답 모두)
+- **RLS**: 모든 테이블 활성화 (사용자는 자신의 데이터만 접근)
+- **공개 데이터**: RLS 정책에 `USING (true)` 또는 `USING (is_published = true)` 추가
+- **인증**: Supabase Auth (세션 기반)
+- **검증**: Zod 스키마 (API 요청/응답 모두)
 
 **환경 변수 체크리스트**:
 - `.env.local` 파일 생성 (`.env.example` 참고)
@@ -348,6 +389,7 @@ git push origin main
 - `refactor:` - 리팩토링
 - `style:` - 코드 스타일 (포맷팅)
 - `test:` - 테스트 추가/수정
+- `design:` - UI/UX 디자인 변경
 
 **자동 배포**: main 브랜치 push → Vercel 자동 배포
 
@@ -380,6 +422,10 @@ git push origin main
 **문제**: `EADDRINUSE`
 **해결**: `npm run server:kill` → `npm run dev`
 
+### 3. Playwright 테스트 타임아웃
+**문제**: 음악 생성 API 호출 시 타임아웃
+**해결**: `playwright.config.ts`에서 타임아웃 설정 확인 (현재 60초)
+
 ---
 
 ## 개발 상태 및 다음 단계
@@ -394,78 +440,18 @@ git push origin main
 - 배포 로그: Vercel 대시보드에서 확인
 
 **최근 개선사항** (2025-01-30):
-- ✅ **디자인 시스템 통합** (2025-01-30)
-  - 전체 인라인 스타일 제거 → Tailwind CSS 표준화
-  - 일관된 디자인 시스템 적용 (간격, 색상, 타이포그래피)
-  - 다크모드 완전 제거 (라이트 모드 전용으로 단순화)
-  - Footer 컴포넌트 제거 (미니멀 디자인 적용)
-  - 마이페이지 디자인 통일
-
-- ✅ **Suno 스타일 피드 레이아웃** (2025-01-30)
-  - 카드 기반 그리드 레이아웃 개선
-  - 더 나은 시각적 계층 구조
+- ✅ **디자인 시스템 통합** - 인라인 스타일 제거, Tailwind CSS 표준화
+- ✅ **Suno 스타일 피드 레이아웃** - 카드 기반 그리드 레이아웃
+- ✅ **다크모드 제거** - 라이트 모드 전용 단순화
+- ✅ **Footer 제거** - 미니멀 디자인 적용
 
 **이전 개선사항** (2025-01-23~28):
-- ✅ **이미지 최적화 구현** (2025-01-23)
-  - Next.js Image 최적화 설정: AVIF/WebP 포맷 자동 변환
-  - 모든 Image 컴포넌트에 quality=85, lazy loading 적용
-  - JourneyHeader에 priority loading (LCP 최적화)
-  - 예상 효과: 이미지 용량 80-90% 감소, 페이지 로드 20-30% 개선
-  - 적용 파일: JourneyCard, PostCard, BookCover, JourneyHeader
-  - 참고: `claudedocs/image-optimization-implementation.md`
-
-- ✅ **데이터베이스 인덱스 최적화** (2025-01-23)
-  - 29개 전략적 인덱스 추가 (commit f45523c)
-  - 복합 인덱스: `idx_reading_journeys_user_status_started`
-  - 부분 인덱스: `idx_posts_published_created_at WHERE is_published = true`
-  - Production 성능 측정: 피드 72% 개선, 책장 71% 개선
-  - N+1 쿼리 제거: 11개 → 1개 JOIN
-  - 참고: `claudedocs/db-index-performance-evaluation.md`
-
-- ✅ **회원가입 이메일 컨펼 프로세스 개선** (2025-01-23)
-  - 이메일 확인이 필요한 경우 사용자 친화적 안내 추가
-  - `/signup/check-email` 페이지 생성 (이메일 확인 안내 UI)
-  - SignupForm 로직 개선: 세션 생성 여부에 따라 분기 처리
-  - users 테이블 프로필 데이터 자동 삽입 (upsert 방식)
-  - 문제: 회원가입 후 "로그인 필요" 메시지 표시로 사용자 혼란
-  - 해결: 이메일 확인 필요 시 명확한 안내 및 전용 페이지 제공
-
-- ✅ **피드 공개 조회 RLS 정책 수정** (2025-01-23)
-  - 비로그인 사용자가 피드 페이지에서 게시물을 볼 수 없던 문제 해결
-  - `users` 테이블: 공개 프로필 조회 정책 추가 (`USING (true)`)
-  - `reading_journeys` 테이블: 공개 게시물과 연결된 여정 조회 정책 추가
-  - `posts` 테이블: 공개 게시물 조회 정책 추가 (`USING (is_published = true)`)
-  - 세 테이블 모두 RLS 정책 통과해야 JOIN 성공 → 비인증 사용자 피드 접근 가능
-
-- ✅ **비로그인 사용자 오류 처리 개선** (2025-01-23)
-  - AuthRequired 컴포넌트 추가 (사용자 친화적 로그인 안내 UI)
-  - /library, /my, /my/bookmarks 페이지에 인증 가드 추가
-  - 비인증 사용자 API 호출 차단으로 반복적인 401 오류 방지
-  - useEffect에 user 의존성 추가 및 로딩 상태 관리 개선
-
-- ✅ **음악 재생 바 UX/디자인 대폭 개선** (Spotify/YouTube Music 스타일)
-  - 재생/일시정지 상태 동기화 오류 수정
-  - Audio 메모리 누수 해결 (이벤트 리스너 cleanup)
-  - 진행 바 상호작용 개선 (hover 효과, dragging 피드백)
-  - Visual hierarchy 강화 (48px 재생 버튼, 56px 앨범 커버)
-  - Glass morphism + pulse 애니메이션
-  - 모바일 터치 영역 최적화
-
-- ✅ **완독 플레이리스트 및 크로스페이드 자동 재생 구현** (2025-01-28)
-  - Journey API: 완독된 여정의 플레이리스트 컴파일 로직 추가 (v0~vFinal)
-  - Journey Detail: 플레이리스트 UI 섹션 및 "전체 재생" 버튼 추가
-  - AudioCrossfadeManager: Web Audio API 기반 전문가 수준 크로스페이드
-    - Equal Power Crossfade (cosine/sine curves)
-    - Adaptive duration (tempo/mood 기반 5-10초)
-    - 15초 사전 로딩으로 끊김 없는 재생
-  - useMusicPlayer: 플레이리스트 관리 및 크로스페이드 통합
-  - MusicPlayerBar: 이전/다음 트랙 버튼 및 진행 상태 표시
-  - GPT-4o-mini 프롬프트: 크로스페이드 최적화 힌트 추가
-    - 템포 일관성 유지 (±10-15 BPM)
-    - 페이드 인/아웃 명시
-    - 장르 호환성 확보
-  - E2E Tests: 플레이리스트 및 크로스페이드 기능 검증
-  - 참고: `claudedocs/music-generation-api-guide.md` (팀 공유용)
+- ✅ **이미지 최적화** - AVIF/WebP 자동 변환, 80-90% 용량 감소
+- ✅ **DB 인덱스 최적화** - 29개 인덱스, 피드 72% 개선
+- ✅ **회원가입 UX 개선** - 이메일 확인 프로세스 개선
+- ✅ **피드 공개 조회** - RLS 정책 수정
+- ✅ **음악 재생 바 개선** - Spotify 스타일, 크로스페이드
+- ✅ **플레이리스트 자동 재생** - Web Audio API 기반 크로스페이드
 
 **완료된 최적화** (Phase 11):
 - N+1 쿼리 제거: 11개 → 1개 JOIN (60-70% 성능 개선)
@@ -478,10 +464,6 @@ git push origin main
 - 실시간 업데이트 (Supabase Realtime)
 - 앨범커버 생성 (DALL-E 3)
 - 고급 통계 대시보드
-
-**제거된 기능**:
-- ❌ 다크모드 (라이트 모드 전용으로 변경됨)
-- ❌ Footer 컴포넌트 (미니멀 디자인 적용)
 
 ---
 
@@ -505,9 +487,36 @@ git push origin main
 
 ---
 
+## 빠른 참조
+
+**컴포넌트 개발**:
+1. `src/components/CLAUDE.md` 확인
+2. 기존 컴포넌트 재사용
+3. Props/variants 활용
+4. 새 컴포넌트 생성 (최후의 수단)
+
+**API 개발**:
+1. Repository 확인 (데이터 접근)
+2. Service 작성 (비즈니스 로직)
+3. API Route 작성 (HTTP 처리)
+4. Zod 스키마 검증
+
+**테스트 개발**:
+1. `tests/e2e/` 확인
+2. Playwright 작성
+3. `npm run test:ui` 실행
+4. 디버깅: `--headed --debug`
+
+**환경 변수**:
+- `.env.example` → `.env.local` 복사
+- Supabase, OpenAI, Mureka, Kakao 키 설정
+- Vercel에도 동일하게 설정
+
+---
+
 **참고 문서**:
 - [src/components/CLAUDE.md](./src/components/CLAUDE.md) - 컴포넌트 재사용 가이드
 - [PRD_instruction.md](./PRD_instruction.md) - 제품 요구사항
 - [execution_plan.md](./execution_plan.md) - 개발 계획
 - [claudedocs/performance-optimization-report.md](./claudedocs/performance-optimization-report.md) - 성능 최적화 상세
-- [claudedocs/music-generation-api-guide.md](./claudedocs/music-generation-api-guide.md) - 음악 생성 API 가이드 (팀 공유용) ⭐
+- [claudedocs/music-generation-api-guide.md](./claudedocs/music-generation-api-guide.md) - 음악 생성 API 가이드 ⭐

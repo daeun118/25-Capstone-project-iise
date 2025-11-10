@@ -28,6 +28,8 @@ export interface PlaybackState {
   duration: number;
   playlistLength: number;
   mode: 'single' | 'playlist';
+  volume: number;  // ✅ 볼륨 (0-100)
+  isMuted: boolean;  // ✅ 음소거 상태
 }
 
 type StateChangeListener = (state: PlaybackState) => void;
@@ -45,7 +47,9 @@ export class AudioStateManager {
     currentTime: 0,
     duration: 0,
     playlistLength: 0,
-    mode: 'single'
+    mode: 'single',
+    volume: 70,  // ✅ 기본 볼륨 70%
+    isMuted: false
   };
 
   // Event listeners
@@ -141,6 +145,10 @@ export class AudioStateManager {
       // 2. 새 플레이어 생성
       this.activePlayer = new AudioCrossfadeManager();
       this.currentPlaylist = tracks;
+
+      // ✅ 현재 볼륨 설정 적용
+      this.activePlayer.setVolume(this.playbackState.volume);
+      this.activePlayer.setMuted(this.playbackState.isMuted);
 
       // 3. 이벤트 핸들러 설정
       this.setupEventHandlers();
@@ -268,6 +276,47 @@ export class AudioStateManager {
       currentTrackIndex: 0,
       mode: 'single'
     });
+  }
+
+  /**
+   * 볼륨 설정 (0-100)
+   * ✅ Critical Issue #12 해결: 볼륨 제어
+   */
+  public setVolume(volume: number): void {
+    // Clamp volume to 0-100
+    const clampedVolume = Math.max(0, Math.min(100, volume));
+
+    this.log(`🔊 Setting volume to ${clampedVolume}%`);
+
+    // Update state
+    this.updateState({ volume: clampedVolume });
+
+    // Update active player
+    if (this.activePlayer) {
+      this.activePlayer.setVolume(clampedVolume);
+    }
+  }
+
+  /**
+   * 음소거 설정
+   */
+  public setMuted(muted: boolean): void {
+    this.log(`🔇 Setting muted to ${muted}`);
+
+    // Update state
+    this.updateState({ isMuted: muted });
+
+    // Update active player
+    if (this.activePlayer) {
+      this.activePlayer.setMuted(muted);
+    }
+  }
+
+  /**
+   * 음소거 토글
+   */
+  public toggleMute(): void {
+    this.setMuted(!this.playbackState.isMuted);
   }
 
   /**

@@ -88,13 +88,16 @@ export class AudioCrossfadeManager {
   private nextSource: MediaElementAudioSourceNode | null = null;
   private currentGain: GainNode | null = null;
   private nextGain: GainNode | null = null;
+  private masterGain: GainNode | null = null;  // ✅ 마스터 볼륨 제어용
   private currentAudio: HTMLAudioElement | null = null;
   private nextAudio: HTMLAudioElement | null = null;
-  
+
   private playlist: AudioTrack[] = [];
   private currentIndex = 0;
   private isPlaying = false;
   private isCrossfading = false;
+  private volume = 0.7;  // ✅ 기본 볼륨 70% (0.0 ~ 1.0)
+  private isMuted = false;  // ✅ 음소거 상태
   
   // Callbacks
   private onTrackChange?: (index: number, track: AudioTrack) => void;
@@ -118,15 +121,20 @@ export class AudioCrossfadeManager {
       // ✅ 전역 싱글톤 AudioContext 획득
       this.audioContext = GlobalAudioContextManager.acquire();
 
-      // Create gain nodes
+      // Create gain nodes for crossfade
       this.currentGain = this.audioContext.createGain();
       this.nextGain = this.audioContext.createGain();
 
-      // Connect to destination
-      this.currentGain.connect(this.audioContext.destination);
-      this.nextGain.connect(this.audioContext.destination);
+      // ✅ Create master gain node for volume control
+      this.masterGain = this.audioContext.createGain();
+      this.masterGain.gain.value = this.isMuted ? 0 : this.volume;
 
-      // Initialize gain values
+      // ✅ Connect: crossfade gains → master gain → destination
+      this.masterGain.connect(this.audioContext.destination);
+      this.currentGain.connect(this.masterGain);
+      this.nextGain.connect(this.masterGain);
+
+      // Initialize crossfade gain values
       this.currentGain.gain.value = 1;
       this.nextGain.gain.value = 0;
 
@@ -793,6 +801,39 @@ export class AudioCrossfadeManager {
   }
 
   /**
+   * 볼륨 설정 (0-100)
+   * ✅ Critical Issue #12 해결: 마스터 볼륨 제어
+   */
+  public setVolume(volume: number) {
+    // Clamp volume to 0-100
+    this.volume = Math.max(0, Math.min(100, volume)) / 100;
+
+    if (this.masterGain && !this.isMuted) {
+      this.masterGain.gain.value = this.volume;
+      this.log(`🔊 Volume set to ${Math.round(this.volume * 100)}%`);
+    }
+  }
+
+  /**
+   * 음소거 설정
+   */
+  public setMuted(muted: boolean) {
+    this.isMuted = muted;
+
+    if (this.masterGain) {
+      this.masterGain.gain.value = muted ? 0 : this.volume;
+      this.log(`🔇 Mute ${muted ? 'ON' : 'OFF'}`);
+    }
+  }
+
+  /**
+   * 음소거 토글
+   */
+  public toggleMute() {
+    this.setMuted(!this.isMuted);
+  }
+
+  /**
    * 정리
    */
   public dispose() {
@@ -817,6 +858,15 @@ export class AudioCrossfadeManager {
     if (this.nextSource) {
       this.nextSource.disconnect();
     }
+    if (this.currentGain) {
+      this.currentGain.disconnect();
+    }
+    if (this.nextGain) {
+      this.nextGain.disconnect();
+    }
+    if (this.masterGain) {
+      this.masterGain.disconnect();
+    }
 
     // ✅ Critical Issue #5 해결: GlobalAudioContextManager 해제
     // 참조 카운트 감소, 모든 참조가 해제되면 자동으로 닫힘
@@ -830,6 +880,7 @@ export class AudioCrossfadeManager {
     this.nextSource = null;
     this.currentGain = null;
     this.nextGain = null;
+    this.masterGain = null;
     this.currentAudio = null;
     this.nextAudio = null;
     this.playlist = [];
@@ -860,16 +911,24 @@ export class AudioCrossfadeManager {
   public get isPlayingNow() {
     return this.isPlaying;
   }
-  
+
   public get currentTrackIndex() {
     return this.currentIndex;
   }
-  
+
   public get playlistLength() {
     return this.playlist.length;
   }
-  
+
   public get currentTrack() {
     return this.playlist[this.currentIndex] || null;
+  }
+
+  public get currentVolume() {
+    return Math.round(this.volume * 100);
+  }
+
+  public get muted() {
+    return this.isMuted;
   }
 }
