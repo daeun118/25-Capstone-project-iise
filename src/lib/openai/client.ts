@@ -36,7 +36,7 @@ Generate detailed music prompts that capture the essence of a reading journey.
 Return a JSON object with: prompt (string), genre (string), mood (string), tempo (number), description (string).
 
 CROSSFADE OPTIMIZATION RULES:
-1. Maintain tempo consistency (±10-15 BPM variation between tracks)
+1. Maintain tempo consistency (±5 BPM variation between tracks)
 2. Request gentle fade-in/fade-out capabilities in the prompt
 3. Ensure smooth transitions by using compatible genres and moods
 4. Include "suitable for crossfading" or "smooth transitions" in prompts
@@ -54,16 +54,28 @@ Book: ${bookTitle}
 ${bookDescription ? `Description: ${bookDescription}` : ''}
 ${bookCategory ? `Category: ${bookCategory}` : ''}
 
-Create a contemplative, anticipatory mood that represents the start of a reading journey.
+Create a mood that represents the start of a reading journey.
+The output will be used as an input for the Mureka music generation model.
+
 IMPORTANT: 
 - Start with a soft, gradual introduction (first 5-10 seconds)
 - Use a moderate tempo (70-90 BPM) that can transition smoothly to various moods
 - End with a gentle fade-out suitable for crossfading
-- Include "ambient introduction with smooth transitions" in the prompt`
+- Include "ambient introduction with smooth transitions" in the prompt.
+
+IMPORTANT: Analyze the book description to infer its genre, and create music that fits the mood of that genre.  
+For example:  
+- Sci-Fi → futuristic and mysterious electronic sounds  
+- Romance → warm, emotional piano and string instruments  
+- Mystery → dark, tense, and suspenseful tones  
+- Fantasy → epic and magical orchestral atmosphere  
+- Horror → eerie and unsettling ambient sounds  
+- Adventure → energetic and uplifting rhythm  
+`
   } else if (isFinal) {
     // vFinal generation - synthesis of entire journey
     const lastTrack = previousLogs[previousLogs.length - 1];
-    const lastTempo = lastTrack?.musicTempo || 80;
+    const lastTempo = lastTrack?.musicTempo || 70;
     const lastGenre = lastTrack?.musicGenre || 'ambient';
     
     userPrompt = `Generate a finale music prompt that synthesizes an entire reading journey.
@@ -89,6 +101,8 @@ ${userInput.memo ? `Final thoughts: ${userInput.memo}` : ''}
 ` : ''}
 
 Create a conclusive, synthesizing piece that brings closure to the reading journey.
+The output will be used as an input for the Mureka music generation model.
+
 IMPORTANT:
 - Begin with a smooth crossfade from ${lastGenre} at ${lastTempo} BPM
 - Gradually evolve to a grand finale while maintaining tempo within ±15 BPM
@@ -101,7 +115,9 @@ IMPORTANT:
     const prevGenre = prevTrack?.musicGenre || 'ambient';
     const prevMood = prevTrack?.musicMood || 'contemplative';
     
-    userPrompt = `Generate a music prompt for a moment in an ongoing reading journey.
+    userPrompt = `Generate a music prompt for a moment in an ongoing reading journey. Do not use drums, electric guitars.
+Use minor scale for negative situations/emotions.
+Use major scale for positive situations/emotions.
 Book: ${bookTitle}
 
 Previous track context:
@@ -122,11 +138,14 @@ ${userInput?.emotions?.length ? `Emotions: ${userInput.emotions.join(', ')}` : '
 ${userInput?.memo ? `Reflection: ${userInput.memo}` : ''}
 
 Create music that reflects this moment while maintaining connection to the journey so far.
+The output will be used as an input for the Mureka music generation model.
 IMPORTANT:
-- Keep tempo within ${prevTempo - 10} to ${prevTempo + 10} BPM for smooth transitions
+- Keep tempo within ${prevTempo - 20} to ${prevTempo + 5} BPM for smooth transitions
 - Ensure genre compatibility with ${prevGenre} for crossfading
 - Include "smooth fade-in from ${prevMood} mood" in the opening
-- End with a gentle fade suitable for transitioning to the next track`
+- End with a gentle fade suitable for transitioning to the next track
+- Be careful not to interfere with reading.
+`
   }
 
   const response = await openai.chat.completions.create({
